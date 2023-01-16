@@ -28,6 +28,18 @@ public enum BaseResponseStatus {
     // [POST] /users
     POST_USERS_EMPTY_NAME(false, 2011, "유저 이름을 입력해주세요."),
 
+    // [POST] /users
+    POST_USERS_EMPTY_EMAIL(false, 2015, "이메일을 입력해주세요."),
+    POST_USERS_INVALID_EMAIL(false, 2016, "이메일 형식을 확인해주세요."),
+    POST_USERS_EXISTS_EMAIL(false,2017,"중복된 이메일입니다."),
+    POST_USERS_EMPTY_PASSWORD(false, 2018, "비밀번호를 입력해주세요."),
+    POST_USERS_INVALID_PASSWORD(false, 2019, "비밀번호 형식은 숫자, 특문 각 1회 이상, 영문은 2개 이상 사용하여 8자리 이상이어야 합니다."),
+    POST_USERS_EMPTY_NICKNAME(false, 2020, "닉네임을 입력해주세요."),
+    POST_USERS_INVALID_NICKNAME(false, 2021, "닉네임은 한글, 영문, 숫자만 가능합니다."),
+    POST_USERS_EMPTY_STORENAME(false, 2022, "상호명을 입력해주세요."),
+    POST_USERS_INVALID_STORENAME(false, 2023, "상호명은 한글, 영문, 숫자만 가능합니다."),
+
+
     /**
      * 3000 : Response 오류
      */
