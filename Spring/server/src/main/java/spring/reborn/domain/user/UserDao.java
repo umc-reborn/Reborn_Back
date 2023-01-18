@@ -115,7 +115,7 @@ public class UserDao {
                         rs.getString("userBirthDate"),
                         rs.getString("userLikes")), // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
                 getUserParams); // 한 개의 회원정보를 얻기 위한 jdbcTemplate 함수(Query, 객체 매핑 정보, Params)의 결과 반환
-
+    }
     // 회원탈퇴
     public int modifyUserStatus(PatchUserStatusReq patchUserStatusReq) {
         String modifyUserStatusQuery = "update User set status = ? where userIdx = ? "; // 해당 userIdx를 만족하는 User를 해당 status로 변경한다.
