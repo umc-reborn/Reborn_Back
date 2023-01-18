@@ -86,7 +86,6 @@ public class UserController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
-
     /**
      * 회원가입-가게 API
      * [POST] /users
@@ -173,5 +172,37 @@ public class UserController {
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
+
+
+    }
+    
+    /**
+     * 이웃 회원탈퇴 API
+     * [PATCH] /users/:userIdx
+     */
+    @ResponseBody
+    @PatchMapping("/userDelete/{userIdx}")
+    @Transactional
+    public BaseResponse<String> modifyUserName(@PathVariable("userIdx") int userIdx, @RequestBody User user) {
+        try {
+
+//  *********** 해당 부분은 7주차 - JWT 수업 후 주석해체 해주세요!  ****************
+//            jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            //같다면 유저상태 변경
+//  **************************************************************************
+            PatchUserStatusReq patchUserStatusReq = new PatchUserStatusReq(userIdx, user.getStatus());
+            userService.modifyUserStatus(patchUserStatusReq);
+
+            String result = "회원탈퇴가 완료되었습니다.";
+            return new BaseResponse<>(result);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+
     }
 }

@@ -102,6 +102,7 @@ public class UserDao {
                 getUserPointParams); // 한 개의 회원정보를 얻기 위한 jdbcTemplate 함수(Query, 객체 매핑 정보, Params)의 결과 반환
     }
 
+
     // 해당 userIdx를 갖는 유저 정보 조회
     public GetUserInformRes getUserInform(int userIdx) {
         String getUserQuery = "select * from User where userIdx = ?"; // 해당 userIdx를 만족하는 유저를 조회하는 쿼리문
@@ -114,5 +115,13 @@ public class UserDao {
                         rs.getString("userBirthDate"),
                         rs.getString("userLikes")), // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
                 getUserParams); // 한 개의 회원정보를 얻기 위한 jdbcTemplate 함수(Query, 객체 매핑 정보, Params)의 결과 반환
+
+    // 회원탈퇴
+    public int modifyUserStatus(PatchUserStatusReq patchUserStatusReq) {
+        String modifyUserStatusQuery = "update User set status = ? where userIdx = ? "; // 해당 userIdx를 만족하는 User를 해당 status로 변경한다.
+        Object[] modifyUserStatusParams = new Object[]{patchUserStatusReq.getStatus(), patchUserStatusReq.getUserIdx()}; // 주입될 값들(status, userIdx) 순
+
+        return this.jdbcTemplate.update(modifyUserStatusQuery, modifyUserStatusParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0)
+
     }
 }
