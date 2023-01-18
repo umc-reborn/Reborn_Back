@@ -1,10 +1,12 @@
-package spring.reborn.src.reborn;
+package spring.reborn.domain.reborn;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import spring.reborn.config.BaseException;
+import spring.reborn.domain.reborn.model.GetRebornRes;
+import spring.reborn.domain.reborn.model.PostRebornReq;
 import spring.reborn.src.reborn.model.*;
 
 import javax.sql.DataSource;
