@@ -125,7 +125,7 @@ public class UserController {
             return new BaseResponse<>(POST_USERS_EMPTY_STOREADDRESS);
         }
         // 카테고리 값이 존재하는지 검사
-        if (postUserStoreReq.getCategory().length() == 0) {
+        if (postUserStoreReq.getCategory() == null) {
             return new BaseResponse<>(POST_USERS_EMPTY_STORECATEGORY);
         }
         try {
