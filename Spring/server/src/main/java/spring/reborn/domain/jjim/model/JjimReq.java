@@ -9,8 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostJjimRes {
-    private int jjimIdx;
-    private String userEmail;
-    private String storeName;
+public class JjimReq {
+    private int storeIdx;
+    private int userIdx;
 }
