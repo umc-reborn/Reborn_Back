@@ -19,12 +19,23 @@ public class UserDao {
     // 스토어 회원가입
     public int createUserStore(PostUserStoreReq postUserStoreReq) {
         // DB의 Store 테이블에 스토어 데이터 삽입.
-        String createUserStoreQuery = "START TRANSACTION;\n" +
-                "INSERT INTO store (storeName, storeRegister, storeImage, storeAddress, storeInfo, category) VALUES (?,?,?,?,?,?);\n" +
-                "INSERT INTO user (storeIdx, userEmail, userPwd, userType) VALUES (last_insert_id(), ?,?, 'STORE');\n" +
-                "COMMIT;"; // 실행될 동적 쿼리문
-        Object[] createUserParams = new Object[]{postUserStoreReq.getStoreName(), postUserStoreReq.getStoreRegister(), postUserStoreReq.getStoreImage(), postUserStoreReq.getStoreAddress(), postUserStoreReq.getStoreInfo(), postUserStoreReq.getCategory(), postUserStoreReq.getUserEmail(), postUserStoreReq.getUserPwd()}; // 동적 쿼리의 ?부분에 주입될 값
+//        String createUserStoreQuery = "START TRANSACTION;\n" +
+//                "INSERT INTO store (storeName, storeRegister, storeImage, storeAddress, storeInfo, category) VALUES (?,?,?,?,?,?);\n" +
+//                "INSERT INTO user (storeIdx, userEmail, userPwd, userType) VALUES (last_insert_id(), ?,?, 'STORE');\n" +
+//                "COMMIT;"; // 실행될 동적 쿼리문
+//        Object[] createUserParams = new Object[]{postUserStoreReq.getStoreName(), postUserStoreReq.getStoreRegister(), postUserStoreReq.getStoreImage(), postUserStoreReq.getStoreAddress(), postUserStoreReq.getStoreInfo(), postUserStoreReq.getCategory(), postUserStoreReq.getUserEmail(), postUserStoreReq.getUserPwd()}; // 동적 쿼리의 ?부분에 주입될 값
+//        this.jdbcTemplate.update(createUserStoreQuery, createUserParams);
+
+        // DB의 Store 테이블에 스토어 데이터 삽입.
+        String createUserStoreQuery = "INSERT INTO store (storeName, storeRegister, storeImage, storeAddress, storeInfo, category) VALUES (?,?,?,?,?,?)";
+        Object[] createUserParams = new Object[]{postUserStoreReq.getStoreName(), postUserStoreReq.getStoreRegister(), postUserStoreReq.getStoreImage(), postUserStoreReq.getStoreAddress(), postUserStoreReq.getStoreInfo(), postUserStoreReq.getCategory()};
         this.jdbcTemplate.update(createUserStoreQuery, createUserParams);
+
+        // DB의 User 테이블에 스토어 데이터 삽입.
+        createUserStoreQuery = "INSERT INTO user (storeIdx, userEmail, userPwd, userType) VALUES (last_insert_id(), ?,?, 'STORE');";
+        createUserParams = new Object[]{postUserStoreReq.getUserEmail(), postUserStoreReq.getUserPwd()};
+        this.jdbcTemplate.update(createUserStoreQuery, createUserParams);
+
 
         String lastInserIdQuery = "select last_insert_id()"; // 가장 마지막에 삽입된(생성된) id값은 가져온다.
         return this.jdbcTemplate.queryForObject(lastInserIdQuery, int.class); // 해당 쿼리문의 결과 마지막으로 삽인된 유저의 userIdx번호를 반환한다.

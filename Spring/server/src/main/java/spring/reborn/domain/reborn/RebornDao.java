@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import spring.reborn.config.BaseException;
 import spring.reborn.domain.reborn.model.GetRebornRes;
 import spring.reborn.domain.reborn.model.PostRebornReq;
-import spring.reborn.src.reborn.model.*;
 
 import javax.sql.DataSource;
 

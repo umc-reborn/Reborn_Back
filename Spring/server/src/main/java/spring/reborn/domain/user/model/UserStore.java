@@ -13,7 +13,7 @@ public class UserStore {
     private int userIdx;
     private String userEmail;
     private String userPwd;
-    private char userAdAgreement;
+    private String userAdAgreement;
     private String storeName;
     private String storeRegister;
     private String storeImage;
