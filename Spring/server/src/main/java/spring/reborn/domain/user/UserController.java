@@ -1,4 +1,4 @@
-package spring.reborn.user;
+package spring.reborn.domain.user;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import spring.reborn.config.BaseException;
 import spring.reborn.config.BaseResponse;
-import spring.reborn.user.model.PostUserStoreReq;
-import spring.reborn.user.model.PostUserStoreRes;
+import spring.reborn.domain.user.model.PostUserStoreReq;
+import spring.reborn.domain.user.model.PostUserStoreRes;
 import spring.reborn.utils.JwtService;
 
 import static spring.reborn.config.BaseResponseStatus.*;
@@ -39,8 +39,6 @@ public class UserController {
     @ResponseBody
     @PostMapping("/sign-up-store")    // POST 방식의 요청을 매핑하기 위한 어노테이션
     public BaseResponse<PostUserStoreRes> createUserStore(@RequestBody PostUserStoreReq postUserStoreReq) {
-        //  @RequestBody란, 클라이언트가 전송하는 HTTP Request Body(우리는 JSON으로 통신하니, 이 경우 body는 JSON)를 자바 객체로 매핑시켜주는 어노테이션
-        // TODO: email 관련한 짧은 validation 예시입니다. 그 외 더 부가적으로 추가해주세요!
         // email에 값이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
         if (postUserStoreReq.getUserEmail().length() == 0) {
             return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);

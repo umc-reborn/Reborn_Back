@@ -1,4 +1,4 @@
-package spring.reborn.config.test;
+package spring.reborn.test;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

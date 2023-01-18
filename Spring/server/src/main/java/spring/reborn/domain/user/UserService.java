@@ -1,4 +1,4 @@
-package spring.reborn.user;
+package spring.reborn.domain.user;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,10 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import spring.reborn.config.BaseException;
 import spring.reborn.config.secret.Secret;
-import spring.reborn.user.model.PostUserReq;
-import spring.reborn.user.model.PostUserRes;
-import spring.reborn.user.model.PostUserStoreReq;
-import spring.reborn.user.model.PostUserStoreRes;
+import spring.reborn.domain.user.model.PostUserStoreReq;
+import spring.reborn.domain.user.model.PostUserStoreRes;
 import spring.reborn.utils.AES128;
 import spring.reborn.utils.JwtService;
 
@@ -55,6 +53,7 @@ public class UserService {
             return new PostUserStoreRes(userIdx,jwt);
 //  *********************************************************************
         } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
+            System.out.println(exception);
             throw new BaseException(DATABASE_ERROR);
         }
     }

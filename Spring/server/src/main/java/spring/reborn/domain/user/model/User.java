@@ -1,4 +1,4 @@
-package spring.reborn.user.model;
+package spring.reborn.domain.user.model;
 
 public class User {
     private int userIdx;

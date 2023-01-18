@@ -1,4 +1,4 @@
-package spring.reborn.user;
+package spring.reborn.domain.user;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

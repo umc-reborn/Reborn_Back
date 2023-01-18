@@ -1,4 +1,4 @@
-package spring.reborn.user.model;
+package spring.reborn.domain.user.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
