@@ -10,7 +10,6 @@ import spring.reborn.config.BaseResponse;
 import spring.reborn.domain.reborn.model.GetRebornRes;
 import spring.reborn.domain.reborn.model.PostRebornReq;
 import spring.reborn.domain.reborn.model.PostRebornRes;
-import spring.reborn.src.reborn.model.*;
 
 import java.util.List;
 
