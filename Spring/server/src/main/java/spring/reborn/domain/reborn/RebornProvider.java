@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import spring.reborn.config.BaseException;
-import spring.reborn.domain.reborn.model.GetRebornRes;
+import spring.reborn.domain.reborn.model.*;
 
 import java.util.List;
 

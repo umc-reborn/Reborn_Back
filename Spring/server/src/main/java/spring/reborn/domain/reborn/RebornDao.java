@@ -5,8 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import spring.reborn.config.BaseException;
-import spring.reborn.domain.reborn.model.GetRebornRes;
-import spring.reborn.domain.reborn.model.PostRebornReq;
+import spring.reborn.domain.reborn.model.*;
 
 import javax.sql.DataSource;
 
@@ -27,7 +26,7 @@ public class RebornDao {
     public int createReborn(PostRebornReq postRebornReq) throws BaseException {
         try {
             System.out.println("dao 시작");
-            String createRebornQuery = "insert into reborn (storeIdx, productName, productGuide, productComment, productImg, productLimitTime, productCnt) values (?,?,?,?,?,?,?)";
+            String createRebornQuery = "insert into Reborn (storeIdx, productName, productGuide, productComment, productImg, productLimitTime, productCnt) values (?,?,?,?,?,?,?)";
             Object[] createRebornParams = new Object[]{postRebornReq.getStoreIdx(), postRebornReq.getProductName(), postRebornReq.getProductGuide(), postRebornReq.getProductComment(), postRebornReq.getProductImg(), postRebornReq.getProductLimitTime(), postRebornReq.getProductCnt()};
             this.jdbcTemplate.update(createRebornQuery, createRebornParams);
             System.out.println("createDinnerQuery 끝");
@@ -45,7 +44,7 @@ public class RebornDao {
 
     public List<GetRebornRes> getReborns(Integer storeIdx) {
         System.out.println("dao 시작");
-        String getRebornsQuery = "SELECT productName, productGuide, productComment, productImg, productLimitTime, productCnt FROM reborn WHERE storeIdx = ?";
+        String getRebornsQuery = "SELECT productName, productGuide, productComment, productImg, productLimitTime, productCnt FROM Reborn WHERE storeIdx = ?";
         List<GetRebornRes> result = this.jdbcTemplate.query(
                 getRebornsQuery,
                 (rs2, rowNum2) -> new GetRebornRes(

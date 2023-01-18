@@ -37,7 +37,7 @@ public enum BaseResponseStatus {
     POST_USERS_EMPTY_ADDRESS(false, 2102, "주소를 입력해주세요."),
     POST_USERS_EMPTY_LIKES(false, 2103, "관심 카테고리를 입력해주세요."),
     POST_USERS_INVALID_BIRTHDATE(false, 2104, "생년월일을 숫자만 사용해서 8자리로 입력해주세요"),
-
+    
     //민몰리
     POST_USERS_EMPTY_PASSWORD(false, 2400, "비밀번호를 입력해주세요."),
     POST_USERS_INVALID_PASSWORD(false, 2401, "비밀번호 형식은 숫자, 특문 각 1회 이상, 영문은 2개 이상 사용하여 8자리 이상이어야 합니다."),
