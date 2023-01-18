@@ -1,4 +1,4 @@
-package spring.reborn.src.reborn;
+package spring.reborn.domain.reborn;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spring.reborn.config.BaseException;
-import spring.reborn.src.reborn.model.PostRebornReq;
-import spring.reborn.src.reborn.model.PostRebornRes;
+import spring.reborn.domain.reborn.model.PostRebornReq;
+import spring.reborn.domain.reborn.model.PostRebornRes;
 
 import static spring.reborn.config.BaseResponseStatus.DATABASE_ERROR;
 
