@@ -1,11 +1,13 @@
-package spring.reborn.src.reborn.model;
+package spring.reborn.domain.reborn.model;
 
 import lombok.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
-public class GetRebornRes {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class PostRebornReq {
+    private int storeIdx;
     private String productName;
     private String productGuide;
     private String productComment;
