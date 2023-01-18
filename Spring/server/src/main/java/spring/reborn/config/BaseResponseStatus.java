@@ -44,6 +44,26 @@ public enum BaseResponseStatus {
     POST_USERS_EMPTY_STORENAME(false, 2404, "상호명을 입력해주세요."),
     POST_USERS_INVALID_STORENAME(false, 2405, "상호명은 한글, 영문, 숫자만 가능합니다."),
 
+    // [POST] /users
+    POST_USERS_EMPTY_EMAIL(false, 2015, "이메일을 입력해주세요."),
+    POST_USERS_INVALID_EMAIL(false, 2016, "이메일 형식을 확인해주세요."),
+    POST_USERS_EXISTS_EMAIL(false,2017,"중복된 이메일입니다."),
+    //폴
+    INVALID_USER(false,2100,"탈퇴 혹은 블랙 유저입니다."),
+    POST_USERS_EMPTY_BIRTHDATE(false, 2101, "생년월일을 입력해주세요."),
+    POST_USERS_EMPTY_ADDRESS(false, 2102, "주소를 입력해주세요."),
+    POST_USERS_EMPTY_LIKES(false, 2103, "관심 카테고리를 입력해주세요."),
+    //민몰리
+    POST_USERS_EMPTY_PASSWORD(false, 2400, "비밀번호를 입력해주세요."),
+    POST_USERS_INVALID_PASSWORD(false, 2401, "비밀번호 형식은 숫자, 특문 각 1회 이상, 영문은 2개 이상 사용하여 8자리 이상이어야 합니다."),
+    POST_USERS_EMPTY_NICKNAME(false, 2402, "닉네임을 입력해주세요."),
+    POST_USERS_INVALID_NICKNAME(false, 2403, "닉네임은 한글, 영문, 숫자만 가능합니다."),
+    POST_USERS_EMPTY_STORENAME(false, 2404, "상호명을 입력해주세요."),
+    POST_USERS_INVALID_STORENAME(false, 2405, "상호명은 한글, 영문, 숫자만 가능합니다."),
+    POST_USERS_EMPTY_STOREADDRESS(false, 2406, "가게 주소를 입력해주세요."),
+    POST_USERS_EMPTY_STORECATEGORY(false, 2407, "카테고리를 설정해주세요."),
+
+
     /**
      * 3000 : Response 오류
      */
