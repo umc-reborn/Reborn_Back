@@ -7,9 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import spring.reborn.config.BaseException;
 import spring.reborn.config.BaseResponse;
-import spring.reborn.domain.reborn.model.GetRebornRes;
-import spring.reborn.domain.reborn.model.PostRebornReq;
-import spring.reborn.domain.reborn.model.PostRebornRes;
+import spring.reborn.domain.reborn.model.*;
 
 import java.util.List;
 
