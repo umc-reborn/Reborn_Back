@@ -26,6 +26,7 @@ public class UserDao {
 //        Object[] createUserParams = new Object[]{postUserStoreReq.getStoreName(), postUserStoreReq.getStoreRegister(), postUserStoreReq.getStoreImage(), postUserStoreReq.getStoreAddress(), postUserStoreReq.getStoreInfo(), postUserStoreReq.getCategory(), postUserStoreReq.getUserEmail(), postUserStoreReq.getUserPwd()}; // 동적 쿼리의 ?부분에 주입될 값
 //        this.jdbcTemplate.update(createUserStoreQuery, createUserParams);
 
+
         // DB의 Store 테이블에 스토어 데이터 삽입.
         String createUserStoreQuery = "INSERT INTO store (storeName, storeRegister, storeImage, storeAddress, storeInfo, category) VALUES (?,?,?,?,?,?)";
         Object[] createUserParams = new Object[]{postUserStoreReq.getStoreName(), postUserStoreReq.getStoreRegister(), postUserStoreReq.getStoreImage(), postUserStoreReq.getStoreAddress(), postUserStoreReq.getStoreInfo(), postUserStoreReq.getCategory()};
