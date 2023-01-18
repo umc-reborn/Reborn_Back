@@ -11,7 +11,6 @@ import spring.reborn.domain.reborn.model.GetRebornRes;
 import spring.reborn.domain.reborn.model.PostRebornReq;
 import spring.reborn.domain.reborn.model.PostRebornRes;
 
-
 import java.util.List;
 
 @RestController
