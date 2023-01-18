@@ -8,8 +8,6 @@ import spring.reborn.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-
 import static spring.reborn.config.BaseResponseStatus.*;
 import static spring.reborn.utils.ValidationRegex.*;
 
@@ -161,21 +159,23 @@ public class UserController {
      * [GET] /users/inform/:userIdx
      */
     // Path-variable
-    /*@ResponseBody
-    @GetMapping("/inform/{userIdx}") // (GET) 127.0.0.1:9000/app/users/:userIdx
+    @ResponseBody
+    @GetMapping("/inform/{userIdx}") // (GET) 127.0.0.1:9000/app/users/inform/:userIdx
     public BaseResponse<GetUserInformRes> getUserInform(@PathVariable("userIdx") int userIdx) {
         // @PathVariable RESTful(URL)에서 명시된 파라미터({})를 받는 어노테이션, 이 경우 userId값을 받아옴.
         //  null값 or 공백값이 들어가는 경우는 적용하지 말 것
         //  .(dot)이 포함된 경우, .을 포함한 그 뒤가 잘려서 들어감
         // Get Users
         try {
-            GetUserInformRes getUserInformRes = userProvider.getUser(userIdx);
+            GetUserInformRes getUserInformRes = userProvider.getUserInform(userIdx);
             return new BaseResponse<>(getUserInformRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
 
-    }*/
+
+    }
+    
     /**
      * 이웃 회원탈퇴 API
      * [PATCH] /users/:userIdx
@@ -203,5 +203,6 @@ public class UserController {
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
+
     }
 }

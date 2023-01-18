@@ -9,6 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor // 해당 클래스의 모든 멤버 변수(jwt, userIdx)를 받는 생성자를 생성-
 public class PostUserStoreRes {
     private int userIdx;
+//    private int storeIdx;
     //    해당 부분은 7주차 - JWT 수업 후 주석해제 및 대체해주세요!
     private String jwt;
 }
