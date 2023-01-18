@@ -26,9 +26,10 @@ dependencies {
 	testCompileOnly 'org.projectlombok:lombok:1.18.24'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
 
-	// Security
+	// Security, Authentication
 	implementation 'io.jsonwebtoken:jjwt:0.9.0'
 	implementation 'org.glassfish.jaxb:jaxb-runtime'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa' //javax.persistence import
 }
 
 tasks.named('test') {

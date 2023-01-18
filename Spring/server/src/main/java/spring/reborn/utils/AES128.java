@@ -42,4 +42,3 @@ public class AES128 {
         return new String(cipher.doFinal(decrypted), UTF_8);
     }
 }
-

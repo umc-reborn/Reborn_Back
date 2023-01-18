@@ -1,5 +1,7 @@
 package spring.reborn.utils;
 
+import spring.reborn.config.*;
+import spring.reborn.config.secret.Secret;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -7,14 +9,11 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import spring.reborn.config.BaseException;
-import spring.reborn.config.secret.Secret;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
-import static spring.reborn.config.BaseResponseStatus.EMPTY_JWT;
-import static spring.reborn.config.BaseResponseStatus.INVALID_JWT;
+import static spring.reborn.config.BaseResponseStatus.*;
 
 @Service
 public class JwtService {
@@ -49,7 +48,7 @@ public class JwtService {
     @return int
     @throws BaseException
      */
-    public int getUserIdx() throws BaseException {
+    public int getUserIdx() throws BaseException{
         //1. JWT 추출
         String accessToken = getJwt();
         if(accessToken == null || accessToken.length() == 0){
@@ -71,3 +70,4 @@ public class JwtService {
     }
 
 }
+
