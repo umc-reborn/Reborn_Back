@@ -1,2 +1,6 @@
-package spring.reborn.domain.store.model;public class StoreStatus {
+package spring.reborn.domain.store.model;
+
+public enum StoreStatus {
+    ACTIVE,
+    DELETE
 }
