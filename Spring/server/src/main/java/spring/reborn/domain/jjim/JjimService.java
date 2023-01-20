@@ -4,12 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spring.reborn.config.BaseException;
-import spring.reborn.domain.jjim.model.PostJjimReq;
-import spring.reborn.domain.jjim.model.PostJjimRes;
-import spring.reborn.domain.reborn.RebornDao;
-import spring.reborn.domain.reborn.RebornProvider;
-import spring.reborn.domain.reborn.model.PostRebornReq;
-import spring.reborn.domain.reborn.model.PostRebornRes;
+import spring.reborn.domain.jjim.model.JjimReq;
+import spring.reborn.domain.jjim.model.JjimRes;
 
 import static spring.reborn.config.BaseResponseStatus.DATABASE_ERROR;
 
@@ -25,13 +21,24 @@ public class JjimService {
     }
 
     @Transactional
-    public PostJjimRes createJjim(PostJjimReq postJjimReq) throws BaseException {
+    public JjimRes createJjim(JjimReq jjimReq) throws BaseException {
+        try {
+            JjimRes jjimRes = jjimDao.createJjim(jjimReq);
+
+            return jjimRes;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    @Transactional
+    public JjimRes deleteJjim(JjimReq jjimReq) throws BaseException {
         try {
             System.out.println("Service 시작");
-            PostJjimRes postJjimRes = jjimDao.createJjim(postJjimReq);
+            JjimRes jjimRes = jjimDao.deleteJjim(jjimReq);
             System.out.println("Service 끝");
 
-            return postJjimRes;
+            return jjimRes;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }

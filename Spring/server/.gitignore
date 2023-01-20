@@ -39,3 +39,5 @@ out/
 ### files ###
 secret/
 application.properties
+!/.idea/misc.xml
+*.ppk

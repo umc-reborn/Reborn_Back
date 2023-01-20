@@ -5,12 +5,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import spring.reborn.config.BaseException;
-import spring.reborn.domain.jjim.model.PostJjimReq;
-import spring.reborn.domain.jjim.model.PostJjimRes;
+import spring.reborn.domain.jjim.model.JjimReq;
+import spring.reborn.domain.jjim.model.JjimRes;
 
 import javax.sql.DataSource;
-
-import java.util.List;
 
 import static javax.swing.UIManager.getInt;
 import static javax.swing.UIManager.getString;
@@ -27,10 +25,10 @@ public class JjimDao {
     }
 
     @Transactional
-    public PostJjimRes createJjim(PostJjimReq postJjimReq) throws BaseException {
+    public JjimRes createJjim(JjimReq jjimReq) throws BaseException {
         try {
             String createJjimQuery = "insert into Jjim (storeIdx, userIdx) values (?,?)";
-            Object[] createJjimParams = new Object[]{postJjimReq.getStoreIdx(), postJjimReq.getUserIdx()};
+            Object[] createJjimParams = new Object[]{jjimReq.getStoreIdx(), jjimReq.getUserIdx()};
             this.jdbcTemplate.update(createJjimQuery, createJjimParams);
 
             String postJjimResponseQuery =
@@ -41,15 +39,52 @@ public class JjimDao {
             Object[] postJjimParams = new Object[]{};
 
             //queryForObject : DTO 하나 값 반환
-            PostJjimRes postJjimRes = this.jdbcTemplate.queryForObject(postJjimResponseQuery,
+            JjimRes jjimRes = this.jdbcTemplate.queryForObject(postJjimResponseQuery,
                     postJjimParams,
-                    (rs, rowNum) -> new PostJjimRes(
+                    (rs, rowNum) -> new JjimRes(
                             rs.getInt("jjimIdx"),
                             rs.getString("userEmail"),
                             rs.getString("storeName"))
             );
 
-            return postJjimRes;
+            return jjimRes;
+
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    @Transactional
+    public JjimRes deleteJjim(JjimReq jjimReq) throws BaseException {
+        try {
+            System.out.println("Dao 시작");
+
+            String postJjimResponseQuery =
+                    "select Jjim.jjimIdx,User.userEmail,Store.storeName\n" +
+                            "from Jjim, User, Store " +
+                            "where Jjim.jjimIdx=last_insert_id() and Jjim.userIdx = User.userIdx and Jjim.storeIdx = Store.storeIdx;";
+            System.out.println("Dao 1");
+
+            Object[] postJjimParams = new Object[]{};
+            System.out.println("Dao 2");
+
+            //queryForObject : DTO 하나 값 반환
+            JjimRes jjimRes = this.jdbcTemplate.queryForObject(postJjimResponseQuery,
+                    postJjimParams,
+                    (rs, rowNum) -> new JjimRes(
+                            rs.getInt("jjimIdx"),
+                            rs.getString("userEmail"),
+                            rs.getString("storeName"))
+            );
+
+            System.out.println("Dao 3");
+
+            String deleteJjimQuery = "delete from Jjim where storeIdx=? and userIdx=?";
+            Object[] createJjimParams = new Object[]{jjimReq.getStoreIdx(), jjimReq.getUserIdx()};
+            this.jdbcTemplate.update(deleteJjimQuery, createJjimParams);
+            System.out.println("Dao 끝");
+
+            return jjimRes;
 
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);

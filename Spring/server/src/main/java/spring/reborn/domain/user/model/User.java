@@ -25,6 +25,7 @@ public class User {
     private String userBirthDate;
     private String userAddress;//맞나?
     private String userLikes;
+    private String status;
     /*{
         CAFE, FASHION, SIDEDISH, LIFE, ETC
     }
