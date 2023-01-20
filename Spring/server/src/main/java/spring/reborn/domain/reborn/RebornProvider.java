@@ -33,4 +33,17 @@ public class RebornProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public List<GetRebornRes> getInProgressReborns(Integer rebornIdx) throws BaseException {
+        try {
+            System.out.println("provider 시작");
+            List<GetRebornRes> getRebornsRes = rebornDao.getReborns(rebornIdx);
+            System.out.println("provider 끝");
+            return getRebornsRes;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+
 }

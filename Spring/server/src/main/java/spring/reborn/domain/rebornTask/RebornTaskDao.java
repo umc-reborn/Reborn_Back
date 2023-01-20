@@ -1,4 +1,4 @@
-package spring.reborn.domain.reborn;
+package spring.reborn.domain.rebornTask;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -6,15 +6,15 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import spring.reborn.config.BaseException;
 import spring.reborn.domain.reborn.model.*;
+import spring.reborn.domain.rebornTask.model.*;
 
 import javax.sql.DataSource;
-
 import java.util.List;
 
 import static spring.reborn.config.BaseResponseStatus.DATABASE_ERROR;
 
 @Repository
-public class RebornDao {
+public class RebornTaskDao {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -42,9 +42,9 @@ public class RebornDao {
         }
     }
 
-    public List<GetRebornRes> getReborns(Integer storeIdx) {
+    public List<GetRebornHistoryRes> getRebornHistories(Integer userIdx) {
         System.out.println("dao 시작");
-        String getRebornsQuery = "SELECT productName, productGuide, productComment, productImg, productLimitTime, productCnt, status FROM Reborn WHERE storeIdx = ? AND status = ?";
+        String getRebornsQuery = "SELECT S.storeName, S.storeImg, S.storeAddress, S.storeScore, T.rebornTaskIdx, T.createdAt FROM Store AS S, RebornTask AS T WHERE userIdx = ? AND status = ?";
         List<GetRebornRes> result = this.jdbcTemplate.query(
                 getRebornsQuery,
                 (rs, rowNum) -> new GetRebornRes(
@@ -55,8 +55,8 @@ public class RebornDao {
                         rs.getString("productLimitTime"),
                         rs.getInt("productCnt"),
                         rs.getString("status"))
-                        ,
-                storeIdx,
+                ,
+                userIdx,
                 "ACTIVE"
         );
         return result;
