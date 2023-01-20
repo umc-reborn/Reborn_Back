@@ -75,8 +75,8 @@ public class JjimDao {
             );
 
             String deleteJjimQuery = "delete from Jjim where storeIdx=? and userIdx=?";
-            Object[] createJjimParams = new Object[]{jjimReq.getStoreIdx(), jjimReq.getUserIdx()};
-            this.jdbcTemplate.update(deleteJjimQuery, createJjimParams);
+            Object[] deleteJjimParams = new Object[]{jjimReq.getStoreIdx(), jjimReq.getUserIdx()};
+            this.jdbcTemplate.update(deleteJjimQuery, deleteJjimParams);
 
             return jjimRes;
 
