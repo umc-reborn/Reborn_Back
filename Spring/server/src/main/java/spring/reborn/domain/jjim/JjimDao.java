@@ -57,8 +57,6 @@ public class JjimDao {
     @Transactional
     public JjimRes deleteJjim(JjimReq jjimReq) throws BaseException {
         try {
-            System.out.println("Dao 시작");
-
             String postJjimResponseQuery =
                     "select Jjim.jjimIdx,User.userEmail,Store.storeName\n" +
                             "from Jjim, User, Store " +
@@ -66,7 +64,6 @@ public class JjimDao {
             System.out.println("Dao 1");
 
             Object[] postJjimParams = new Object[]{};
-            System.out.println("Dao 2");
 
             //queryForObject : DTO 하나 값 반환
             JjimRes jjimRes = this.jdbcTemplate.queryForObject(postJjimResponseQuery,
@@ -77,12 +74,9 @@ public class JjimDao {
                             rs.getString("storeName"))
             );
 
-            System.out.println("Dao 3");
-
             String deleteJjimQuery = "delete from Jjim where storeIdx=? and userIdx=?";
             Object[] createJjimParams = new Object[]{jjimReq.getStoreIdx(), jjimReq.getUserIdx()};
             this.jdbcTemplate.update(deleteJjimQuery, createJjimParams);
-            System.out.println("Dao 끝");
 
             return jjimRes;
 
