@@ -6,6 +6,8 @@ import spring.reborn.config.BaseException;
 import spring.reborn.domain.review.model.PostReviewReq;
 import spring.reborn.domain.review.model.PostReviewRes;
 
+import java.util.List;
+
 @Service
 public class ReviewService {
 

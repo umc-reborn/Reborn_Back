@@ -33,6 +33,19 @@ public class ReviewDao {
                 postReviewReq.getReviewImage5(),}; // 동적 쿼리의 ?부분에 주입될 값
         this.jdbcTemplate.update(createReviewQuery, createReviewParams);
 
+        // 가게 평점 업데이트
+        String findStoreIdxQuery = "UPDATE Store SET storeScore=(\n" +
+                "SELECT AVG(Review.reviewScore) FROM Review\n" +
+                "WHERE Review.rebornIdx = ?)\n" +
+                "WHERE storeIdx =(SELECT S.storeIdx FROM \n" +
+                "( SELECT Store.storeIdx FROM Store JOIN Reborn \n" +
+                "ON Reborn.storeIdx=Reborn.storeIdx WHERE Reborn.rebornIdx = ?) AS S);";
+        Object[] findStoreIdxParams = new Object[]{
+                postReviewReq.getRebornIdx(),
+                postReviewReq.getRebornIdx(),}; // 동적 쿼리의 ?부분에 주입될 값
+        this.jdbcTemplate.update(findStoreIdxQuery, findStoreIdxParams);
+
+
         String lastInsertIdQuery = "select last_insert_id()"; // 가장 마지막에 삽입된(생성된) id값은 가져온다.
         return this.jdbcTemplate.queryForObject(lastInsertIdQuery, int.class); // 해당 쿼리문의 결과 마지막으로 삽인된 유저의 userIdx번호를 반환한다.
     }

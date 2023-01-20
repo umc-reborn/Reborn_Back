@@ -18,6 +18,4 @@ public class GetReviewRes {
     private String reviewImage3;
     private String reviewImage4;
     private String reviewImage5;
-    private Enum<ReviewStatus> status;
-
 }
