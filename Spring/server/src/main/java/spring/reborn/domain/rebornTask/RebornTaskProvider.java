@@ -23,16 +23,16 @@ public class RebornTaskProvider {
         this.rebornTaskDao = rebornTaskDao;
     }
 
-    public List<GetRebornHistoryRes> getRebornHistories(Integer userIdx) throws BaseException {
-        try {
-            System.out.println("provider 시작");
-            List<GetRebornHistoryRes> GetRebornHistoriesRes = rebornTaskDao.getRebornHistories(userIdx);
-            System.out.println("provider 끝");
-            return GetRebornHistoriesRes;
-        } catch (Exception exception) {
-            throw new BaseException(DATABASE_ERROR);
-        }
-    }
+//    public List<GetRebornHistoryRes> getRebornHistories(Integer userIdx) throws BaseException {
+//        try {
+//            System.out.println("provider 시작");
+//            List<GetRebornHistoryRes> GetRebornHistoriesRes = rebornTaskDao.getRebornHistories(userIdx);
+//            System.out.println("provider 끝");
+//            return GetRebornHistoriesRes;
+//        } catch (Exception exception) {
+//            throw new BaseException(DATABASE_ERROR);
+//        }
+//    }
 
 
 }

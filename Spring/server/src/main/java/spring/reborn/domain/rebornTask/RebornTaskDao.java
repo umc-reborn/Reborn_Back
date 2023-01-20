@@ -22,43 +22,43 @@ public class RebornTaskDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    @Transactional
-    public int createReborn(PostRebornReq postRebornReq) throws BaseException {
-        try {
-            System.out.println("dao 시작");
-            String createRebornQuery = "insert into Reborn (storeIdx, productName, productGuide, productComment, productImg, productLimitTime, productCnt) values (?,?,?,?,?,?,?)";
-            Object[] createRebornParams = new Object[]{postRebornReq.getStoreIdx(), postRebornReq.getProductName(), postRebornReq.getProductGuide(), postRebornReq.getProductComment(), postRebornReq.getProductImg(), postRebornReq.getProductLimitTime(), postRebornReq.getProductCnt()};
-            this.jdbcTemplate.update(createRebornQuery, createRebornParams);
-            System.out.println("createDinnerQuery 끝");
+//    @Transactional
+//    public int createReborn(PostRebornReq postRebornReq) throws BaseException {
+//        try {
+//            System.out.println("dao 시작");
+//            String createRebornQuery = "insert into Reborn (storeIdx, productName, productGuide, productComment, productImg, productLimitTime, productCnt) values (?,?,?,?,?,?,?)";
+//            Object[] createRebornParams = new Object[]{postRebornReq.getStoreIdx(), postRebornReq.getProductName(), postRebornReq.getProductGuide(), postRebornReq.getProductComment(), postRebornReq.getProductImg(), postRebornReq.getProductLimitTime(), postRebornReq.getProductCnt()};
+//            this.jdbcTemplate.update(createRebornQuery, createRebornParams);
+//            System.out.println("createDinnerQuery 끝");
+//
+//            System.out.println("lastInsertIdQuery 시작");
+//            String lastInsertIdQuery = "select last_insert_id()";
+//            int rebornIdx = this.jdbcTemplate.queryForObject(lastInsertIdQuery, int.class);
+//            System.out.println("lastInsertIdQuery 끝 : " + rebornIdx);
+//
+//            return rebornIdx;
+//        } catch (Exception exception) {
+//            throw new BaseException(DATABASE_ERROR);
+//        }
+//    }
 
-            System.out.println("lastInsertIdQuery 시작");
-            String lastInsertIdQuery = "select last_insert_id()";
-            int rebornIdx = this.jdbcTemplate.queryForObject(lastInsertIdQuery, int.class);
-            System.out.println("lastInsertIdQuery 끝 : " + rebornIdx);
-
-            return rebornIdx;
-        } catch (Exception exception) {
-            throw new BaseException(DATABASE_ERROR);
-        }
-    }
-
-    public List<GetRebornHistoryRes> getRebornHistories(Integer userIdx) {
-        System.out.println("dao 시작");
-        String getRebornsQuery = "SELECT S.storeName, S.storeImg, S.storeAddress, S.storeScore, T.rebornTaskIdx, T.createdAt FROM Store AS S, RebornTask AS T WHERE userIdx = ? AND status = ?";
-        List<GetRebornRes> result = this.jdbcTemplate.query(
-                getRebornsQuery,
-                (rs, rowNum) -> new GetRebornRes(
-                        rs.getString("productName"),
-                        rs.getString("productGuide"),
-                        rs.getString("productComment"),
-                        rs.getString("productImg"),
-                        rs.getString("productLimitTime"),
-                        rs.getInt("productCnt"),
-                        rs.getString("status"))
-                ,
-                userIdx,
-                "ACTIVE"
-        );
-        return result;
-    }
+//    public List<GetRebornHistoryRes> getRebornHistories(Integer userIdx) {
+//        System.out.println("dao 시작");
+//        String getRebornsQuery = "SELECT S.storeName, S.storeImg, S.storeAddress, S.storeScore, T.rebornTaskIdx, T.createdAt FROM Store AS S, RebornTask AS T WHERE userIdx = ? AND status = ?";
+//        List<GetRebornHistoryRes> result = this.jdbcTemplate.query(
+//                getRebornsQuery,
+//                (rs, rowNum) -> new GetRebornRes(
+//                        rs.getString("productName"),
+//                        rs.getString("productGuide"),
+//                        rs.getString("productComment"),
+//                        rs.getString("productImg"),
+//                        rs.getString("productLimitTime"),
+//                        rs.getInt("productCnt"),
+//                        rs.getString("status"))
+//                ,
+//                userIdx,
+//                "ACTIVE"
+//        );
+//        return result;
+//    }
 }

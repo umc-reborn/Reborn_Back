@@ -25,15 +25,15 @@ public class RebornTaskService {
         this.rebornTaskProvider = rebornTaskProvider;
     }
 
-    @Transactional
-    public PostRebornRes createReborn(PostRebornReq postRebornReq) throws BaseException {
-        try {
-            System.out.println("service 시작");
-            int rebornIdx = rebornTaskDao.createReborn(postRebornReq);
-            System.out.println("dao 끝");
-            return new PostRebornRes(rebornIdx);
-        } catch (Exception exception) {
-            throw new BaseException(DATABASE_ERROR);
-        }
-    }
+//    @Transactional
+//    public PostRebornRes createReborn(PostRebornReq postRebornReq) throws BaseException {
+//        try {
+//            System.out.println("service 시작");
+//            int rebornIdx = rebornTaskDao.createReborn(postRebornReq);
+//            System.out.println("dao 끝");
+//            return new PostRebornRes(rebornIdx);
+//        } catch (Exception exception) {
+//            throw new BaseException(DATABASE_ERROR);
+//        }
+//    }
 }
