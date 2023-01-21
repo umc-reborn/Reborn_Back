@@ -22,7 +22,10 @@ public class ReviewProvider {
     }
 
     public List<GetReviewRes> getReviewByStoreIdx(Integer storeIdx) throws BaseException {
-        System.out.println("Service 시작");
         return reviewDao.getReviewByStoreIdx(storeIdx);
+    }
+
+    public Integer getReviewCntByStoreIdx(Integer storeIdx) throws BaseException {
+        return reviewDao.getReviewCntByStoreIdx(storeIdx);
     }
 }

@@ -99,9 +99,19 @@ public class ReviewController {
     @GetMapping("/review/{storeIdx}")
     public BaseResponse<List<GetReviewRes>> getReviewByStoreIdx(@PathVariable Integer storeIdx) {
         try {
-            System.out.println("controller 시작");
             List<GetReviewRes> getReviewRes = reviewProvider.getReviewByStoreIdx(storeIdx);
-            System.out.println("controller 끝");
+
+            return new BaseResponse<>(getReviewRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    @ResponseBody
+    @GetMapping("/review/cnt/{storeIdx}")
+    public BaseResponse<Integer> getReviewCntByStoreIdx(@PathVariable Integer storeIdx) {
+        try {
+            Integer getReviewRes = reviewProvider.getReviewCntByStoreIdx(storeIdx);
 
             return new BaseResponse<>(getReviewRes);
         } catch (BaseException exception) {
