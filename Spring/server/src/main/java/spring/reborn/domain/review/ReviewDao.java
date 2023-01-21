@@ -88,8 +88,6 @@ public class ReviewDao {
 
     @Transactional
     public List<GetReviewRes> getReviewByStoreIdx(Integer storeIdx) throws BaseException {
-        System.out.println("dao 시작");
-
         String getReviewByStoreIdxQuery = "SELECT Review.reviewIdx, Review.userIdx, Review.rebornIdx, Review.reviewScore, \n" +
                 "Review.reviewComment, Review.reviewImage1, Review.reviewImage2, Review.reviewImage3,\n" +
                 "Review.reviewImage4, Review.reviewImage5\n" +
@@ -98,9 +96,6 @@ public class ReviewDao {
                 "WHERE Reborn.storeIdx = ?;"; // 실행될 동적 쿼리문
         Object[] getReviewByStoreIdxParams = new Object[]{
                 storeIdx,}; // 동적 쿼리의 ?부분에 주입될 값
-
-        System.out.println("dao 시작 - #1");
-
 
         //queryForObject : DTO 여러개 값 반환
         List<GetReviewRes> getReviewRes = this.jdbcTemplate.query(getReviewByStoreIdxQuery,
@@ -117,9 +112,6 @@ public class ReviewDao {
                         rs.getString("reviewImage5")),
                 getReviewByStoreIdxParams
         );
-        System.out.println("dao 시작 - #2");
-        System.out.println(getReviewRes);
-
         return getReviewRes;
     }
 
@@ -145,5 +137,20 @@ public class ReviewDao {
         );
 
         return reviewImgKey;
+    }
+
+    @Transactional
+    public Integer getReviewCntByStoreIdx(Integer storeIdx) throws BaseException {
+        String getReviewCntByStoreIdxQuery = "SELECT COUNT(Review.reviewIdx)\n" +
+                "FROM reborn.Review JOIN reborn.Reborn\n" +
+                "ON Review.rebornIdx = Reborn.rebornIdx\n" +
+                "WHERE Reborn.storeIdx = ?;"; // 실행될 동적 쿼리문
+        Object[] getReviewCntByStoreIdxParams = new Object[]{
+                storeIdx,}; // 동적 쿼리의 ?부분에 주입될 값
+
+        Integer count = jdbcTemplate.queryForObject(
+                getReviewCntByStoreIdxQuery,getReviewCntByStoreIdxParams, Integer.class);
+
+        return count;
     }
 }

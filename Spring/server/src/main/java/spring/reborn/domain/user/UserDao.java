@@ -1,6 +1,9 @@
 package spring.reborn.domain.user;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
+import spring.reborn.config.BaseResponse;
+import spring.reborn.domain.review.model.ReviewImgKey;
 import spring.reborn.domain.user.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -102,6 +105,36 @@ public class UserDao {
                 getUserPointParams); // 한 개의 회원정보를 얻기 위한 jdbcTemplate 함수(Query, 객체 매핑 정보, Params)의 결과 반환
     }
 
+    // 포인트 적립, 취소 - hyerm
+    @Transactional
+    public PatchUserPointRes editUserPoint(@RequestBody PatchUserPointReq patchUserPointReq) {
+        String getUserPointQuery = "select userPoint from User where userIdx = ?"; // 해당 userIdx를 만족하는 유저를 조회하는 쿼리문
+        Object[] getUserPointParams = new Object[]{
+                patchUserPointReq.getUserIdx(),}; // 동적 쿼리의 ?부분에 주입될 값
+        Integer oldPoint = jdbcTemplate.queryForObject(
+                getUserPointQuery,getUserPointParams, Integer.class);
+
+        Integer newPoint = oldPoint + patchUserPointReq.getAddPoint();
+
+        String editUserPointQuery = "UPDATE User SET userPoint=? WHERE User.userIdx=?";
+        Object[] editUserPointParams = new Object[]{
+                newPoint,
+                patchUserPointReq.getUserIdx(),}; // 동적 쿼리의 ?부분에 주입될 값
+        this.jdbcTemplate.update(editUserPointQuery, editUserPointParams);
+
+        String editUserPointResQuery = "SELECT * FROM User WHERE User.userIdx=?";
+        Object[] editUserPointResParams = new Object[]{
+                patchUserPointReq.getUserIdx(),};
+
+        return this.jdbcTemplate.queryForObject(editUserPointResQuery,
+                (rs, rowNum) -> new PatchUserPointRes(
+                        rs.getInt("userIdx"),
+                        rs.getString("userEmail"),
+                        patchUserPointReq.getAddPoint(),
+                        rs.getInt("userPoint")),
+                editUserPointResParams
+        );
+    }
 
     // 해당 userIdx를 갖는 유저 정보 조회
     public GetUserInformRes getUserInform(int userIdx) {
@@ -116,6 +149,7 @@ public class UserDao {
                         rs.getString("userLikes")), // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
                 getUserParams); // 한 개의 회원정보를 얻기 위한 jdbcTemplate 함수(Query, 객체 매핑 정보, Params)의 결과 반환
     }
+    
     // 이웃 회원탈퇴
     public int modifyUserStatus(PatchUserStatusReq patchUserStatusReq) {
         String modifyUserStatusQuery = "update User set status = ? where userIdx = ? "; // 해당 userIdx를 만족하는 User를 해당 status로 변경한다.
@@ -124,6 +158,7 @@ public class UserDao {
         return this.jdbcTemplate.update(modifyUserStatusQuery, modifyUserStatusParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0)
 
     }
+    
     // 스토어 회원탈퇴
     public int modifyStoreStatus(PatchStoreStatusReq patchStoreStatusReq) {
         String modifyStoreStatusQuery = "update Store set status = ? where storeIdx = ? "; // 해당 storeIdx를 만족하는 Store를 해당 status로 변경한다.
@@ -135,6 +170,5 @@ public class UserDao {
         modifyStoreStatusParams = new Object[]{patchStoreStatusReq.getStatus(), patchStoreStatusReq.getUserIdx()}; // 주입될 값들(status, userIdx) 순
 
         return this.jdbcTemplate.update(modifyStoreStatusQuery, modifyStoreStatusParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0)
-
     }
 }

@@ -1,6 +1,11 @@
 package spring.reborn.domain.user;
 
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 import spring.reborn.config.BaseException;
+import spring.reborn.config.BaseResponse;
 import spring.reborn.config.secret.Secret;
 import spring.reborn.domain.user.model.PostUserReq;
 import spring.reborn.domain.user.model.PostUserRes;
@@ -50,7 +55,7 @@ public class UserService {
             throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
         }
         try {
-        int userIdx = userDao.createUser(postUserReq);
+            int userIdx = userDao.createUser(postUserReq);
 //            return new PostUserRes(userIdx);
 
 //  *********** 해당 부분은 7주차 수업 후 주석해제하서 대체해서 사용해주세요! ***********
@@ -91,6 +96,15 @@ public class UserService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    // 포인트 적립, 취소 - hyerm
+    @Transactional
+    public PatchUserPointRes editUserPoint(@RequestBody PatchUserPointReq patchUserPointReq) {
+        System.out.println("service 시작");
+
+        return userDao.editUserPoint(patchUserPointReq);
+    }
+
     // 이웃 회원탈퇴(Patch)
     public void modifyUserStatus(PatchUserStatusReq patchUserStatusReq) throws BaseException {
         try {
@@ -102,6 +116,7 @@ public class UserService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+    
     // 스토어 회원탈퇴(Patch)
     public void modifyStoreStatus(PatchStoreStatusReq patchStoreStatusReq) throws BaseException {
         try {
@@ -113,4 +128,5 @@ public class UserService {
           throw new BaseException(DATABASE_ERROR);
         }
     }
+    
 }
