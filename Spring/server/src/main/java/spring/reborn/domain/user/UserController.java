@@ -157,6 +157,15 @@ public class UserController {
         }
     }
 
+    // 포인트 적립, 취소 - hyerm
+    @ResponseBody
+    @PatchMapping("/point")
+    public BaseResponse<PatchUserPointRes> editUserPoint(@RequestBody PatchUserPointReq patchUserPointReq) {
+        System.out.println("controller 시작");
+        PatchUserPointRes patchUserPointRes = userService.editUserPoint(patchUserPointReq);
+        return new BaseResponse<>(patchUserPointRes);
+    }
+
     /**
      * 회원 정보 조회 API
      * [GET] /users/inform/:userIdx
