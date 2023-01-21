@@ -7,8 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import spring.reborn.config.BaseException;
 import spring.reborn.config.BaseResponse;
 import spring.reborn.domain.awsS3.AwsS3Service;
-import spring.reborn.domain.review.model.PostReviewReq;
-import spring.reborn.domain.review.model.PostReviewRes;
+import spring.reborn.domain.review.model.*;
 
 import java.util.List;
 
@@ -20,14 +19,17 @@ public class ReviewController {
     private final ReviewService reviewService;
     @Autowired
     private final AwsS3Service awsS3Service;
+    @Autowired
+    private final ReviewDao reviewDao;
 
 //    @Autowired
 //    private final JwtService jwtService;
 
-    public ReviewController(ReviewProvider reviewProvider, ReviewService reviewService, AwsS3Service awsS3Service) {
+    public ReviewController(ReviewProvider reviewProvider, ReviewService reviewService, AwsS3Service awsS3Service, ReviewDao reviewDao) {
         this.reviewProvider = reviewProvider;
         this.reviewService = reviewService;
         this.awsS3Service = awsS3Service;
+        this.reviewDao = reviewDao;
 //        this.jwtService = jwtService; // JWT부분은 7주차에 다루므로 모르셔도 됩니다!
     }
 
@@ -58,10 +60,50 @@ public class ReviewController {
             // 리뷰 생성
             PostReviewRes postReviewRes = reviewService.createReview(postReviewReq);
 
-            // 가게 별점 평균 업데이트
-
-
             return new BaseResponse<>(postReviewRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    @ResponseBody
+    @DeleteMapping("/review")
+    public BaseResponse<ReviewReq> deleteReview(@RequestBody ReviewReq reviewReq) {
+        try {
+            ReviewImgKey reviewImgKey = reviewService.findImgKey(reviewReq);
+
+            if (reviewImgKey.getReviewImageKey1() != null) {
+                awsS3Service.deleteImage(reviewImgKey.getReviewImageKey1().split("/")[3]);
+            }
+            if (reviewImgKey.getReviewImageKey2() != null) {
+                awsS3Service.deleteImage(reviewImgKey.getReviewImageKey2().split("/")[3]);
+            }
+            if (reviewImgKey.getReviewImageKey3() != null) {
+                awsS3Service.deleteImage(reviewImgKey.getReviewImageKey3().split("/")[3]);
+            }
+            if (reviewImgKey.getReviewImageKey4() != null) {
+                awsS3Service.deleteImage(reviewImgKey.getReviewImageKey4().split("/")[3]);
+            }
+            if (reviewImgKey.getReviewImageKey5() != null) {
+                awsS3Service.deleteImage(reviewImgKey.getReviewImageKey5().split("/")[3]);
+            }
+
+            reviewService.deleteReview(reviewReq);
+            return new BaseResponse<>(reviewReq);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    @ResponseBody
+    @GetMapping("/review/{storeIdx}")
+    public BaseResponse<List<GetReviewRes>> getReviewByStoreIdx(@PathVariable Integer storeIdx) {
+        try {
+            System.out.println("controller 시작");
+            List<GetReviewRes> getReviewRes = reviewProvider.getReviewByStoreIdx(storeIdx);
+            System.out.println("controller 끝");
+
+            return new BaseResponse<>(getReviewRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
