@@ -30,6 +30,13 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt:0.9.0'
 	implementation 'org.glassfish.jaxb:jaxb-runtime'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa' //javax.persistence import
+
+	// swagger
+	compileOnly 'io.springfox:springfox-swagger2:2.9.2'
+	compileOnly 'io.springfox:springfox-swagger-ui:2.9.2'
+
+	// AWS S3
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 }
 
 tasks.named('test') {
