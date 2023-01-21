@@ -42,11 +42,22 @@ public class UserProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
     // 해당 userIdx를 갖는 User의 포인트 조회
     public GetUserPointRes getUserPoint(int userIdx) throws BaseException {
         try {
             GetUserPointRes getUserPointRes = userDao.getUserPoint(userIdx);
             return getUserPointRes;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    // 해당 userIdx를 갖는 유저 정보 조회
+    public GetUserInformRes getUserInform(int userIdx) throws BaseException {
+        try {
+            GetUserInformRes getUserInformRes = userDao.getUserInform(userIdx);
+            return getUserInformRes;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }

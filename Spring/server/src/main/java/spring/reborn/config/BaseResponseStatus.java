@@ -73,7 +73,9 @@ public enum BaseResponseStatus {
     MODIFY_FAIL_STATUS(false,4018,"유저 비활성화 실패"),
 
     PASSWORD_ENCRYPTION_ERROR(false, 4011, "비밀번호 암호화에 실패하였습니다."),
-    PASSWORD_DECRYPTION_ERROR(false, 4012, "비밀번호 복호화에 실패하였습니다.");
+    PASSWORD_DECRYPTION_ERROR(false, 4012, "비밀번호 복호화에 실패하였습니다."),
+    MODIFY_FAIL_USERSTATUS(false,4100,"유저 탈퇴 실패"),
+    MODIFY_FAIL_STORESTATUS(false,4101,"가게 탈퇴 실패");
 
 
     // 5000 : 필요시 만들어서 쓰세요

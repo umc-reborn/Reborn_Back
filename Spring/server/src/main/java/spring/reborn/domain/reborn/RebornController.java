@@ -31,25 +31,34 @@ public class RebornController {
     @Transactional
     public BaseResponse<PostRebornRes> createReborn(@RequestBody PostRebornReq postRebornReq) {
         try {
-            System.out.println("controller 시작");
             PostRebornRes postRebornRes = rebornService.createReborn(postRebornReq);
-
-            System.out.println("orderService 끝");
             return new BaseResponse<>(postRebornRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
 
+    /* 리본 조회 (스토어) */
     @ResponseBody
     @GetMapping("/{storeIdx}")
     @Transactional
     public BaseResponse<List<GetRebornRes>> getReborns(@PathVariable Integer storeIdx) {
         try {
-            System.out.println("controller 시작");
             List<GetRebornRes> getRebornsRes= rebornProvider.getReborns(storeIdx);
-            System.out.println("controller 끝");
             return new BaseResponse<>(getRebornsRes);
+        } catch (BaseException baseException) {
+            return new BaseResponse<>(baseException.getStatus());
+        }
+    }
+
+    /* 진행 중인 리본 조회(스토어) */
+    @ResponseBody
+    @GetMapping("/inprogress/{storeIdx}")
+    @Transactional
+    public BaseResponse<List<GetRebornRes>> getInProgressReborns(@PathVariable Integer storeIdx) {
+        try {
+            List<GetRebornRes> getInProgressRebornsRes = rebornProvider.getInProgressReborns(storeIdx);
+            return new BaseResponse<>(getInProgressRebornsRes);
         } catch (BaseException baseException) {
             return new BaseResponse<>(baseException.getStatus());
         }
