@@ -54,7 +54,6 @@ public class AwsS3Service {
 
     public void deleteImage(String fileName) {
         amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
-
     }
 
     private String createFileName(String fileName) {

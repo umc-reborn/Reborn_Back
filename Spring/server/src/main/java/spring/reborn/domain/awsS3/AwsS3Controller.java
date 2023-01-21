@@ -34,7 +34,7 @@ public class AwsS3Controller {
 
     @ResponseBody
     @DeleteMapping("/s3")
-    public BaseResponse<String> deleteImage(@RequestParam(name="url") String fileName) {
+    public BaseResponse<String> deleteImage(String fileName) {
         awsS3Service.deleteImage(fileName);
         return new BaseResponse<>("성공했습니다.");
     }
