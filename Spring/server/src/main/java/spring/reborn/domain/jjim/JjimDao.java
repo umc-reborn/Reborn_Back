@@ -61,8 +61,6 @@ public class JjimDao {
                     "select Jjim.jjimIdx,User.userEmail,Store.storeName\n" +
                             "from Jjim, User, Store " +
                             "where Jjim.jjimIdx=last_insert_id() and Jjim.userIdx = User.userIdx and Jjim.storeIdx = Store.storeIdx;";
-            System.out.println("Dao 1");
-
             Object[] postJjimParams = new Object[]{};
 
             //queryForObject : DTO 하나 값 반환
