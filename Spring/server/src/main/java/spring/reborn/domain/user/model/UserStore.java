@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor // 해당 클래스의 모든 멤버 변수(userIdx, nickname, email, password)를 받는 생성자를 생성
 @NoArgsConstructor
 public class UserStore {
+    private int storeIdx;
     private int userIdx;
     private String userEmail;
     private String userPwd;
@@ -20,5 +21,6 @@ public class UserStore {
     private String storeAddress;
     private String storeInfo;
     private String category;
+    private String status;
 //    private int userPoint;
 }

@@ -8,13 +8,11 @@ import spring.reborn.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-
 import static spring.reborn.config.BaseResponseStatus.*;
 import static spring.reborn.utils.ValidationRegex.*;
 
 @RestController
-@RequestMapping("/app/users")
+@RequestMapping("/users")
 public class UserController {
     final Logger logger = LoggerFactory.getLogger(this.getClass()); // Log를 남기기: 일단은 모르고 넘어가셔도 무방합니다.
 
@@ -88,7 +86,6 @@ public class UserController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
-
     /**
      * 회원가입-가게 API
      * [POST] /users
@@ -172,15 +169,75 @@ public class UserController {
      */
     // Path-variable
     @ResponseBody
-    @GetMapping("/inform/{userIdx}") // (GET) 127.0.0.1:9000/app/users/:userIdx
+    @GetMapping("/inform/{userIdx}") // (GET) 127.0.0.1:9000/app/users/inform/:userIdx
     public BaseResponse<GetUserInformRes> getUserInform(@PathVariable("userIdx") int userIdx) {
         // @PathVariable RESTful(URL)에서 명시된 파라미터({})를 받는 어노테이션, 이 경우 userId값을 받아옴.
         //  null값 or 공백값이 들어가는 경우는 적용하지 말 것
         //  .(dot)이 포함된 경우, .을 포함한 그 뒤가 잘려서 들어감
         // Get Users
         try {
-            GetUserInformRes getUserInformRes = userProvider.getUser(userIdx);
+            GetUserInformRes getUserInformRes = userProvider.getUserInform(userIdx);
             return new BaseResponse<>(getUserInformRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+
+
+    }
+    
+    /**
+     * 이웃 회원탈퇴 API
+     * [PATCH]
+     */
+    @ResponseBody
+    @PatchMapping("/userDelete/{userIdx}")
+    @Transactional
+    public BaseResponse<String> modifyUserStatus(@PathVariable("userIdx") int userIdx, @RequestBody User user) {
+        try {
+
+//  *********** 해당 부분은 7주차 - JWT 수업 후 주석해체 해주세요!  ****************
+//            jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(user.getUserIdx() != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            //같다면 유저상태 변경
+//  **************************************************************************
+            PatchUserStatusReq patchUserStatusReq = new PatchUserStatusReq(userIdx, user.getStatus());
+            userService.modifyUserStatus(patchUserStatusReq);
+
+            String result = "회원탈퇴가 완료되었습니다.";
+            return new BaseResponse<>(result);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+
+    }
+    /**
+     * 스토어 회원탈퇴 API
+     * [PATCH]
+     */
+    @ResponseBody
+    @PatchMapping("/storeDelete/{storeIdx}")
+    @Transactional
+    public BaseResponse<String> modifyStoreStatus(@PathVariable("storeIdx") int storeIdx, @RequestBody UserStore userStore) {
+        try {
+
+//  *********** 해당 부분은 7주차 - JWT 수업 후 주석해체 해주세요!  ****************
+//            jwt에서 idx 추출.
+            int storeIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userStore.getStoreIdx() != storeIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            //같다면 유저상태 변경
+//  **************************************************************************
+            PatchStoreStatusReq patchStoreStatusReq = new PatchStoreStatusReq(storeIdx, userStore.getUserIdx(), userStore.getStatus());
+            userService.modifyStoreStatus(patchStoreStatusReq);
+
+            String result = "회원탈퇴가 완료되었습니다.";
+            return new BaseResponse<>(result);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }

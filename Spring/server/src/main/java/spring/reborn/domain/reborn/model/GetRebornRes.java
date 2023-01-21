@@ -12,4 +12,5 @@ public class GetRebornRes {
     private String productImg;
     private String productLimitTime;
     private int productCnt;
+    private String status;
 }

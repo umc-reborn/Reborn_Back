@@ -14,10 +14,10 @@ public class PostUserStoreReq {
     private String userPwd;             // 비밀번호
     private String userAdAgreement;     // 광고성 정보 동의
     private String storeName;           // 상호명
-    private String storeRegister;       // 사업자 등록증
+    private String storeRegister;       // 사업자 등록번호
     private String storeImage;          // 대표 사진
     private String storeAddress;        // 가게 주소
-    private String storeDescription;           // 가게 한 줄 소개
+    private String storeDescription;    // 가게 한 줄 소개
 
     @Getter
     public enum category

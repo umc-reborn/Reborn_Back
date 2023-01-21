@@ -61,6 +61,7 @@ public class UserDao {
     }
 
     // 스토어 회원가입
+    @Transactional
     public int createUserStore(PostUserStoreReq postUserStoreReq) {
         // DB의 Store 테이블에 스토어 데이터 삽입.
 //        String createUserStoreQuery = "START TRANSACTION;\n" +
@@ -70,14 +71,14 @@ public class UserDao {
 //        Object[] createUserParams = new Object[]{postUserStoreReq.getStoreName(), postUserStoreReq.getStoreRegister(), postUserStoreReq.getStoreImage(), postUserStoreReq.getStoreAddress(), postUserStoreReq.getStoreInfo(), postUserStoreReq.getCategory(), postUserStoreReq.getUserEmail(), postUserStoreReq.getUserPwd()}; // 동적 쿼리의 ?부분에 주입될 값
 //        this.jdbcTemplate.update(createUserStoreQuery, createUserParams);
 
-        // DB의 Store 테이블에 스토어 데이터 삽입.
-        String createUserStoreQuery = "INSERT INTO store (storeName, storeRegister, storeImage, storeAddress, storeInfo, category) VALUES (?,?,?,?,?,?)";
-        Object[] createUserParams = new Object[]{postUserStoreReq.getStoreName(), postUserStoreReq.getStoreRegister(), postUserStoreReq.getStoreImage(), postUserStoreReq.getStoreAddress(), postUserStoreReq.getStoreDescription(), postUserStoreReq.getCategory().name()};
+        // DB의 User 테이블에 스토어 데이터 삽입.
+        String createUserStoreQuery = "INSERT INTO User (userEmail, userPwd, userAdAgreement, userType) VALUES (?,?,?,'STORE');";
+        Object[] createUserParams = new Object[]{postUserStoreReq.getUserEmail(), postUserStoreReq.getUserPwd(), postUserStoreReq.getUserAdAgreement()};
         this.jdbcTemplate.update(createUserStoreQuery, createUserParams);
 
-        // DB의 User 테이블에 스토어 데이터 삽입.
-        createUserStoreQuery = "INSERT INTO user (storeIdx, userEmail, userPwd, userType) VALUES (last_insert_id(), ?,?, 'STORE');";
-        createUserParams = new Object[]{postUserStoreReq.getUserEmail(), postUserStoreReq.getUserPwd()};
+        // DB의 Store 테이블에 스토어 데이터 삽입.
+        createUserStoreQuery = "INSERT INTO Store (userIdx, storeName, storeRegister, storeImage, storeAddress, storeDescription, category, storeScore) VALUES (last_insert_id(), ?,?,?,?,?,?, 0.0)";
+        createUserParams = new Object[]{postUserStoreReq.getStoreName(), postUserStoreReq.getStoreRegister(), postUserStoreReq.getStoreImage(), postUserStoreReq.getStoreAddress(), postUserStoreReq.getStoreDescription(), postUserStoreReq.getCategory().name()};
         this.jdbcTemplate.update(createUserStoreQuery, createUserParams);
 
 
@@ -93,6 +94,7 @@ public class UserDao {
                 int.class,
                 checkEmailParams); // checkEmailQuery, checkEmailParams를 통해 가져온 값(intgud)을 반환한다. -> 쿼리문의 결과(존재하지 않음(False,0),존재함(True, 1))를 int형(0,1)으로 반환됩니다.
     }
+
     // 해당 userIdx를 갖는 유저의 포인트조회
     public GetUserPointRes getUserPoint(int userIdx) {
         String getUserPointQuery = "select userPoint from User where userIdx = ?"; // 해당 userIdx를 만족하는 유저를 조회하는 쿼리문
@@ -132,5 +134,41 @@ public class UserDao {
                         rs.getInt("userPoint")),
                 editUserPointResParams
         );
+    }
+
+    // 해당 userIdx를 갖는 유저 정보 조회
+    public GetUserInformRes getUserInform(int userIdx) {
+        String getUserQuery = "select * from User where userIdx = ?"; // 해당 userIdx를 만족하는 유저를 조회하는 쿼리문
+        int getUserParams = userIdx;
+        return this.jdbcTemplate.queryForObject(getUserQuery,
+                (rs, rowNum) -> new GetUserInformRes(
+                        rs.getString("userImg"),
+                        rs.getString("userNickname"),
+                        rs.getString("userAddress"),
+                        rs.getString("userBirthDate"),
+                        rs.getString("userLikes")), // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+                getUserParams); // 한 개의 회원정보를 얻기 위한 jdbcTemplate 함수(Query, 객체 매핑 정보, Params)의 결과 반환
+    }
+    
+    // 이웃 회원탈퇴
+    public int modifyUserStatus(PatchUserStatusReq patchUserStatusReq) {
+        String modifyUserStatusQuery = "update User set status = ? where userIdx = ? "; // 해당 userIdx를 만족하는 User를 해당 status로 변경한다.
+        Object[] modifyUserStatusParams = new Object[]{patchUserStatusReq.getStatus(), patchUserStatusReq.getUserIdx()}; // 주입될 값들(status, userIdx) 순
+
+        return this.jdbcTemplate.update(modifyUserStatusQuery, modifyUserStatusParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0)
+
+    }
+    
+    // 스토어 회원탈퇴
+    public int modifyStoreStatus(PatchStoreStatusReq patchStoreStatusReq) {
+        String modifyStoreStatusQuery = "update Store set status = ? where storeIdx = ? "; // 해당 storeIdx를 만족하는 Store를 해당 status로 변경한다.
+        Object[] modifyStoreStatusParams = new Object[]{patchStoreStatusReq.getStatus(), patchStoreStatusReq.getStoreIdx()}; // 주입될 값들(status, userIdx) 순
+
+        this.jdbcTemplate.update(modifyStoreStatusQuery, modifyStoreStatusParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0)
+
+        modifyStoreStatusQuery = "update User set status = ? where userIdx = ? "; // 해당 storeIdx를 만족하는 User를 해당 status로 변경한다.
+        modifyStoreStatusParams = new Object[]{patchStoreStatusReq.getStatus(), patchStoreStatusReq.getUserIdx()}; // 주입될 값들(status, userIdx) 순
+
+        return this.jdbcTemplate.update(modifyStoreStatusQuery, modifyStoreStatusParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0)
     }
 }
