@@ -12,7 +12,7 @@ import static spring.reborn.config.BaseResponseStatus.*;
 import static spring.reborn.utils.ValidationRegex.*;
 
 @RestController
-@RequestMapping("/app/users")
+@RequestMapping("/users")
 public class UserController {
     final Logger logger = LoggerFactory.getLogger(this.getClass()); // Log를 남기기: 일단은 모르고 넘어가셔도 무방합니다.
 
@@ -178,25 +178,54 @@ public class UserController {
     
     /**
      * 이웃 회원탈퇴 API
-     * [PATCH] /users/:userIdx
+     * [PATCH]
      */
     @ResponseBody
     @PatchMapping("/userDelete/{userIdx}")
     @Transactional
-    public BaseResponse<String> modifyUserName(@PathVariable("userIdx") int userIdx, @RequestBody User user) {
+    public BaseResponse<String> modifyUserStatus(@PathVariable("userIdx") int userIdx, @RequestBody User user) {
         try {
 
 //  *********** 해당 부분은 7주차 - JWT 수업 후 주석해체 해주세요!  ****************
 //            jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            if(userIdx != userIdxByJwt){
+            if(user.getUserIdx() != userIdxByJwt){
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
             //같다면 유저상태 변경
 //  **************************************************************************
             PatchUserStatusReq patchUserStatusReq = new PatchUserStatusReq(userIdx, user.getStatus());
             userService.modifyUserStatus(patchUserStatusReq);
+
+            String result = "회원탈퇴가 완료되었습니다.";
+            return new BaseResponse<>(result);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+
+    }
+    /**
+     * 스토어 회원탈퇴 API
+     * [PATCH]
+     */
+    @ResponseBody
+    @PatchMapping("/storeDelete/{storeIdx}")
+    @Transactional
+    public BaseResponse<String> modifyStoreStatus(@PathVariable("storeIdx") int storeIdx, @RequestBody UserStore userStore) {
+        try {
+
+//  *********** 해당 부분은 7주차 - JWT 수업 후 주석해체 해주세요!  ****************
+//            jwt에서 idx 추출.
+            int storeIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userStore.getStoreIdx() != storeIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            //같다면 유저상태 변경
+//  **************************************************************************
+            PatchStoreStatusReq patchStoreStatusReq = new PatchStoreStatusReq(storeIdx, userStore.getUserIdx(), userStore.getStatus());
+            userService.modifyStoreStatus(patchStoreStatusReq);
 
             String result = "회원탈퇴가 완료되었습니다.";
             return new BaseResponse<>(result);
