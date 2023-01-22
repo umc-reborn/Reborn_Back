@@ -58,7 +58,7 @@ public class StoreController {
     todo
     가게 정보 조회
      */
-    @GetMapping("/{id}/info")
+    @GetMapping("/{id}")
     public BaseResponse<GetStoreRes> getStoreInfo(@PathVariable Long id) throws BaseException {
         try {
             GetStoreRes getStoreRes = storeService.getStoreInfo(id);
@@ -91,7 +91,7 @@ public class StoreController {
     todo
     가게 정보 수정
      */
-    @PatchMapping("/{id}/info")
+    @PatchMapping("/{id}")
     public BaseResponse<Object> updateStoreInfo(@PathVariable Long id, @RequestBody PatchStoreReq patchStoreReq) {
         try {
             storeService.updateStoreInfo(id, patchStoreReq);
