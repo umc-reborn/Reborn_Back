@@ -14,5 +14,7 @@ public class PatchStoreReq {
 
     private String category;
 
+    private String storeImage;
+
 
 }

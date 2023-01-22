@@ -7,10 +7,7 @@ import spring.reborn.config.BaseException;
 import spring.reborn.config.BaseResponse;
 import spring.reborn.config.BaseResponseStatus;
 import spring.reborn.domain.review.model.PostReviewRes;
-import spring.reborn.domain.store.model.GetStoreLocationRes;
-import spring.reborn.domain.store.model.GetStoreRes;
-import spring.reborn.domain.store.model.PatchStoreReq;
-import spring.reborn.domain.store.model.Store;
+import spring.reborn.domain.store.model.*;
 
 import java.util.List;
 
@@ -91,11 +88,11 @@ public class StoreController {
     todo
     가게 정보 수정
      */
-    @PatchMapping("/{id}")
-    public BaseResponse<Object> updateStoreInfo(@PathVariable Long id, @RequestBody PatchStoreReq patchStoreReq) {
+    @PatchMapping("/{storeIdx}")
+    public BaseResponse<Object> updateStoreInfo(@PathVariable Long storeIdx, @RequestBody PatchStoreReq patchStoreReq) {
         try {
-            storeService.updateStoreInfo(id, patchStoreReq);
-            return new BaseResponse<>(BaseResponseStatus.SUCCESS);
+            storeService.updateStoreInfo(storeIdx, patchStoreReq);
+            return new BaseResponse<>(new PatchStoreRes(storeIdx));
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }

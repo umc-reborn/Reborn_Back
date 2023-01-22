@@ -117,13 +117,14 @@ public class StoreDao {
 
     @Transactional
     public void updateStoreInfo(Long id, PatchStoreReq patchStoreReq) {
-        String updateStoreInfoQuery = "UPDATE Store SET storeName = ?, storeAddress = ?, storeDescription = ?, category = ? WHERE storeIdx = ? and status = 'ACTIVE'";
+        String updateStoreInfoQuery = "UPDATE Store SET storeName = ?, storeAddress = ?, storeDescription = ?, category = ?, storeImage = ? WHERE storeIdx = ? and status = 'ACTIVE'";
 
         Object[] updateStoreParams = new Object[]{
                 patchStoreReq.getStoreName(),
                 patchStoreReq.getStoreAddress(),
                 patchStoreReq.getStoreDescription(),
                 patchStoreReq.getCategory(),
+                patchStoreReq.getStoreImage(),
                 id
         };
 
