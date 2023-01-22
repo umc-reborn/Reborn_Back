@@ -48,7 +48,7 @@ public class StoreDao {
 
 
     public GetStoreLocationRes getStoreLocation(Long id) {
-        String getStoreQuery = "SELECT storeIdx, storeName, storeAddress FROM Store WHERE storeIdx = ? and status = 'ACTIVE'";
+        String getStoreQuery = "SELECT storeIdx, storeName, storeAddress, storeScore FROM Store WHERE storeIdx = ? and status = 'ACTIVE'";
 
         Object[] selectStoreParams = new Object[]{id};
         GetStoreLocationRes res = this.jdbcTemplate.queryForObject(
@@ -58,6 +58,7 @@ public class StoreDao {
                         .storeIdx(rs.getLong("storeIdx"))
                         .storeName(rs.getString("storeName"))
                         .storeAddress(rs.getString("storeAddress"))
+                        .storeScore(rs.getFloat("storeScore"))
 
                         .build()
 
