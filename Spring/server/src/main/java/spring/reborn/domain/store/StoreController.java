@@ -6,11 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import spring.reborn.config.BaseException;
 import spring.reborn.config.BaseResponse;
 import spring.reborn.config.BaseResponseStatus;
-import spring.reborn.domain.review.model.PostReviewRes;
-import spring.reborn.domain.store.model.GetStoreLocationRes;
-import spring.reborn.domain.store.model.GetStoreRes;
-import spring.reborn.domain.store.model.PatchStoreReq;
-import spring.reborn.domain.store.model.Store;
+import spring.reborn.domain.store.model.*;
 
 import java.util.List;
 
@@ -33,6 +29,7 @@ public class StoreController {
             log.info(getStoreResList.toString());
             return new BaseResponse<>(getStoreResList);
         } catch (BaseException e) {
+            log.error(e.getStatus().getMessage());
             return new BaseResponse<>((e.getStatus()));
         }
 
@@ -42,13 +39,14 @@ public class StoreController {
     todo
     가게 위치 표시
      */
-    @GetMapping("/{id}/location")
-    public BaseResponse<GetStoreLocationRes> getStoreLocation(@PathVariable Long id) throws BaseException {
+    @GetMapping("/{storeIdx}/location")
+    public BaseResponse<GetStoreLocationRes> getStoreLocation(@PathVariable Long storeIdx) throws BaseException {
 
         try {
-            GetStoreLocationRes getStoreLocationRes = storeService.getStoreLocation(id);
+            GetStoreLocationRes getStoreLocationRes = storeService.getStoreLocation(storeIdx);
             return new BaseResponse<>(getStoreLocationRes);
         } catch (BaseException e) {
+            log.error(e.getStatus().getMessage());
             return new BaseResponse<>((e.getStatus()));
         }
 
@@ -58,12 +56,13 @@ public class StoreController {
     todo
     가게 정보 조회
      */
-    @GetMapping("/{id}")
-    public BaseResponse<GetStoreRes> getStoreInfo(@PathVariable Long id) throws BaseException {
+    @GetMapping("/{storeIdx}")
+    public BaseResponse<GetStoreRes> getStoreInfo(@PathVariable Long storeIdx) throws BaseException {
         try {
-            GetStoreRes getStoreRes = storeService.getStoreInfo(id);
+            GetStoreRes getStoreRes = storeService.getStoreInfo(storeIdx);
             return new BaseResponse<>(getStoreRes);
         } catch (BaseException e) {
+            log.error(e.getStatus().getMessage());
             return new BaseResponse<>(e.getStatus());
         }
 
@@ -74,33 +73,39 @@ public class StoreController {
     todo
     가게 검색
      */
-    @GetMapping("/search/{title}")
-    public BaseResponse<List<GetStoreRes>> searchStore(@PathVariable String title) throws BaseException {
+    @GetMapping("/search/{keyword}")
+    public BaseResponse<List<GetStoreRes>> searchStore(@PathVariable String keyword) throws BaseException {
         try {
-            List<GetStoreRes> getStoreRes = storeService.searchStoreListUsingTitle(title);
+            if(keyword.isEmpty())
+                throw new BaseException(BaseResponseStatus.GET_STORE_EMPTY_KEYWORD);
+
+            List<GetStoreRes> getStoreRes = storeService.searchStoreListUsingTitle(keyword);
             return new BaseResponse<>(getStoreRes);
         } catch (BaseException e) {
+            log.error(e.getStatus().getMessage());
             return new BaseResponse<>(e.getStatus());
 
         }
-
-
     }
 
     /*
     todo
     가게 정보 수정
      */
-    @PatchMapping("/{id}")
-    public BaseResponse<Object> updateStoreInfo(@PathVariable Long id, @RequestBody PatchStoreReq patchStoreReq) {
+    @PatchMapping("/{storeIdx}")
+    public BaseResponse<Object> updateStoreInfo(@PathVariable Long storeIdx, @RequestBody PatchStoreReq patchStoreReq) {
         try {
-            storeService.updateStoreInfo(id, patchStoreReq);
-            return new BaseResponse<>(BaseResponseStatus.SUCCESS);
+            if(patchStoreReq.getStoreName().isEmpty())
+                throw new BaseException(BaseResponseStatus.MODIFY_FAIL_STORE_EMPTY_NAME);
+            if (patchStoreReq.getStoreAddress().isEmpty())
+                throw new BaseException(BaseResponseStatus.MODIFY_FAIL_STORE_EMPTY_LOCATION);
+
+            storeService.updateStoreInfo(storeIdx, patchStoreReq);
+            return new BaseResponse<>(new PatchStoreRes(storeIdx));
         } catch (BaseException e) {
+            log.error(e.getStatus().getMessage());
             return new BaseResponse<>(e.getStatus());
         }
 
     }
-
-
 }
