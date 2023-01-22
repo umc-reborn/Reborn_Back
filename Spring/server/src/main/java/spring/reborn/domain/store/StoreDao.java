@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import spring.reborn.config.BaseException;
+import spring.reborn.config.BaseResponseStatus;
 import spring.reborn.domain.store.model.GetStoreLocationRes;
 import spring.reborn.domain.store.model.GetStoreRes;
 import spring.reborn.domain.store.model.PatchStoreReq;
@@ -26,131 +28,174 @@ public class StoreDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    public List<GetStoreRes> getStoreList(){
+    public List<GetStoreRes> getStoreList() throws BaseException {
+        try {
 
-        String getStoreListQuery = "SELECT storeIdx, storeName,storeImage, storeAddress, storeDescription, category, storeScore FROM Store WHERE status = 'ACTIVE' ORDER BY updatedAt desc";
-        List<GetStoreRes> res = this.jdbcTemplate.query(
-                getStoreListQuery,
-                (rs, rowNum) -> GetStoreRes.builder()
-                        .storeIdx(rs.getLong("storeIdx"))
-                        .storeName(rs.getString("storeName"))
-                        .category(StoreCategory.valueOf(rs.getString("category")))
-                        .storeAddress(rs.getString("storeAddress"))
-                        .storeImage(rs.getString("storeImage"))
-                        .storeDescription(rs.getString("storeDescription"))
-                        .storeScore(rs.getFloat("storeScore"))
+            String getStoreListQuery = "SELECT storeIdx, storeName,storeImage, storeAddress, storeDescription, category, storeScore FROM Store WHERE status = 'ACTIVE' ORDER BY updatedAt desc";
+            List<GetStoreRes> res = this.jdbcTemplate.query(
+                    getStoreListQuery,
+                    (rs, rowNum) -> GetStoreRes.builder()
+                            .storeIdx(rs.getLong("storeIdx"))
+                            .storeName(rs.getString("storeName"))
+                            .category(StoreCategory.valueOf(rs.getString("category")))
+                            .storeAddress(rs.getString("storeAddress"))
+                            .storeImage(rs.getString("storeImage"))
+                            .storeDescription(rs.getString("storeDescription"))
+                            .storeScore(rs.getFloat("storeScore"))
 
-                        .build()
+                            .build()
 
-        );
-        return res;
-    }
+            );
+            return res;
 
+        }
+        catch (Exception e){
+            log.error(e.getMessage());
+            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
 
-    public GetStoreLocationRes getStoreLocation(Long id) {
-        String getStoreQuery = "SELECT storeIdx, storeName, storeAddress, storeScore FROM Store WHERE storeIdx = ? and status = 'ACTIVE'";
-
-        Object[] selectStoreParams = new Object[]{id};
-        GetStoreLocationRes res = this.jdbcTemplate.queryForObject(
-                getStoreQuery,
-                selectStoreParams,
-                (rs, rowNum) -> GetStoreLocationRes.builder()
-                        .storeIdx(rs.getLong("storeIdx"))
-                        .storeName(rs.getString("storeName"))
-                        .storeAddress(rs.getString("storeAddress"))
-                        .storeScore(rs.getFloat("storeScore"))
-
-                        .build()
-
-        );
-        return res;
-    }
-
-    public GetStoreRes getStoreInfo(Long id) {
-        String getStoreInfoQuery = "SELECT storeIdx, storeName ,storeImage, storeAddress, storeDescription, category, storeScore FROM Store WHERE storeIdx = ? and status = 'ACTIVE'";
-
-        Object[] selectStoreParams = new Object[]{id};
-
-        GetStoreRes res = this.jdbcTemplate.queryForObject(
-                getStoreInfoQuery,
-                selectStoreParams,
-                (rs, rowNum) -> GetStoreRes.builder()
-                        .storeIdx(rs.getLong("storeIdx"))
-                        .storeName(rs.getString("storeName"))
-                        .category(StoreCategory.valueOf(rs.getString("category")))
-                        .storeAddress(rs.getString("storeAddress"))
-                        .storeImage(rs.getString("storeImage"))
-                        .storeDescription(rs.getString("storeDescription"))
-                        .storeScore(rs.getFloat("storeScore"))
-
-                        .build()
-
-        );
-        return res;
+        }
 
     }
 
-    public List<GetStoreRes> searchStoreUsingTitle(String keyword) {
 
-        String getStoreInfoQuery = "SELECT storeIdx, storeName ,storeImage, storeAddress, storeDescription, category, storeScore FROM Store WHERE UPPER(storeName) LIKE UPPER(?) and status = 'ACTIVE'";
+    public GetStoreLocationRes getStoreLocation(Long storeIdx) throws BaseException {
+        try {
+            String getStoreQuery = "SELECT storeIdx, storeName, storeAddress, storeScore FROM Store WHERE storeIdx = ? and status = 'ACTIVE'";
 
-        String paramString = "%" + keyword +  "%";
-        Object[] selectStoreParams = new Object[]{paramString};
+            Object[] selectStoreParams = new Object[]{storeIdx};
+            GetStoreLocationRes res = this.jdbcTemplate.queryForObject(
+                    getStoreQuery,
+                    selectStoreParams,
+                    (rs, rowNum) -> GetStoreLocationRes.builder()
+                            .storeIdx(rs.getLong("storeIdx"))
+                            .storeName(rs.getString("storeName"))
+                            .storeAddress(rs.getString("storeAddress"))
+                            .storeScore(rs.getFloat("storeScore"))
 
-        List<GetStoreRes> res = this.jdbcTemplate.query(
-                getStoreInfoQuery,
-                selectStoreParams,
-                (rs, rowNum) -> GetStoreRes.builder()
-                        .storeIdx(rs.getLong("storeIdx"))
-                        .storeName(rs.getString("storeName"))
-                        .category(StoreCategory.valueOf(rs.getString("category")))
-                        .storeAddress(rs.getString("storeAddress"))
-                        .storeImage(rs.getString("storeImage"))
-                        .storeDescription(rs.getString("storeDescription"))
-                        .storeScore(rs.getFloat("storeScore"))
+                            .build()
 
-                        .build()
+            );
+            return res;
 
-        );
-        return res;
+        }
+        catch (Exception e){
+            log.error(e.getMessage());
+            throw new BaseException(BaseResponseStatus.CAN_NOT_FOUND_STORE);
+        }
+    }
+
+    public GetStoreRes getStoreInfo(Long storeIdx) throws BaseException {
+        try {
+            String getStoreInfoQuery = "SELECT storeIdx, storeName ,storeImage, storeAddress, storeDescription, category, storeScore FROM Store WHERE storeIdx = ? and status = 'ACTIVE'";
+
+            Object[] selectStoreParams = new Object[]{storeIdx};
+
+            GetStoreRes res = this.jdbcTemplate.queryForObject(
+                    getStoreInfoQuery,
+                    selectStoreParams,
+                    (rs, rowNum) -> GetStoreRes.builder()
+                            .storeIdx(rs.getLong("storeIdx"))
+                            .storeName(rs.getString("storeName"))
+                            .category(StoreCategory.valueOf(rs.getString("category")))
+                            .storeAddress(rs.getString("storeAddress"))
+                            .storeImage(rs.getString("storeImage"))
+                            .storeDescription(rs.getString("storeDescription"))
+                            .storeScore(rs.getFloat("storeScore"))
+
+                            .build()
+
+            );
+            return res;
+
+        }
+        catch(Exception e){
+            log.error(e.getMessage());
+            throw new BaseException(BaseResponseStatus.CAN_NOT_FOUND_STORE);
+
+        }
+
+    }
+
+    public List<GetStoreRes> searchStoreUsingTitle(String keyword) throws BaseException {
+        try {
+
+            String getStoreInfoQuery = "SELECT storeIdx, storeName ,storeImage, storeAddress, storeDescription, category, storeScore FROM Store WHERE UPPER(storeName) LIKE UPPER(?) and status = 'ACTIVE'";
+
+            String paramString = "%" + keyword + "%";
+            Object[] selectStoreParams = new Object[]{paramString};
+
+            List<GetStoreRes> res = this.jdbcTemplate.query(
+                    getStoreInfoQuery,
+                    selectStoreParams,
+                    (rs, rowNum) -> GetStoreRes.builder()
+                            .storeIdx(rs.getLong("storeIdx"))
+                            .storeName(rs.getString("storeName"))
+                            .category(StoreCategory.valueOf(rs.getString("category")))
+                            .storeAddress(rs.getString("storeAddress"))
+                            .storeImage(rs.getString("storeImage"))
+                            .storeDescription(rs.getString("storeDescription"))
+                            .storeScore(rs.getFloat("storeScore"))
+
+                            .build()
+
+            );
+            return res;
+        }
+        catch (Exception e){
+            log.error(e.getMessage());
+            throw new BaseException(BaseResponseStatus.SEARCH_STORE_ERROR);
+        }
     }
 
     @Transactional
-    public void updateStoreInfo(Long storeIdx, PatchStoreReq patchStoreReq) {
-        String updateStoreInfoQuery = "UPDATE Store SET storeName = ?, storeAddress = ?, storeDescription = ?, category = ?, storeImage = ? WHERE storeIdx = ? and status = 'ACTIVE'";
+    public void updateStoreInfo(Long storeIdx, PatchStoreReq patchStoreReq) throws BaseException {
+        try {
+            String updateStoreInfoQuery = "UPDATE Store SET storeName = ?, storeAddress = ?, storeDescription = ?, category = ?, storeImage = ? WHERE storeIdx = ? and status = 'ACTIVE'";
 
-        Object[] updateStoreParams = new Object[]{
-                patchStoreReq.getStoreName(),
-                patchStoreReq.getStoreAddress(),
-                patchStoreReq.getStoreDescription(),
-                patchStoreReq.getCategory(),
-                patchStoreReq.getStoreImage(),
-                storeIdx
-        };
+            Object[] updateStoreParams = new Object[]{
+                    patchStoreReq.getStoreName(),
+                    patchStoreReq.getStoreAddress(),
+                    patchStoreReq.getStoreDescription(),
+                    patchStoreReq.getCategory(),
+                    patchStoreReq.getStoreImage(),
+                    storeIdx
+            };
 
 
-        this.jdbcTemplate.update(
-                updateStoreInfoQuery,
-                updateStoreParams
-        );
+            this.jdbcTemplate.update(
+                    updateStoreInfoQuery,
+                    updateStoreParams
+            );
 
-        updateStoreUpdateTime(storeIdx);
+            updateStoreUpdateTime(storeIdx);
+        }
+        catch (Exception e){
+            log.error(e.getMessage());
+            throw new BaseException(BaseResponseStatus.MODIFY_FAIL_STORE);
+        }
+
 
     }
-    public void updateStoreUpdateTime(Long storeIdx){
-        String updateStoreUpdateAtQuery = "UPDATE Store SET updatedAt = ? WHERE storeIdx = ? and status = 'ACTIVE'";
+    public void updateStoreUpdateTime(Long storeIdx) throws BaseException {
+        try {
+            String updateStoreUpdateAtQuery = "UPDATE Store SET updatedAt = ? WHERE storeIdx = ? and status = 'ACTIVE'";
 
-        Object[] updateStoreParams = new Object[]{
-                new Timestamp(new Date().getTime()),
-                storeIdx
-        };
+            Object[] updateStoreParams = new Object[]{
+                    new Timestamp(new Date().getTime()),
+                    storeIdx
+            };
 
 
-        this.jdbcTemplate.update(
-                updateStoreUpdateAtQuery,
-                updateStoreParams
-        );
+            this.jdbcTemplate.update(
+                    updateStoreUpdateAtQuery,
+                    updateStoreParams
+            );
 
+        }
+        catch (Exception e){
+            log.error(e.getMessage());
+            throw new BaseException(BaseResponseStatus.MODIFY_FAIL_STORE_UPDATE_TIME);
+        }
 
     }
 }

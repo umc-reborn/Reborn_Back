@@ -26,9 +26,8 @@ public class StoreService {
             return storeDao.getStoreList();
 
         }
-        catch (Exception e){
-            log.error(e.toString());
-            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+        catch (BaseException e){
+            throw new BaseException(e.getStatus());
         }
     }
 
@@ -36,9 +35,8 @@ public class StoreService {
         try {
             return storeDao.getStoreLocation(storeIdx);
         }
-        catch (Exception e){
-            log.error(e.toString());
-            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+        catch (BaseException e){
+            throw new BaseException(e.getStatus());
         }
     }
 
@@ -47,9 +45,8 @@ public class StoreService {
             return storeDao.getStoreInfo(storeIdx);
 
         }
-        catch (Exception e){
-            log.error(e.toString());
-            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+        catch (BaseException e){
+            throw new BaseException(e.getStatus());
         }
     }
 
@@ -57,9 +54,8 @@ public class StoreService {
         try {
             return storeDao.searchStoreUsingTitle(keyword);
         }
-        catch (Exception e){
-            log.error(e.toString());
-            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+        catch (BaseException e){
+            throw new BaseException(e.getStatus());
         }
     }
 
@@ -67,9 +63,8 @@ public class StoreService {
         try {
             storeDao.updateStoreInfo(storeIdx ,patchStoreReq);
         }
-        catch (Exception e){
-            log.error(e.toString());
-            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+        catch (BaseException e){
+            throw new BaseException(e.getStatus());
         }
     }
 }

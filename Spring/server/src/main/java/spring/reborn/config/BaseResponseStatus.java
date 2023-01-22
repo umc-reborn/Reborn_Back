@@ -37,7 +37,19 @@ public enum BaseResponseStatus {
     POST_USERS_EMPTY_ADDRESS(false, 2102, "주소를 입력해주세요."),
     POST_USERS_EMPTY_LIKES(false, 2103, "관심 카테고리를 입력해주세요."),
     POST_USERS_INVALID_BIRTHDATE(false, 2104, "생년월일을 숫자만 사용해서 8자리로 입력해주세요"),
-    
+
+
+    //준몰리
+    CAN_NOT_FOUND_STORE(false,2200,"해당하는 스토어 정보를 찾을 수 없습니다."),
+    GET_STORE_EMPTY_KEYWORD(false,2201,"키워드를 입력해주세요."),
+    SEARCH_STORE_ERROR(false,2202,"스토어를 검색할 수 없습니다."),
+    MODIFY_FAIL_STORE(false,2203,"해당 스토어의 정보를 수정할 수 없습니다."),
+    MODIFY_FAIL_STORE_EMPTY_NAME(false,2204,"해당 스토어의 이름을 입력해주세요."),
+    MODIFY_FAIL_STORE_EMPTY_LOCATION(false,2205,"해당 스토어의 위치를 입력해주세요."),
+
+
+    MODIFY_FAIL_STORE_UPDATE_TIME(false,2299,"해당 스토어 마지막 업데이트 시간을 수정할 수 없습니다."),
+
     //민몰리
     POST_USERS_EMPTY_PASSWORD(false, 2400, "비밀번호를 입력해주세요."),
     POST_USERS_INVALID_PASSWORD(false, 2401, "비밀번호 형식은 숫자, 특문 각 1회 이상, 영문은 2개 이상 사용하여 8자리 이상이어야 합니다."),
