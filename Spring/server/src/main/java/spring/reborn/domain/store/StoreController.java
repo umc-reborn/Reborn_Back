@@ -39,11 +39,11 @@ public class StoreController {
     todo
     가게 위치 표시
      */
-    @GetMapping("/{id}/location")
-    public BaseResponse<GetStoreLocationRes> getStoreLocation(@PathVariable Long id) throws BaseException {
+    @GetMapping("/{storeIdx}/location")
+    public BaseResponse<GetStoreLocationRes> getStoreLocation(@PathVariable Long storeIdx) throws BaseException {
 
         try {
-            GetStoreLocationRes getStoreLocationRes = storeService.getStoreLocation(id);
+            GetStoreLocationRes getStoreLocationRes = storeService.getStoreLocation(storeIdx);
             return new BaseResponse<>(getStoreLocationRes);
         } catch (BaseException e) {
             return new BaseResponse<>((e.getStatus()));
@@ -55,10 +55,10 @@ public class StoreController {
     todo
     가게 정보 조회
      */
-    @GetMapping("/{id}")
-    public BaseResponse<GetStoreRes> getStoreInfo(@PathVariable Long id) throws BaseException {
+    @GetMapping("/{storeIdx}")
+    public BaseResponse<GetStoreRes> getStoreInfo(@PathVariable Long storeIdx) throws BaseException {
         try {
-            GetStoreRes getStoreRes = storeService.getStoreInfo(id);
+            GetStoreRes getStoreRes = storeService.getStoreInfo(storeIdx);
             return new BaseResponse<>(getStoreRes);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
@@ -71,10 +71,10 @@ public class StoreController {
     todo
     가게 검색
      */
-    @GetMapping("/search/{title}")
-    public BaseResponse<List<GetStoreRes>> searchStore(@PathVariable String title) throws BaseException {
+    @GetMapping("/search/{keyword}")
+    public BaseResponse<List<GetStoreRes>> searchStore(@PathVariable String keyword) throws BaseException {
         try {
-            List<GetStoreRes> getStoreRes = storeService.searchStoreListUsingTitle(title);
+            List<GetStoreRes> getStoreRes = storeService.searchStoreListUsingTitle(keyword);
             return new BaseResponse<>(getStoreRes);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());

@@ -90,11 +90,11 @@ public class StoreDao {
 
     }
 
-    public List<GetStoreRes> searchStoreUsingTitle(String title) {
+    public List<GetStoreRes> searchStoreUsingTitle(String keyword) {
 
         String getStoreInfoQuery = "SELECT storeIdx, storeName ,storeImage, storeAddress, storeDescription, category, storeScore FROM Store WHERE UPPER(storeName) LIKE UPPER(?) and status = 'ACTIVE'";
 
-        String paramString = "%" + title +  "%";
+        String paramString = "%" + keyword +  "%";
         Object[] selectStoreParams = new Object[]{paramString};
 
         List<GetStoreRes> res = this.jdbcTemplate.query(
@@ -116,7 +116,7 @@ public class StoreDao {
     }
 
     @Transactional
-    public void updateStoreInfo(Long id, PatchStoreReq patchStoreReq) {
+    public void updateStoreInfo(Long storeIdx, PatchStoreReq patchStoreReq) {
         String updateStoreInfoQuery = "UPDATE Store SET storeName = ?, storeAddress = ?, storeDescription = ?, category = ?, storeImage = ? WHERE storeIdx = ? and status = 'ACTIVE'";
 
         Object[] updateStoreParams = new Object[]{
@@ -125,7 +125,7 @@ public class StoreDao {
                 patchStoreReq.getStoreDescription(),
                 patchStoreReq.getCategory(),
                 patchStoreReq.getStoreImage(),
-                id
+                storeIdx
         };
 
 
@@ -134,15 +134,15 @@ public class StoreDao {
                 updateStoreParams
         );
 
-        updateStoreUpdateTime(id);
+        updateStoreUpdateTime(storeIdx);
 
     }
-    public void updateStoreUpdateTime(Long id){
+    public void updateStoreUpdateTime(Long storeIdx){
         String updateStoreUpdateAtQuery = "UPDATE Store SET updatedAt = ? WHERE storeIdx = ? and status = 'ACTIVE'";
 
         Object[] updateStoreParams = new Object[]{
                 new Timestamp(new Date().getTime()),
-                id
+                storeIdx
         };
 
 

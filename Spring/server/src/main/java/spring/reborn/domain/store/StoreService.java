@@ -32,9 +32,9 @@ public class StoreService {
         }
     }
 
-    public GetStoreLocationRes getStoreLocation(Long id) throws BaseException {
+    public GetStoreLocationRes getStoreLocation(Long storeIdx) throws BaseException {
         try {
-            return storeDao.getStoreLocation(id);
+            return storeDao.getStoreLocation(storeIdx);
         }
         catch (Exception e){
             log.error(e.toString());
@@ -42,9 +42,9 @@ public class StoreService {
         }
     }
 
-    public GetStoreRes getStoreInfo(Long id) throws BaseException{
+    public GetStoreRes getStoreInfo(Long storeIdx) throws BaseException{
         try {
-            return storeDao.getStoreInfo(id);
+            return storeDao.getStoreInfo(storeIdx);
 
         }
         catch (Exception e){
@@ -53,9 +53,9 @@ public class StoreService {
         }
     }
 
-    public List<GetStoreRes> searchStoreListUsingTitle(String title) throws BaseException {
+    public List<GetStoreRes> searchStoreListUsingTitle(String keyword) throws BaseException {
         try {
-            return storeDao.searchStoreUsingTitle(title);
+            return storeDao.searchStoreUsingTitle(keyword);
         }
         catch (Exception e){
             log.error(e.toString());
@@ -63,9 +63,9 @@ public class StoreService {
         }
     }
 
-    public void updateStoreInfo(Long id, PatchStoreReq patchStoreReq) throws BaseException {
+    public void updateStoreInfo(Long storeIdx, PatchStoreReq patchStoreReq) throws BaseException {
         try {
-            storeDao.updateStoreInfo(id ,patchStoreReq);
+            storeDao.updateStoreInfo(storeIdx ,patchStoreReq);
         }
         catch (Exception e){
             log.error(e.toString());
