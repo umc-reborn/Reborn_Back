@@ -266,15 +266,15 @@ public class UserController {
     @PatchMapping("/userModify/{userIdx}")
     public BaseResponse<String> modifyUserInform(@PathVariable("userIdx") int userIdx, @RequestBody User user) {
         try {
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(INVALID_USER_JWT);
-//            }
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             //같다면 유저정보 변경
 
-            PatchUserReq patchUserReq = new PatchUserReq(userIdx, user.getUserImg(), user.getUserNickname(), user.getUserAddress(), user.getUserBirthDate(), user.getUserLikes().name());
+            PatchUserReq patchUserReq = new PatchUserReq(userIdx, user.getUserImg(), user.getUserNickname(), user.getUserAddress(), user.getUserBirthDate(), user.getUserLikes());
             userService.modifyUserInform(patchUserReq);
 
             String result = "회원정보가 수정되었습니다.";
