@@ -80,7 +80,13 @@ public class UserProvider {
 //            return new PostLoginRes(userIdx);
 //  *********** 해당 부분은 7주차 - JWT 수업 후 주석해제 및 대체해주세요!  **************** //
             String jwt = jwtService.createJwt(userIdx);
-            return new PostLoginRes(userIdx,jwt);
+            String status = userDao.getUserStatus(userIdx);
+            if(status != "ACTIVE"){
+                System.out.println(status);
+                throw new BaseException(INVALID_USER);
+            } else{
+                return new PostLoginRes(userIdx,jwt);
+            }
 //  **************************************************************************
 
         } else { // 비밀번호가 다르다면 에러메세지를 출력한다.

@@ -14,5 +14,4 @@ import lombok.*;
 public class PostLoginReq {
     private String userEmail;
     private String userPwd;
-    private String status;
 }
