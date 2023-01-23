@@ -40,6 +40,7 @@ public class UserService {
     }
     // ******************************************************************************
     // 회원가입(POST)
+    @Transactional
     public PostUserRes createUser(PostUserReq postUserReq) throws BaseException {
         // 중복 확인: 해당 이메일을 가진 유저가 있는지 확인합니다. 중복될 경우, 에러 메시지를 보냅니다.
         if (userProvider.checkUserEmail(postUserReq.getUserEmail()) == 1) {
@@ -56,12 +57,13 @@ public class UserService {
         }
         try {
             int userIdx = userDao.createUser(postUserReq);
+            String userNickname = userDao.getUserNickname(userIdx);
 //            return new PostUserRes(userIdx);
 
 //  *********** 해당 부분은 7주차 수업 후 주석해제하서 대체해서 사용해주세요! ***********
 //            jwt 발급.
         String jwt = jwtService.createJwt(userIdx);
-        return new PostUserRes(userIdx,jwt);
+        return new PostUserRes(userIdx,userNickname,jwt);
 //  *********************************************************************
         } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
         throw new BaseException(DATABASE_ERROR);
@@ -112,6 +114,7 @@ public class UserService {
     }
 
     // 이웃 회원탈퇴(Patch)
+    @Transactional
     public void modifyUserStatus(PatchUserStatusReq patchUserStatusReq) throws BaseException {
         try {
             int result = userDao.modifyUserStatus(patchUserStatusReq); // 해당 과정이 무사히 수행되면 True(1), 그렇지 않으면 False(0)입니다.
@@ -124,6 +127,7 @@ public class UserService {
     }
     
     // 스토어 회원탈퇴(Patch)
+    @Transactional
     public void modifyStoreStatus(PatchStoreStatusReq patchStoreStatusReq) throws BaseException {
         try {
         int result = userDao.modifyStoreStatus(patchStoreStatusReq); // 해당 과정이 무사히 수행되면 True(1), 그렇지 않으면 False(0)입니다.

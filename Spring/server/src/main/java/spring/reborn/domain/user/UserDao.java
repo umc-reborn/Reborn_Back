@@ -9,7 +9,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-
 import static spring.reborn.config.BaseResponseStatus.DATABASE_ERROR;
 
 @Repository
@@ -49,15 +48,36 @@ public class UserDao {
      */
 
     // 회원가입
+    @Transactional
     public int createUser(PostUserReq postUserReq) {
         String createUserQuery = "insert into User (userEmail, userPwd, userNickname, userImg, userAdAgreement, userBirthDate, userAddress, userLikes) VALUES (?,?,?,?,?,?,?,?)"; // 실행될 동적 쿼리문
         Object[] createUserParams = new Object[]{postUserReq.getUserEmail(), postUserReq.getUserPwd(), postUserReq.getUserNickname(), postUserReq.getUserImg(), postUserReq.getUserAdAgreement(), postUserReq.getUserBirthDate(), postUserReq.getUserAddress(), postUserReq.getUserLikes().name()}; // 동적 쿼리의 ?부분에 주입될 값
         this.jdbcTemplate.update(createUserQuery, createUserParams);
-        // email -> postUserReq.getEmail(), password -> postUserReq.getPassword(), nickname -> postUserReq.getNickname() 로 매핑(대응)시킨다음 쿼리문을 실행한다.
-        // 즉 DB의 User Table에 (email, password, nickname)값을 가지는 유저 데이터를 삽입(생성)한다.
 
         String lastInserIdQuery = "select last_insert_id()"; // 가장 마지막에 삽입된(생성된) id값은 가져온다.
         return this.jdbcTemplate.queryForObject(lastInserIdQuery, int.class); // 해당 쿼리문의 결과 마지막으로 삽인된 유저의 userIdx번호를 반환한다.
+    }
+
+    // 해당 userIdx를 갖는 유저의 닉네임조회
+    @Transactional
+    public String getUserNickname(int userIdx) {
+        String getUserQuery = "select userNickname from User where userIdx = ?"; // 해당 userIdx를 만족하는 유저를 조회하는 쿼리문
+        int getUserParams = userIdx;
+        return this.jdbcTemplate.queryForObject(getUserQuery,
+                (rs, rowNum) -> (
+                        rs.getString("userNickname")), // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+                getUserParams); // 한 개의 회원정보를 얻기 위한 jdbcTemplate 함수(Query, 객체 매핑 정보, Params)의 결과 반환
+    }
+
+    // 해당 userIdx를 갖는 유저의 status조회
+    @Transactional
+    public String getUserStatus(int userIdx) {
+        String getUserStatusQuery = "select status from User where userIdx = ?"; // 해당 userIdx를 만족하는 유저를 조회하는 쿼리문
+        int getUserParams = userIdx;
+        return this.jdbcTemplate.queryForObject(getUserStatusQuery,
+                (rs, rowNum) -> (
+                        rs.getString("status")), // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+                getUserParams); // 한 개의 회원정보를 얻기 위한 jdbcTemplate 함수(Query, 객체 매핑 정보, Params)의 결과 반환
     }
 
     // 스토어 회원가입
@@ -171,6 +191,7 @@ public class UserDao {
     }
 
     // 이웃 회원탈퇴
+    @Transactional
     public int modifyUserStatus(PatchUserStatusReq patchUserStatusReq) {
         String modifyUserStatusQuery = "update User set status = ? where userIdx = ? "; // 해당 userIdx를 만족하는 User를 해당 status로 변경한다.
         Object[] modifyUserStatusParams = new Object[]{patchUserStatusReq.getStatus(), patchUserStatusReq.getUserIdx()}; // 주입될 값들(status, userIdx) 순
@@ -180,9 +201,10 @@ public class UserDao {
     }
 
     // 스토어 회원탈퇴
+    @Transactional
     public int modifyStoreStatus(PatchStoreStatusReq patchStoreStatusReq) {
-        String modifyStoreStatusQuery = "update Store set status = ? where storeIdx = ? "; // 해당 storeIdx를 만족하는 Store를 해당 status로 변경한다.
-        Object[] modifyStoreStatusParams = new Object[]{patchStoreStatusReq.getStatus(), patchStoreStatusReq.getStoreIdx()}; // 주입될 값들(status, userIdx) 순
+        String modifyStoreStatusQuery = "update Store set status = ? where userIdx = ? "; // 해당 storeIdx를 만족하는 Store를 해당 status로 변경한다.
+        Object[] modifyStoreStatusParams = new Object[]{patchStoreStatusReq.getStatus(), patchStoreStatusReq.getUserIdx()}; // 주입될 값들(status, userIdx) 순
 
         this.jdbcTemplate.update(modifyStoreStatusQuery, modifyStoreStatusParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0)
 
@@ -198,5 +220,28 @@ public class UserDao {
         Object[] modifyUserNameParams = new Object[]{patchUserReq.getUserImg(), patchUserReq.getUserNickname(), patchUserReq.getUserAddress(), patchUserReq.getUserBirthDate(), patchUserReq.getUserLikes(), patchUserReq.getUserIdx()}; // 주입될 값들(nickname, userIdx) 순
 
         return this.jdbcTemplate.update(modifyUserNameQuery, modifyUserNameParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0)
+    }
+    
+    // 로그인: 해당 email에 해당되는 user의 암호화된 비밀번호 값을 가져온다.
+    public User getPwd(PostLoginReq postLoginReq) {
+        String getPwdQuery = "select * from User where userEmail = ?"; // 해당 email을 만족하는 User의 정보들을 조회한다.
+        String getPwdParams = postLoginReq.getUserEmail(); // 주입될 email값을 클라이언트의 요청에서 주어진 정보를 통해 가져온다.
+
+        return this.jdbcTemplate.queryForObject(getPwdQuery,
+                (rs, rowNum) -> new User(
+                        rs.getInt("userIdx"),
+                        rs.getString("userEmail"),
+                        rs.getString("userPwd"),
+                        rs.getString("userNickname"),
+                        rs.getInt("userPoint"),
+                        rs.getString("userImg"),
+                        rs.getString("userAdAgreement"),
+                        rs.getString("userBirthDate"),
+                        rs.getString("userAddress"),
+                        rs.getString("userLikes"),
+                        rs.getString("status")
+                ), // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+                getPwdParams
+        ); // 한 개의 회원정보를 얻기 위한 jdbcTemplate 함수(Query, 객체 매핑 정보, Params)의 결과 반환
     }
 }
