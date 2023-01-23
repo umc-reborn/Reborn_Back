@@ -48,6 +48,8 @@ public enum BaseResponseStatus {
     MODIFY_FAIL_STORE_EMPTY_LOCATION(false,2205,"해당 스토어의 위치를 입력해주세요."),
 
 
+    AWS_UPLOAD_FAIL_ERROR(false,2297, "AWS에서 해당 이미지를 업로드에 실패하였습니다."),
+    AWS_DELETE_FAIL_ERROR(false,2298, "AWS에서 해당 이미지를 제거에 실패하였습니다."),
     MODIFY_FAIL_STORE_UPDATE_TIME(false,2299,"해당 스토어 마지막 업데이트 시간을 수정할 수 없습니다."),
 
     //민몰리
