@@ -84,19 +84,25 @@ public class UserService {
         } catch (Exception ignored) { // 암호화가 실패하였을 경우 에러 발생
             throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
         }
+        PostUserStoreRes postUserStoreRes;
         try {
-            int userIdx = userDao.createUserStore(postUserStoreReq);
-//            return new PostUserRes(userIdx);
-
-//  *********** 해당 부분은 7주차 수업 후 주석해제하서 대체해서 사용해주세요! ***********
-//            jwt 발급.
-            String jwt = jwtService.createJwt(userIdx);
-            return new PostUserStoreRes(userIdx,jwt);
-//  *********************************************************************
-        } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
+            int storeId = userDao.createUserStore(postUserStoreReq);
+            postUserStoreRes = userDao.getStoreInform(storeId);
+         } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
             System.out.println(exception);
             throw new BaseException(DATABASE_ERROR);
         }
+
+        try {
+            //  jwt 발급.
+            String jwt = jwtService.createJwt(postUserStoreRes.getUserIdx());
+            return new PostUserStoreRes(postUserStoreRes.getStoreIdx(), postUserStoreRes.getUserIdx(), postUserStoreRes.getStoreName() ,jwt);
+
+        } catch (Exception exception) {
+            System.out.println(exception);
+            throw new BaseException(PASSWORD_DECRYPTION_ERROR);
+        }
+
     }
 
     // 포인트 적립, 취소 - hyerm
@@ -130,6 +136,18 @@ public class UserService {
         }
         } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
           throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    // 회원정보 수정(Patch)
+    public void modifyUserInform(PatchUserReq patchUserReq) throws BaseException {
+        try {
+            int result = userDao.modifyUserInform(patchUserReq); // 해당 과정이 무사히 수행되면 True(1), 그렇지 않으면 False(0)입니다.
+            if (result == 0) { // result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
+                throw new BaseException(MODIFY_FAIL_USERNAME);
+            }
+        } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
+            throw new BaseException(DATABASE_ERROR);
         }
     }
     
