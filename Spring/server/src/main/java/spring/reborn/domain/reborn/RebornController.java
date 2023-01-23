@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import spring.reborn.config.BaseException;
 import spring.reborn.config.BaseResponse;
 import spring.reborn.domain.reborn.model.*;
-
 import java.util.List;
+import static spring.reborn.config.BaseResponseStatus.*;
 
 @RestController
 @RequestMapping("/reborns")
@@ -59,6 +59,24 @@ public class RebornController {
         try {
             List<GetInProgressRes> getInProgressRebornsRes = rebornProvider.getInProgressReborns(userIdx);
             return new BaseResponse<>(getInProgressRebornsRes);
+        } catch (BaseException baseException) {
+            return new BaseResponse<>(baseException.getStatus());
+        }
+    }
+
+    @ResponseBody
+    @PatchMapping("/modify")
+    @Transactional
+    public BaseResponse<String> patchReborn(PatchRebornReq patchRebornReq) {
+        try {
+            if (patchRebornReq.getProductName() == null)
+                return new BaseResponse<>(PATCH_REBORN_EMPTY_PRODUCTNAME);
+            if (patchRebornReq.getProductGuide() == null)
+                return new BaseResponse<>(PATCH_REBORN_EMPTY_PRODUCTGUIDE);
+            if (patchRebornReq.getProductComment() == null)
+                return new BaseResponse<>(PATCH_REBORN_EMPTY_PRODUCTCOMMENT);
+            String result = rebornService.patchReborn(patchRebornReq);
+            return new BaseResponse<>(result);
         } catch (BaseException baseException) {
             return new BaseResponse<>(baseException.getStatus());
         }

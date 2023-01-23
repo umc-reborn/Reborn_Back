@@ -84,4 +84,11 @@ public class RebornDao {
         );
         return result;
     }
+
+    public int patchReborn(PatchRebornReq patchRebornReq) {
+        String patchRebornQuery = "update Reborn set productName = ?, productGuide = ?, productComment = ?, procutImg = ?, productLimitTime = ?, productCnt = ? WHERE rebornIdx = ?";
+        Object[] patchRebornParams = new Object[]{patchRebornReq.getProductName(), patchRebornReq.getProductGuide(), patchRebornReq.getProductComment(), patchRebornReq.getProductImg(), patchRebornReq.getProductCnt(), patchRebornReq.getRebornIdx()};
+
+        return this.jdbcTemplate.update(patchRebornQuery, patchRebornParams);
+    }
 }
