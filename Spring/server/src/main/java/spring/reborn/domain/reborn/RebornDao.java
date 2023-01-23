@@ -44,10 +44,11 @@ public class RebornDao {
 
     public List<GetRebornRes> getReborns(Integer storeIdx) {
         System.out.println("dao 시작");
-        String getRebornsQuery = "SELECT productName, productGuide, productComment, productImg, productLimitTime, productCnt, status FROM Reborn WHERE storeIdx = ? AND status = ?";
+        String getRebornsQuery = "SELECT rebornIdx, productName, productGuide, productComment, productImg, productLimitTime, productCnt, status FROM Reborn WHERE storeIdx = ? AND status = ?";
         List<GetRebornRes> result = this.jdbcTemplate.query(
                 getRebornsQuery,
                 (rs, rowNum) -> new GetRebornRes(
+                        rs.getInt("rebornIdx"),
                         rs.getString("productName"),
                         rs.getString("productGuide"),
                         rs.getString("productComment"),
@@ -57,6 +58,28 @@ public class RebornDao {
                         rs.getString("status"))
                         ,
                 storeIdx,
+                "ACTIVE"
+        );
+        return result;
+    }
+
+    public List<GetInProgressRes> getInProgressReborns(Integer userIdx) {
+        System.out.println("dao 시작");
+        String getRebornsQuery = "SELECT T.rebornTaskIdx, T.rebornIdx, S.storeIdx, S.storeName, S.category, R.productName, R.productImg, R.productLimitTime, R.productCnt FROM Reborn AS R LEFT OUTER JOIN RebornTask AS T ON T.rebornIdx = R.rebornIdx LEFT OUTER JOIN Store AS S ON R.storeIdx = S.storeIdx WHERE (S.userIdx = ? AND T.status = ?)";
+        List<GetInProgressRes> result = this.jdbcTemplate.query(
+                getRebornsQuery,
+                (rs, rowNum) -> new GetInProgressRes(
+                        rs.getInt("rebornTaskIdx"),
+                        rs.getInt("rebornIdx"),
+                        rs.getInt("storeIdx"),
+                        rs.getString("storeName"),
+                        rs.getString("category"),
+                        rs.getString("productName"),
+                        rs.getString("productImg"),
+                        rs.getString("productLimitTime"),
+                        rs.getInt("productCnt"))
+                ,
+                userIdx,
                 "ACTIVE"
         );
         return result;

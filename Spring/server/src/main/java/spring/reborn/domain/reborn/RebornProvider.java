@@ -34,12 +34,12 @@ public class RebornProvider {
         }
     }
 
-    public List<GetRebornRes> getInProgressReborns(Integer rebornIdx) throws BaseException {
+    public List<GetInProgressRes> getInProgressReborns(Integer userIdx) throws BaseException {
         try {
             System.out.println("provider 시작");
-            List<GetRebornRes> getRebornsRes = rebornDao.getReborns(rebornIdx);
+            List<GetInProgressRes> getInProgressRebornsRes = rebornDao.getInProgressReborns(userIdx);
             System.out.println("provider 끝");
-            return getRebornsRes;
+            return getInProgressRebornsRes;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }

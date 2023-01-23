@@ -38,9 +38,9 @@ public class RebornController {
         }
     }
 
-    /* 리본 조회 (스토어) */
+    /* 진행 중인 리본 조회 (스토어) */
     @ResponseBody
-    @GetMapping("/{storeIdx}")
+    @GetMapping("/inprogress/store/{storeIdx}")
     @Transactional
     public BaseResponse<List<GetRebornRes>> getReborns(@PathVariable Integer storeIdx) {
         try {
@@ -51,13 +51,13 @@ public class RebornController {
         }
     }
 
-    /* 진행 중인 리본 조회(스토어) */
+    /* 진행 중인 리본 조회 (유저) */
     @ResponseBody
-    @GetMapping("/inprogress/{storeIdx}")
+    @GetMapping("/inprogress/user/{userIdx}")
     @Transactional
-    public BaseResponse<List<GetRebornRes>> getInProgressReborns(@PathVariable Integer storeIdx) {
+    public BaseResponse<List<GetInProgressRes>> getInProgressReborns(@PathVariable Integer userIdx) {
         try {
-            List<GetRebornRes> getInProgressRebornsRes = rebornProvider.getInProgressReborns(storeIdx);
+            List<GetInProgressRes> getInProgressRebornsRes = rebornProvider.getInProgressReborns(userIdx);
             return new BaseResponse<>(getInProgressRebornsRes);
         } catch (BaseException baseException) {
             return new BaseResponse<>(baseException.getStatus());
