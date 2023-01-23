@@ -63,5 +63,15 @@ public class UserProvider {
         }
     }
 
+//    // 해당 storeIdx를 갖는 스토어 정보 조회
+//    public GetStoreInformRes getStoreInform(int sotreIdx) throws BaseException{
+//        try {
+//            GetStoreInformRes getStoreInformRes = userDao.getStoreInform(sotreIdx);
+//            return getStoreInformRes;
+//        } catch (Exception exception) {
+//            throw new BaseException(DATABASE_ERROR);
+//        }
+//    }
+
 
 }
