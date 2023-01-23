@@ -2,12 +2,18 @@ package spring.reborn.domain.user;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
+import org.springframework.web.multipart.MultipartFile;
 import spring.reborn.config.*;
 import spring.reborn.domain.user.model.*;
 import spring.reborn.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import spring.reborn.domain.awsS3.AwsS3Service;
+
+import java.util.List;
+
 import static spring.reborn.config.BaseResponseStatus.*;
 import static spring.reborn.utils.ValidationRegex.*;
 
@@ -22,11 +28,14 @@ public class UserController {
     private final UserService userService;
     @Autowired
     private final JwtService jwtService; // JWT부분은 7주차에 다루므로 모르셔도 됩니다!
+    @Autowired
+    private final AwsS3Service awsS3Service;
 
-    public UserController(UserProvider userProvider, UserService userService, JwtService jwtService) {
+    public UserController(UserProvider userProvider, UserService userService, JwtService jwtService, AwsS3Service awsS3Service) {
         this.userProvider = userProvider;
         this.userService = userService;
         this.jwtService = jwtService; // JWT부분은 7주차에 다루므로 모르셔도 됩니다!
+        this.awsS3Service = awsS3Service;
     }
 
     /**
@@ -35,9 +44,9 @@ public class UserController {
      */
     // Body
     @ResponseBody
-    @PostMapping("/sign-up")    // POST 방식의 요청을 매핑하기 위한 어노테이션
+    @PostMapping(value = "/sign-up", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})    // POST 방식의 요청을 매핑하기 위한 어노테이션
     @Transactional
-    public BaseResponse<PostUserRes> createUser(@RequestBody PostUserReq postUserReq) {
+    public BaseResponse<PostUserRes> createUser(@RequestPart PostUserReq postUserReq, @RequestParam(name = "images") List<MultipartFile> multipartFile) {
         //  @RequestBody란, 클라이언트가 전송하는 HTTP Request Body(우리는 JSON으로 통신하니, 이 경우 body는 JSON)를 자바 객체로 매핑시켜주는 어노테이션
         // email에 값이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
         if (postUserReq.getUserEmail().length() == 0) {
@@ -79,6 +88,11 @@ public class UserController {
         if (postUserReq.getUserLikes() == null) {
             return new BaseResponse<>(POST_USERS_EMPTY_LIKES);
         }
+        //사진 넣기
+        List<String> fileUrl = awsS3Service.uploadImage(multipartFile);
+
+        // 이미지 파일 객체에 추가
+        postUserReq.setUserImg(fileUrl.get(0));
         try {
             PostUserRes postUserRes = userService.createUser(postUserReq);
             return new BaseResponse<>(postUserRes);
@@ -219,21 +233,21 @@ public class UserController {
      * [PATCH]
      */
     @ResponseBody
-    @PatchMapping("/storeDelete/{storeIdx}")
+    @PatchMapping("/storeDelete/{userIdx}")
     @Transactional
-    public BaseResponse<String> modifyStoreStatus(@PathVariable("storeIdx") int storeIdx, @RequestBody UserStore userStore) {
+    public BaseResponse<String> modifyStoreStatus(@PathVariable("userIdx") int userIdx, @RequestBody UserStore userStore) {
         try {
 
 //  *********** 해당 부분은 7주차 - JWT 수업 후 주석해체 해주세요!  ****************
 //            jwt에서 idx 추출.
-            int storeIdxByJwt = jwtService.getUserIdx();
+            int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            if(userStore.getStoreIdx() != storeIdxByJwt){
+            if(userStore.getUserIdx() != userIdxByJwt){
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
             //같다면 유저상태 변경
 //  **************************************************************************
-            PatchStoreStatusReq patchStoreStatusReq = new PatchStoreStatusReq(storeIdx, userStore.getUserIdx(), userStore.getStatus());
+            PatchStoreStatusReq patchStoreStatusReq = new PatchStoreStatusReq(userIdx, userStore.getStatus());
             userService.modifyStoreStatus(patchStoreStatusReq);
 
             String result = "회원탈퇴가 완료되었습니다.";
@@ -242,5 +256,25 @@ public class UserController {
             return new BaseResponse<>((exception.getStatus()));
         }
 
+    }
+    /**
+     * 이웃 로그인 API
+     * [POST] /users/logIn
+     */
+    @ResponseBody
+    @PostMapping("/log-in")
+    @Transactional
+    public BaseResponse<PostLoginRes> logIn(@RequestBody PostLoginReq postLoginReq) {
+        if (postLoginReq.getStatus() == "DELETE" || postLoginReq.getStatus() == "BLACK") {
+            return new BaseResponse<>(INVALID_USER);
+        }
+        try {
+            // TODO: 로그인 값들에 대한 형식적인 validatin 처리해주셔야합니다!
+            // TODO: 유저의 status ex) 비활성화된 유저, 탈퇴한 유저 등을 관리해주고 있다면 해당 부분에 대한 validation 처리도 해주셔야합니다.
+            PostLoginRes postLoginRes = userProvider.logIn(postLoginReq);
+            return new BaseResponse<>(postLoginRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
     }
 }
