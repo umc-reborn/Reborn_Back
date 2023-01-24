@@ -262,14 +262,14 @@ public class UserController {
         }
 
     }
-
+/////////////////////////////////////
     /**
      * 회원정보 수정 API
      * [PATCH]
      */
     @ResponseBody
-    @PatchMapping("/userModify/{userIdx}")
-    public BaseResponse<String> modifyUserInform(@PathVariable("userIdx") int userIdx, @RequestBody User user) {
+    @PatchMapping(value="/userModify/{userIdx}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public BaseResponse<String> modifyUserInform(@PathVariable("userIdx") int userIdx, @RequestPart User user,  @RequestParam(name = "userImg") List<MultipartFile> multipartFile) {
         try {
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
@@ -278,6 +278,11 @@ public class UserController {
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
             //같다면 유저정보 변경
+
+            //사진 넣기
+            List<String> fileUrl = awsS3Service.uploadImage(multipartFile);
+            // 이미지 파일 객체에 추가
+            user.setUserImg(fileUrl.get(0));
 
             PatchUserReq patchUserReq = new PatchUserReq(userIdx, user.getUserImg(), user.getUserNickname(), user.getUserAddress(), user.getUserBirthDate(), user.getUserLikes());
             userService.modifyUserInform(patchUserReq);
