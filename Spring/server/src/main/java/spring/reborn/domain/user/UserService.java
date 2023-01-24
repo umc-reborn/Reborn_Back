@@ -163,7 +163,7 @@ public class UserService {
     }
 
 
-
+    // 이메일 본인인증
     // 메일 내용 작성(Post)
     public MimeMessage createMessage(String to) throws MessagingException, UnsupportedEncodingException {
 //		System.out.println("보내는 대상 : " + to);
@@ -196,6 +196,7 @@ public class UserService {
         return message;
     }
 
+    // 이메일 본인인증
     // 랜덤 인증 코드 전송(Post)
     public String createKey() {
         StringBuffer key = new StringBuffer();
@@ -223,6 +224,7 @@ public class UserService {
         return key.toString();
     }
 
+    // 이메일 본인인증
     // 메일 발송(Post)
     // sendSimpleMessage 의 매개변수로 들어온 to 는 곧 이메일 주소가 되고,
     // MimeMessage 객체 안에 내가 전송할 메일의 내용을 담는다.
