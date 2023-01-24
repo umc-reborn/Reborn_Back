@@ -323,4 +323,20 @@ public class UserController {
             return new BaseResponse<>(exception.getStatus());
         }
     }
+
+    /**
+     * 이메일 인증 API
+     * [POST] /users/logIn/mailConfirm
+     */
+    @PostMapping("login/mailConfirm")
+    @ResponseBody
+    public BaseResponse<String> mailConfirm(@RequestParam("email") String email) throws Exception {
+        try {
+            String code = userService.sendSimpleMessage(email);
+            System.out.println("인증코드 : " + code);
+            return new BaseResponse<>(code);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
 }
