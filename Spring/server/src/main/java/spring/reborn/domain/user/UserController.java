@@ -106,8 +106,9 @@ public class UserController {
      */
     // Body
     @ResponseBody
-    @PostMapping("/sign-up-store")    // POST 방식의 요청을 매핑하기 위한 어노테이션
-    public BaseResponse<PostUserStoreRes> createUserStore(@RequestBody PostUserStoreReq postUserStoreReq) {
+    @PostMapping(value ="/sign-up-store", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})    // POST 방식의 요청을 매핑하기 위한 어노테이션
+    @Transactional
+    public BaseResponse<PostUserStoreRes> createUserStore(@RequestPart PostUserStoreReq postUserStoreReq, @RequestParam(name = "storeImage") List<MultipartFile> multipartFile) {
         // email에 값이 존재하는지 검사
         if (postUserStoreReq.getUserEmail().length() == 0) {
             return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
@@ -140,6 +141,10 @@ public class UserController {
         if (postUserStoreReq.getCategory() == null) {
             return new BaseResponse<>(POST_USERS_EMPTY_STORECATEGORY);
         }
+        //사진 넣기
+        List<String> fileUrl = awsS3Service.uploadImage(multipartFile);
+        // 이미지 파일 객체에 추가
+        postUserStoreReq.setStoreImage(fileUrl.get(0));
         try {
             PostUserStoreRes postUserStoreRes = userService.createUserStore(postUserStoreReq);
             return new BaseResponse<>(postUserStoreRes);
@@ -266,15 +271,15 @@ public class UserController {
     @PatchMapping("/userModify/{userIdx}")
     public BaseResponse<String> modifyUserInform(@PathVariable("userIdx") int userIdx, @RequestBody User user) {
         try {
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(INVALID_USER_JWT);
-//            }
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             //같다면 유저정보 변경
 
-            PatchUserReq patchUserReq = new PatchUserReq(userIdx, user.getUserImg(), user.getUserNickname(), user.getUserAddress(), user.getUserBirthDate(), user.getUserLikes().name());
+            PatchUserReq patchUserReq = new PatchUserReq(userIdx, user.getUserImg(), user.getUserNickname(), user.getUserAddress(), user.getUserBirthDate(), user.getUserLikes());
             userService.modifyUserInform(patchUserReq);
 
             String result = "회원정보가 수정되었습니다.";
@@ -314,6 +319,22 @@ public class UserController {
         try {
             PostLoginRes postLoginRes = userProvider.logIn(postLoginReq);
             return new BaseResponse<>(postLoginRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    /**
+     * 이메일 인증 API
+     * [POST] /users/logIn/mailConfirm
+     */
+    @PostMapping("login/mailConfirm")
+    @ResponseBody
+    public BaseResponse<String> mailConfirm(@RequestParam("email") String email) throws Exception {
+        try {
+            String code = userService.sendSimpleMessage(email);
+            System.out.println("인증코드 : " + code);
+            return new BaseResponse<>(code);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
