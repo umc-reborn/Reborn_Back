@@ -76,13 +76,34 @@ public class StoreController {
     todo
     가게 검색
      */
-    @GetMapping("/search/{keyword}")
-    public BaseResponse<List<GetStoreRes>> searchStore(@PathVariable String keyword) {
+    @GetMapping("/search")
+    public BaseResponse<List<GetStoreRes>> searchStore(@RequestParam(required = false) String keyword,
+                                                       @RequestParam(required = false) String sort) {
         try {
-            if (keyword.isEmpty())
+            if (keyword == null || keyword.isEmpty())
                 throw new BaseException(BaseResponseStatus.GET_STORE_EMPTY_KEYWORD);
 
-            List<GetStoreRes> getStoreRes = storeService.searchStoreListUsingTitle(keyword);
+            List<GetStoreRes> getStoreRes;
+
+            if(sort == null || sort.equals("name")){
+                getStoreRes = storeService.searchStoreListUsingTitleSortByName(keyword);
+
+            }
+            else if(sort.toUpperCase().equals("score".toUpperCase())){
+                getStoreRes = storeService.searchStoreListUsingTitleSortByScore(keyword);
+
+            }
+            else if(sort.toUpperCase().equals("jjim".toUpperCase())){
+                getStoreRes = storeService.searchStoreListUsingTitleSortByJjim(keyword);
+
+            }
+            // 잘못된 정렬 값도 이름순 처리
+            else{
+                getStoreRes = storeService.searchStoreListUsingTitleSortByName(keyword);
+
+            }
+
+
             return new BaseResponse<>(getStoreRes);
         } catch (BaseException e) {
             log.error(e.getStatus().getMessage());

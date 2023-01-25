@@ -16,8 +16,6 @@ public class Store {
 
     private String storeName;
 
-    private String storeRegister;
-
     private String storeImage;
 
     private String storeAddress;

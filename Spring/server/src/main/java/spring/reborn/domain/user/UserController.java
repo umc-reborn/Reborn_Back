@@ -56,6 +56,14 @@ public class UserController {
         if (!isRegexEmail(postUserReq.getUserEmail())) {
             return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
         }
+        // id에 값이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
+        if (postUserReq.getUserId().length() == 0) {
+            return new BaseResponse<>(POST_USERS_EMPTY_ID);
+        }
+        //id 정규표현: 입력받은 id가 영문 대소문자,숫자 4-16자리 형식인지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
+        if (!isRegexId(postUserReq.getUserId())) {
+            return new BaseResponse<>(POST_USERS_INVALID_ID);
+        }
         // password에 값이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
         if (postUserReq.getUserPwd().length() == 0) {
             return new BaseResponse<>(POST_USERS_EMPTY_PASSWORD);
@@ -106,8 +114,9 @@ public class UserController {
      */
     // Body
     @ResponseBody
-    @PostMapping("/sign-up-store")    // POST 방식의 요청을 매핑하기 위한 어노테이션
-    public BaseResponse<PostUserStoreRes> createUserStore(@RequestBody PostUserStoreReq postUserStoreReq) {
+    @PostMapping(value ="/sign-up-store", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})    // POST 방식의 요청을 매핑하기 위한 어노테이션
+    @Transactional
+    public BaseResponse<PostUserStoreRes> createUserStore(@RequestPart PostUserStoreReq postUserStoreReq, @RequestParam(name = "storeImage") List<MultipartFile> multipartFile) {
         // email에 값이 존재하는지 검사
         if (postUserStoreReq.getUserEmail().length() == 0) {
             return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
@@ -115,6 +124,14 @@ public class UserController {
         //이메일 정규표현: 입력받은 이메일이 email@domain.xxx와 같은 형식인지 검사
         if (!isRegexEmail(postUserStoreReq.getUserEmail())) {
             return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
+        }
+        // id에 값이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
+        if (postUserStoreReq.getUserId().length() == 0) {
+            return new BaseResponse<>(POST_USERS_EMPTY_ID);
+        }
+        //id 정규표현: 입력받은 id가 영문 대소문자,숫자 4-16자리 형식인지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
+        if (!isRegexId(postUserStoreReq.getUserId())) {
+            return new BaseResponse<>(POST_USERS_INVALID_ID);
         }
         // password에 값이 존재하는지 검사
         if (postUserStoreReq.getUserPwd().length() == 0) {
@@ -140,6 +157,10 @@ public class UserController {
         if (postUserStoreReq.getCategory() == null) {
             return new BaseResponse<>(POST_USERS_EMPTY_STORECATEGORY);
         }
+        //사진 넣기
+        List<String> fileUrl = awsS3Service.uploadImage(multipartFile);
+        // 이미지 파일 객체에 추가
+        postUserStoreReq.setStoreImage(fileUrl.get(0));
         try {
             PostUserStoreRes postUserStoreRes = userService.createUserStore(postUserStoreReq);
             return new BaseResponse<>(postUserStoreRes);
@@ -257,6 +278,39 @@ public class UserController {
         }
 
     }
+/////////////////////////////////////
+    /**
+     * 회원정보 수정 API
+     * [PATCH]
+     */
+    @ResponseBody
+    @PatchMapping(value="/userModify/{userIdx}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public BaseResponse<String> modifyUserInform(@PathVariable("userIdx") int userIdx, @RequestPart User user,  @RequestParam(name = "userImg") List<MultipartFile> multipartFile) {
+        try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            //같다면 유저정보 변경
+
+            //사진 넣기
+            List<String> fileUrl = awsS3Service.uploadImage(multipartFile);
+            // 이미지 파일 객체에 추가
+            user.setUserImg(fileUrl.get(0));
+
+            PatchUserReq patchUserReq = new PatchUserReq(userIdx, user.getUserImg(), user.getUserNickname(), user.getUserAddress(), user.getUserBirthDate(), user.getUserLikes());
+            userService.modifyUserInform(patchUserReq);
+
+            String result = "회원정보가 수정되었습니다.";
+            return new BaseResponse<>(result);
+        } catch (BaseException exception) {
+            System.out.println(exception);
+            return new BaseResponse<>((exception.getStatus()));
+        }
+  }
+  
     /**
      * 이웃 로그인 API
      * [POST] /users/logIn
@@ -265,15 +319,12 @@ public class UserController {
     @PostMapping("/log-in")
     @Transactional
     public BaseResponse<PostLoginRes> logIn(@RequestBody PostLoginReq postLoginReq) {
-        /*if (postLoginReq.getStatus() == "DELETE" || postLoginReq.getStatus() == "BLACK") {
-            return new BaseResponse<>(INVALID_USER);
-        }*/
-        if (postLoginReq.getUserEmail().length() == 0) {
-            return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
+        if (postLoginReq.getUserId().length() == 0) {
+            return new BaseResponse<>(POST_USERS_EMPTY_ID);
         }
-        //이메일 정규표현: 입력받은 이메일이 email@domain.xxx와 같은 형식인지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
-        if (!isRegexEmail(postLoginReq.getUserEmail())) {
-            return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
+        //id 정규표현: 입력받은 id가 영문 대소문자,숫자 4-16자리 형식인지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
+        if (!isRegexId(postLoginReq.getUserId())) {
+            return new BaseResponse<>(POST_USERS_INVALID_ID);
         }
         // password에 값이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
         if (postLoginReq.getUserPwd().length() == 0) {
@@ -286,6 +337,52 @@ public class UserController {
         try {
             PostLoginRes postLoginRes = userProvider.logIn(postLoginReq);
             return new BaseResponse<>(postLoginRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+    /**
+     * 스토어 로그인 API
+     * [POST]
+     */
+    @ResponseBody
+    @PostMapping("/log-in-store")
+    @Transactional
+    public BaseResponse<PostStoreLoginRes> storeLogIn(@RequestBody PostLoginReq postLoginReq) {
+        if (postLoginReq.getUserId().length() == 0) {
+            return new BaseResponse<>(POST_USERS_EMPTY_ID);
+        }
+        //id 정규표현: 입력받은 id가 영문 대소문자,숫자 4-16자리 형식인지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
+        if (!isRegexId(postLoginReq.getUserId())) {
+            return new BaseResponse<>(POST_USERS_INVALID_ID);
+        }
+        // password에 값이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
+        if (postLoginReq.getUserPwd().length() == 0) {
+            return new BaseResponse<>(POST_USERS_EMPTY_PASSWORD);
+        }
+        //비밀번호 정규표현: 입력받은 비밀번호가 숫자, 특문 각 1회 이상, 영문은 대소문자 모두 사용하여 8~16자리 입력과 같은 형식인지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
+        if (!isRegexPassword(postLoginReq.getUserPwd())) {
+            return new BaseResponse<>(POST_USERS_INVALID_PASSWORD);
+        }
+        try {
+            PostStoreLoginRes postStoreLoginRes = userProvider.storeLogIn(postLoginReq);
+            return new BaseResponse<>(postStoreLoginRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    /**
+     * 이메일 인증 API
+     * [POST] /users/logIn/mailConfirm
+     */
+    @PostMapping("login/mailConfirm")
+    @ResponseBody
+    public BaseResponse<String> mailConfirm(@RequestParam("email") String email) throws Exception {
+        try {
+            String code = userService.sendSimpleMessage(email);
+            System.out.println("인증코드 : " + code);
+            return new BaseResponse<>(code);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }

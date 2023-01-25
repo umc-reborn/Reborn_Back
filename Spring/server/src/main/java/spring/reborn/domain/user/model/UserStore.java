@@ -12,6 +12,7 @@ import lombok.Setter;
 public class UserStore {
     private int storeIdx;
     private int userIdx;
+    private String userId;
     private String userEmail;
     private String userPwd;
     private String userAdAgreement;

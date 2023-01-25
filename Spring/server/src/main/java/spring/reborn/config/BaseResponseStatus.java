@@ -37,6 +37,10 @@ public enum BaseResponseStatus {
     POST_USERS_EMPTY_ADDRESS(false, 2102, "주소를 입력해주세요."),
     POST_USERS_EMPTY_LIKES(false, 2103, "관심 카테고리를 입력해주세요."),
     POST_USERS_INVALID_BIRTHDATE(false, 2104, "생년월일을 숫자만 사용해서 8자리로 입력해주세요"),
+    INVALID_USERTYPE(false,2105,"유저타입이 다른 유저입니다."),
+    POST_USERS_EMPTY_ID(false, 2106, "ID를 입력해주세요."),
+    POST_USERS_INVALID_ID(false, 2107, "ID 형식을 확인해주세요."),
+    POST_USERS_EXISTS_ID(false,2108,"중복된 ID입니다."),
 
 
     //준몰리
