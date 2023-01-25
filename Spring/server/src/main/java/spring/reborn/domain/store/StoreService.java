@@ -63,6 +63,32 @@ public class StoreService {
         }
     }
 
+    public List<GetStoreRes> searchStoreListUsingTitleSortByName(String keyword) throws BaseException{
+        try {
+            return storeDao.searchStoreUsingTitleSortByName(keyword);
+        }
+        catch (BaseException e){
+            throw new BaseException(e.getStatus());
+        }
+    }
+
+    public List<GetStoreRes> searchStoreListUsingTitleSortByScore(String keyword) throws BaseException{
+        try {
+            return storeDao.searchStoreUsingTitleSortByScore(keyword);
+        }
+        catch (BaseException e){
+            throw new BaseException(e.getStatus());
+        }
+    }
+    public List<GetStoreRes> searchStoreListUsingTitleSortByJjim(String keyword) throws BaseException{
+        try {
+            return storeDao.searchStoreUsingTitleSortByJjim(keyword);
+        }
+        catch (BaseException e){
+            throw new BaseException(e.getStatus());
+        }
+    }
+
     @Transactional
     public void updateStoreInfo(Long storeIdx, PatchStoreReq patchStoreReq) throws BaseException {
         try {
@@ -89,5 +115,7 @@ public class StoreService {
             throw new BaseException(e.getStatus());
         }
     }
+
+
 }
 
