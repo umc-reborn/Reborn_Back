@@ -91,4 +91,22 @@ public class RebornDao {
 
         return this.jdbcTemplate.update(patchRebornQuery, patchRebornParams);
     }
+
+    public List<GetHistoryRes> getHistory(Integer userIdx) {
+        System.out.println("dao 시작");
+        String getHistroiesQuery = "SELECT T.rebornTaskIdx, S.storeName, S.storeScore, S.storeAddress, T.createdAt FROM Reborn AS R LEFT OUTER JOIN RebornTask AS T ON T.rebornIdx = R.rebornIdx LEFT OUTER JOIN Store AS S ON R.storeIdx = S.storeIdx WHERE (T.userIdx = ? AND T.status = ?)";
+        List<GetHistoryRes> result = this.jdbcTemplate.query(
+                getHistroiesQuery,
+                (rs, rowNum) -> new GetHistoryRes(
+                        rs.getInt("rebornTaskIdx"),
+                        rs.getString("storeName"),
+                        rs.getFloat("storeScore"),
+                        rs.getString("storeAddress"),
+                        rs.getString("createdAt"))
+                ,
+                userIdx,
+                "COMPLETE"
+        );
+        return result;
+    }
 }

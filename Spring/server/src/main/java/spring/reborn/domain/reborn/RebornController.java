@@ -81,4 +81,16 @@ public class RebornController {
             return new BaseResponse<>(baseException.getStatus());
         }
     }
+
+    @ResponseBody
+    @GetMapping("/history/{userIdx}")
+    @Transactional
+    public BaseResponse<List<GetHistoryRes>> getHistory(@PathVariable Integer userIdx) {
+        try {
+            List<GetHistoryRes> getHistoriesRes = rebornProvider.getHistory(userIdx);
+            return new BaseResponse<>(getHistoriesRes);
+        } catch (BaseException baseException) {
+            return new BaseResponse<>(baseException.getStatus());
+        }
+    }
 }
