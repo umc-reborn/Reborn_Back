@@ -22,14 +22,12 @@ public class StoreController {
     private final StoreService storeService;
 
     /*
-    todo
-        가게 리스트 조회(생성순)
-         */
+    가게 리스트 조회(업데이트 순)
+     */
     @GetMapping("/list")
     public BaseResponse<List<GetStoreRes>> getStoreList() {
         try {
             List<GetStoreRes> getStoreResList = storeService.getStoreList();
-            log.info(getStoreResList.toString());
             return new BaseResponse<>(getStoreResList);
         } catch (BaseException e) {
             log.error(e.getStatus().getMessage());
@@ -38,8 +36,19 @@ public class StoreController {
 
     }
 
+    @GetMapping("/new")
+    public BaseResponse<List<GetNewStoreRes>> getNewStoreList() {
+        try {
+            List<GetNewStoreRes> newStoreList = storeService.getNewStoreList();
+            return new BaseResponse<>(newStoreList);
+        } catch (BaseException e) {
+            log.error(e.getStatus().getMessage());
+            return new BaseResponse<>((e.getStatus()));
+        }
+
+    }
+
     /*
-    todo
     가게 위치 표시
      */
     @GetMapping("/{storeIdx}/location")
@@ -56,7 +65,6 @@ public class StoreController {
     }
 
     /*
-    todo
     가게 정보 조회
      */
     @GetMapping("/{storeIdx}")
@@ -73,7 +81,6 @@ public class StoreController {
 
 
     /*
-    todo
     가게 검색
      */
     @GetMapping("/search")
@@ -113,7 +120,6 @@ public class StoreController {
     }
 
     /*
-    todo
     가게 정보 수정
      */
     @PatchMapping(value = "/{storeIdx}",
