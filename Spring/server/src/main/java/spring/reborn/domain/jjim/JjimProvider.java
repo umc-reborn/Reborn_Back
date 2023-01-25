@@ -3,7 +3,10 @@ package spring.reborn.domain.jjim;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import spring.reborn.config.BaseException;
+import spring.reborn.domain.jjim.model.JjimStoreRes;
 import spring.reborn.domain.review.ReviewDao;
+
+import java.util.List;
 
 @Service
 public class JjimProvider {
@@ -17,6 +20,10 @@ public class JjimProvider {
 
     public Integer countJjim(Integer userIdx) throws BaseException {
         return jjimDao.countJjim(userIdx);
+    }
+
+    public List<JjimStoreRes> getJjimStoreList(Integer userIdx) throws BaseException {
+        return jjimDao.getJjimStoreList(userIdx);
     }
 
 }

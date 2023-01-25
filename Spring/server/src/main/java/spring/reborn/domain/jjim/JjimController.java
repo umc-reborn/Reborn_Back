@@ -6,6 +6,9 @@ import spring.reborn.config.BaseException;
 import spring.reborn.config.BaseResponse;
 import spring.reborn.domain.jjim.model.JjimReq;
 import spring.reborn.domain.jjim.model.JjimRes;
+import spring.reborn.domain.jjim.model.JjimStoreRes;
+
+import java.util.List;
 
 
 @RestController
@@ -46,5 +49,11 @@ public class JjimController {
     @GetMapping("/jjim/cnt/{userIdx}")
     public BaseResponse<Integer> countJjim(@PathVariable Integer userIdx) throws BaseException {
         return new BaseResponse<>(jjimProvider.countJjim(userIdx));
+    }
+
+    @ResponseBody
+    @GetMapping("/jjim/{userIdx}")
+    public BaseResponse<List<JjimStoreRes>> getJjimStoreList(@PathVariable Integer userIdx) throws BaseException {
+        return new BaseResponse<>(jjimProvider.getJjimStoreList(userIdx));
     }
 }
