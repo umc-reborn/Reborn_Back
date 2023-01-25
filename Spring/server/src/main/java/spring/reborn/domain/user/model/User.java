@@ -16,6 +16,7 @@ import javax.persistence.*;
  */
 public class User {
     private int userIdx;
+    private String userId;
     private String userEmail;
     private String userPwd;
     private String userNickname;

@@ -50,8 +50,8 @@ public class UserDao {
     // 회원가입
     @Transactional
     public int createUser(PostUserReq postUserReq) {
-        String createUserQuery = "insert into User (userEmail, userPwd, userNickname, userImg, userAdAgreement, userBirthDate, userAddress, userLikes) VALUES (?,?,?,?,?,?,?,?)"; // 실행될 동적 쿼리문
-        Object[] createUserParams = new Object[]{postUserReq.getUserEmail(), postUserReq.getUserPwd(), postUserReq.getUserNickname(), postUserReq.getUserImg(), postUserReq.getUserAdAgreement(), postUserReq.getUserBirthDate(), postUserReq.getUserAddress(), postUserReq.getUserLikes().name()}; // 동적 쿼리의 ?부분에 주입될 값
+        String createUserQuery = "insert into User (userId, userEmail, userPwd, userNickname, userImg, userAdAgreement, userBirthDate, userAddress, userLikes) VALUES (?,?,?,?,?,?,?,?,?)"; // 실행될 동적 쿼리문
+        Object[] createUserParams = new Object[]{postUserReq.getUserId(), postUserReq.getUserEmail(), postUserReq.getUserPwd(), postUserReq.getUserNickname(), postUserReq.getUserImg(), postUserReq.getUserAdAgreement(), postUserReq.getUserBirthDate(), postUserReq.getUserAddress(), postUserReq.getUserLikes().name()}; // 동적 쿼리의 ?부분에 주입될 값
         this.jdbcTemplate.update(createUserQuery, createUserParams);
 
         String lastInserIdQuery = "select last_insert_id()"; // 가장 마지막에 삽입된(생성된) id값은 가져온다.
@@ -104,8 +104,8 @@ public class UserDao {
 
         try {
             // DB의 User 테이블에 스토어 데이터 삽입.
-            String createUserStoreQuery = "INSERT INTO User (userEmail, userPwd, userAdAgreement, userType) VALUES (?,?,?,'STORE');";
-            Object[] createUserParams = new Object[]{postUserStoreReq.getUserEmail(), postUserStoreReq.getUserPwd(), postUserStoreReq.getUserAdAgreement()};
+            String createUserStoreQuery = "INSERT INTO User (userId, userEmail, userPwd, userAdAgreement, userType) VALUES (?,?,?,?,'STORE');";
+            Object[] createUserParams = new Object[]{postUserStoreReq.getUserId(), postUserStoreReq.getUserEmail(), postUserStoreReq.getUserPwd(), postUserStoreReq.getUserAdAgreement()};
             this.jdbcTemplate.update(createUserStoreQuery, createUserParams);
         } catch (Exception exception) {
             System.out.println(exception);
@@ -154,6 +154,15 @@ public class UserDao {
         return this.jdbcTemplate.queryForObject(checkEmailQuery,
                 int.class,
                 checkEmailParams); // checkEmailQuery, checkEmailParams를 통해 가져온 값(intgud)을 반환한다. -> 쿼리문의 결과(존재하지 않음(False,0),존재함(True, 1))를 int형(0,1)으로 반환됩니다.
+    }
+
+    // ID 확인
+    public int checkUserId(String userId) {
+        String checkIdQuery = "select exists(select userId from User where userId = ?)"; // User Table에 해당 email 값을 갖는 유저 정보가 존재하는가?
+        String checkIdParams = userId; // 해당(확인할) 이메일 값
+        return this.jdbcTemplate.queryForObject(checkIdQuery,
+                int.class,
+                checkIdParams); // checkIDQuery, checkIDParams를 통해 가져온 값(intgud)을 반환한다. -> 쿼리문의 결과(존재하지 않음(False,0),존재함(True, 1))를 int형(0,1)으로 반환됩니다.
     }
 
     // 해당 userIdx를 갖는 유저의 포인트조회
@@ -245,12 +254,13 @@ public class UserDao {
     
     // 로그인: 해당 email에 해당되는 user의 암호화된 비밀번호 값을 가져온다.
     public User getPwd(PostLoginReq postLoginReq) {
-        String getPwdQuery = "select * from User where userEmail = ?"; // 해당 email을 만족하는 User의 정보들을 조회한다.
-        String getPwdParams = postLoginReq.getUserEmail(); // 주입될 email값을 클라이언트의 요청에서 주어진 정보를 통해 가져온다.
+        String getPwdQuery = "select * from User where userId = ?"; // 해당 id를 만족하는 User의 정보들을 조회한다.
+        String getPwdParams = postLoginReq.getUserId(); // 주입될 id값을 클라이언트의 요청에서 주어진 정보를 통해 가져온다.
 
         return this.jdbcTemplate.queryForObject(getPwdQuery,
                 (rs, rowNum) -> new User(
                         rs.getInt("userIdx"),
+                        rs.getString("userId"),
                         rs.getString("userEmail"),
                         rs.getString("userPwd"),
                         rs.getString("userNickname"),
