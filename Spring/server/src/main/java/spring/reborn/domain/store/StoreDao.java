@@ -147,6 +147,108 @@ public class StoreDao {
         }
     }
 
+
+    public List<GetStoreRes> searchStoreUsingTitleSortByName(String keyword) throws BaseException{
+        try {
+
+            String getStoreInfoQuery = "SELECT storeIdx, storeName ,storeImage, storeAddress, storeDescription, category, storeScore " +
+                    "FROM Store " +
+                    "WHERE UPPER(storeName) LIKE UPPER(?) and status = 'ACTIVE' " +
+                    "ORDER BY storeName ASC ";
+
+            String paramString = "%" + keyword + "%";
+            Object[] selectStoreParams = new Object[]{paramString};
+
+            List<GetStoreRes> res = this.jdbcTemplate.query(
+                    getStoreInfoQuery,
+                    selectStoreParams,
+                    (rs, rowNum) -> GetStoreRes.builder()
+                            .storeIdx(rs.getLong("storeIdx"))
+                            .storeName(rs.getString("storeName"))
+                            .category(StoreCategory.valueOf(rs.getString("category")))
+                            .storeAddress(rs.getString("storeAddress"))
+                            .storeImage(rs.getString("storeImage"))
+                            .storeDescription(rs.getString("storeDescription"))
+                            .storeScore(rs.getFloat("storeScore"))
+
+                            .build()
+
+            );
+            return res;
+        }
+        catch (Exception e){
+            log.error(e.getMessage());
+            throw new BaseException(BaseResponseStatus.SEARCH_STORE_ERROR);
+        }
+    }
+    public List<GetStoreRes> searchStoreUsingTitleSortByScore(String keyword) throws BaseException{
+        try {
+
+            String getStoreInfoQuery = "SELECT storeIdx, storeName ,storeImage, storeAddress, storeDescription, category, storeScore " +
+                    "FROM Store " +
+                    "WHERE UPPER(storeName) LIKE UPPER(?) and status = 'ACTIVE' " +
+                    "ORDER BY storeScore Desc ";
+
+            String paramString = "%" + keyword + "%";
+            Object[] selectStoreParams = new Object[]{paramString};
+
+            List<GetStoreRes> res = this.jdbcTemplate.query(
+                    getStoreInfoQuery,
+                    selectStoreParams,
+                    (rs, rowNum) -> GetStoreRes.builder()
+                            .storeIdx(rs.getLong("storeIdx"))
+                            .storeName(rs.getString("storeName"))
+                            .category(StoreCategory.valueOf(rs.getString("category")))
+                            .storeAddress(rs.getString("storeAddress"))
+                            .storeImage(rs.getString("storeImage"))
+                            .storeDescription(rs.getString("storeDescription"))
+                            .storeScore(rs.getFloat("storeScore"))
+
+                            .build()
+
+            );
+            return res;
+        }
+        catch (Exception e){
+            log.error(e.getMessage());
+            throw new BaseException(BaseResponseStatus.SEARCH_STORE_ERROR);
+        }
+    }
+    public List<GetStoreRes> searchStoreUsingTitleSortByJjim(String keyword) throws BaseException{
+        try {
+
+            String getStoreInfoQuery = "SELECT s.storeIdx, storeName ,storeImage, storeAddress, storeDescription, category, storeScore " +
+            "FROM Store s LEFT JOIN Jjim j ON s.storeIdx = j.storeIdx " +
+            "WHERE UPPER(storeName) LIKE UPPER(?) and s.status = 'ACTIVE' " +
+            "GROUP BY s.storeIdx " +
+            "ORDER BY COUNT(j.storeIdx) DESC ";
+
+            String paramString = "%" + keyword + "%";
+            Object[] selectStoreParams = new Object[]{paramString};
+
+            List<GetStoreRes> res = this.jdbcTemplate.query(
+                    getStoreInfoQuery,
+                    selectStoreParams,
+                    (rs, rowNum) -> GetStoreRes.builder()
+                            .storeIdx(rs.getLong("storeIdx"))
+                            .storeName(rs.getString("storeName"))
+                            .category(StoreCategory.valueOf(rs.getString("category")))
+                            .storeAddress(rs.getString("storeAddress"))
+                            .storeImage(rs.getString("storeImage"))
+                            .storeDescription(rs.getString("storeDescription"))
+                            .storeScore(rs.getFloat("storeScore"))
+
+                            .build()
+
+            );
+            return res;
+        }
+        catch (Exception e){
+            log.error(e.getMessage());
+            throw new BaseException(BaseResponseStatus.SEARCH_STORE_ERROR);
+        }
+    }
+
     @Transactional
     public void updateStoreInfo(Long storeIdx, PatchStoreReq patchStoreReq) throws BaseException {
         try {
@@ -198,4 +300,5 @@ public class StoreDao {
         }
 
     }
+
 }
