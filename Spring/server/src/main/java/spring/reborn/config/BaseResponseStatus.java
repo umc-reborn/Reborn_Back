@@ -56,6 +56,12 @@ public enum BaseResponseStatus {
     AWS_DELETE_FAIL_ERROR(false,2298, "AWS에서 해당 이미지를 제거에 실패하였습니다."),
     MODIFY_FAIL_STORE_UPDATE_TIME(false,2299,"해당 스토어 마지막 업데이트 시간을 수정할 수 없습니다."),
 
+
+    // 클로이
+    PATCH_REBORN_EMPTY_PRODUCTNAME(false, 2300, "상품 이름이 없습니다."),
+    PATCH_REBORN_EMPTY_PRODUCTGUIDE(false, 2301, "상품 가이드가 없습니다."),
+    PATCH_REBORN_EMPTY_PRODUCTCOMMENT(false, 2302, "상품 설명이 없습니다."),
+    MODIFY_FAIL_REBORN(false, 2303, "리본 수정에 실패했습니다."),
     //민몰리
     POST_USERS_EMPTY_PASSWORD(false, 2400, "비밀번호를 입력해주세요."),
     POST_USERS_INVALID_PASSWORD(false, 2401, "비밀번호 형식은 숫자, 특문 각 1회 이상, 영문은 2개 이상 사용하여 8자리 이상이어야 합니다."),

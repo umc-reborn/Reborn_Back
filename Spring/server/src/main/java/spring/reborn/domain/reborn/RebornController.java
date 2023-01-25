@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import spring.reborn.config.BaseException;
 import spring.reborn.config.BaseResponse;
 import spring.reborn.domain.reborn.model.*;
-
 import java.util.List;
+import static spring.reborn.config.BaseResponseStatus.*;
 
 @RestController
 @RequestMapping("/reborns")
@@ -38,9 +38,9 @@ public class RebornController {
         }
     }
 
-    /* 리본 조회 (스토어) */
+    /* 진행 중인 리본 조회 (스토어) */
     @ResponseBody
-    @GetMapping("/{storeIdx}")
+    @GetMapping("/inprogress/store/{storeIdx}")
     @Transactional
     public BaseResponse<List<GetRebornRes>> getReborns(@PathVariable Integer storeIdx) {
         try {
@@ -51,14 +51,32 @@ public class RebornController {
         }
     }
 
-    /* 진행 중인 리본 조회(스토어) */
+    /* 진행 중인 리본 조회 (유저) */
     @ResponseBody
-    @GetMapping("/inprogress/{storeIdx}")
+    @GetMapping("/inprogress/user/{userIdx}")
     @Transactional
-    public BaseResponse<List<GetRebornRes>> getInProgressReborns(@PathVariable Integer storeIdx) {
+    public BaseResponse<List<GetInProgressRes>> getInProgressReborns(@PathVariable Integer userIdx) {
         try {
-            List<GetRebornRes> getInProgressRebornsRes = rebornProvider.getInProgressReborns(storeIdx);
+            List<GetInProgressRes> getInProgressRebornsRes = rebornProvider.getInProgressReborns(userIdx);
             return new BaseResponse<>(getInProgressRebornsRes);
+        } catch (BaseException baseException) {
+            return new BaseResponse<>(baseException.getStatus());
+        }
+    }
+
+    @ResponseBody
+    @PatchMapping("/modify")
+    @Transactional
+    public BaseResponse<String> patchReborn(PatchRebornReq patchRebornReq) {
+        try {
+            if (patchRebornReq.getProductName() == null)
+                return new BaseResponse<>(PATCH_REBORN_EMPTY_PRODUCTNAME);
+            if (patchRebornReq.getProductGuide() == null)
+                return new BaseResponse<>(PATCH_REBORN_EMPTY_PRODUCTGUIDE);
+            if (patchRebornReq.getProductComment() == null)
+                return new BaseResponse<>(PATCH_REBORN_EMPTY_PRODUCTCOMMENT);
+            String result = rebornService.patchReborn(patchRebornReq);
+            return new BaseResponse<>(result);
         } catch (BaseException baseException) {
             return new BaseResponse<>(baseException.getStatus());
         }

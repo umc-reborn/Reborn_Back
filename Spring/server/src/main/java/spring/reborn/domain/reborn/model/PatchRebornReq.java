@@ -4,8 +4,7 @@ import lombok.*;
 
 @Getter
 @Setter
-@AllArgsConstructor
-public class GetRebornRes {
+public class PatchRebornReq {
     private int rebornIdx;
     private String productName;
     private String productGuide;
@@ -13,5 +12,4 @@ public class GetRebornRes {
     private String productImg;
     private String productLimitTime;
     private int productCnt;
-    private String status;
 }
