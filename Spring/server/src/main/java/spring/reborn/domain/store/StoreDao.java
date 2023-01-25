@@ -7,10 +7,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import spring.reborn.config.BaseException;
 import spring.reborn.config.BaseResponseStatus;
-import spring.reborn.domain.store.model.GetStoreLocationRes;
-import spring.reborn.domain.store.model.GetStoreRes;
-import spring.reborn.domain.store.model.PatchStoreReq;
-import spring.reborn.domain.store.model.StoreCategory;
+import spring.reborn.domain.store.model.*;
 
 import javax.sql.DataSource;
 import java.sql.Timestamp;
@@ -56,7 +53,36 @@ public class StoreDao {
         }
 
     }
+    public List<GetNewStoreRes> getNewStoreList() throws BaseException {
+        try {
 
+            String getStoreListQuery = "SELECT storeIdx, storeName,storeImage, category, storeScore " +
+                    "FROM Store " +
+                    "WHERE status = 'ACTIVE' " +
+                    "ORDER BY createdAt DESC " +
+                    "LIMIT 3";
+            List<GetNewStoreRes> res = this.jdbcTemplate.query(
+                    getStoreListQuery,
+                    (rs, rowNum) -> GetNewStoreRes.builder()
+                            .storeIdx(rs.getLong("storeIdx"))
+                            .storeName(rs.getString("storeName"))
+                            .category(StoreCategory.valueOf(rs.getString("category")))
+                            .storeImage(rs.getString("storeImage"))
+                            .storeScore(rs.getFloat("storeScore"))
+
+                            .build()
+
+            );
+            return res;
+
+        }
+        catch (Exception e){
+            log.error(e.getMessage());
+            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+
+        }
+
+    }
 
     public GetStoreLocationRes getStoreLocation(Long storeIdx) throws BaseException {
         try {

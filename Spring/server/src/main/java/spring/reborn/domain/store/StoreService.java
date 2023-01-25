@@ -9,10 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import spring.reborn.config.BaseException;
 import spring.reborn.config.BaseResponseStatus;
 import spring.reborn.domain.awsS3.AwsS3Service;
-import spring.reborn.domain.store.model.GetStoreLocationRes;
-import spring.reborn.domain.store.model.GetStoreRes;
-import spring.reborn.domain.store.model.PatchStoreReq;
-import spring.reborn.domain.store.model.Store;
+import spring.reborn.domain.store.model.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +26,16 @@ public class StoreService {
         try {
             return storeDao.getStoreList();
 
+        }
+        catch (BaseException e){
+            throw new BaseException(e.getStatus());
+        }
+    }
+
+
+    public List<GetNewStoreRes> getNewStoreList() throws BaseException{
+        try {
+            return storeDao.getNewStoreList();
         }
         catch (BaseException e){
             throw new BaseException(e.getStatus());
