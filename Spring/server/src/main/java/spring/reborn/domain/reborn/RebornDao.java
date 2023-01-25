@@ -109,4 +109,23 @@ public class RebornDao {
         );
         return result;
     }
+    
+    public GetHistroyDetailRes getHistoryDetail(Integer rebornTaskIdx) {
+        System.out.println("dao 시작");
+        String getHistoryQeury = "SELECT R.productName, R.productGuide, R.productComment, S.storeName, S.storeScore, S.storeAddress, T.productExchangeCode, T.createdAt, T.status FROM Reborn AS R LEFT OUTER JOIN RebornTask AS T ON T.rebornIdx = R.rebornIdx LEFT OUTER JOIN Store AS S ON R.storeIdx = S.storeIdx WHERE T.rebornTaskIdx = ?";
+        return this.jdbcTemplate.queryForObject(getHistoryQeury,
+                (rs, rowNum) -> new GetHistroyDetailRes(
+                        rs.getString("productName"),
+                        rs.getString("productGuide"),
+                        rs.getString("productComment"),
+                        rs.getString("storeName"),
+                        rs.getFloat("storeScore"),
+                        rs.getString("storeAddress"),
+                        rs.getInt("productExchangeCode"),
+                        rs.getString("createdAt"),
+                        rs.getString("status")
+                ),
+                rebornTaskIdx
+        );
+    }
 }
