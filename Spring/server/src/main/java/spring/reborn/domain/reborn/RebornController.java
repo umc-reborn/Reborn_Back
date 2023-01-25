@@ -64,6 +64,7 @@ public class RebornController {
         }
     }
 
+    /* 상품 수정 */
     @ResponseBody
     @PatchMapping("/modify")
     @Transactional
@@ -76,6 +77,48 @@ public class RebornController {
             if (patchRebornReq.getProductComment() == null)
                 return new BaseResponse<>(PATCH_REBORN_EMPTY_PRODUCTCOMMENT);
             String result = rebornService.patchReborn(patchRebornReq);
+            return new BaseResponse<>(result);
+        } catch (BaseException baseException) {
+            return new BaseResponse<>(baseException.getStatus());
+        }
+    }
+
+    /* 리본 히스토리 조회*/
+    @ResponseBody
+    @GetMapping("/history/{userIdx}")
+    @Transactional
+    public BaseResponse<List<GetHistoryRes>> getHistory(@PathVariable Integer userIdx) {
+        try {
+            List<GetHistoryRes> getHistoriesRes = rebornProvider.getHistory(userIdx);
+            return new BaseResponse<>(getHistoriesRes);
+        } catch (BaseException baseException) {
+            return new BaseResponse<>(baseException.getStatus());
+        }
+    }
+
+    /* 리본 히스토리 상세조회*/
+    @ResponseBody
+    @GetMapping("/history/detail/{rebornTaskIdx}")
+    @Transactional
+    public BaseResponse<GetHistroyDetailRes> getHistoryDetail(@PathVariable Integer rebornTaskIdx) {
+        try {
+            GetHistroyDetailRes getHistroyDetailRes = rebornProvider.getHistoryDetail(rebornTaskIdx);
+            return new BaseResponse<>(getHistroyDetailRes);
+        } catch (BaseException baseException) {
+            return new BaseResponse<>(baseException.getStatus());
+        }
+    }
+
+    /* 리본 히스토리 생성 */
+    @ResponseBody
+    @PatchMapping("/create/history/{rebornTaskIdx}")
+    @Transactional
+    public BaseResponse<String> postHistory(@PathVariable int rebornTaskIdx) {
+        try {
+            if (rebornService.postHistory(rebornTaskIdx) == 1) {
+                System.out.println("성공!");
+            };
+            String result = "히스토리 생성에 성공하였습니다.";
             return new BaseResponse<>(result);
         } catch (BaseException baseException) {
             return new BaseResponse<>(baseException.getStatus());

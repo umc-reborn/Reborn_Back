@@ -45,4 +45,25 @@ public class RebornProvider {
         }
     }
 
+    public List<GetHistoryRes> getHistory(Integer userIdx) throws BaseException {
+        try {
+            System.out.println("provider 시작");
+            List<GetHistoryRes> getHistories = rebornDao.getHistory(userIdx);
+            System.out.println("provider 끝");
+            return getHistories;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public GetHistroyDetailRes getHistoryDetail(Integer rebornTaskIdx) throws BaseException {
+        try {
+            System.out.println("provider 시작");
+            GetHistroyDetailRes getHistroyDetailRes = rebornDao.getHistoryDetail(rebornTaskIdx);
+            System.out.println("provider 끝");
+            return getHistroyDetailRes;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }

@@ -91,4 +91,75 @@ public class RebornDao {
 
         return this.jdbcTemplate.update(patchRebornQuery, patchRebornParams);
     }
+
+    public List<GetHistoryRes> getHistory(Integer userIdx) {
+        System.out.println("dao 시작");
+        String getHistroiesQuery = "SELECT T.rebornTaskIdx, S.storeName, S.storeScore, S.storeAddress, T.createdAt FROM Reborn AS R LEFT OUTER JOIN RebornTask AS T ON T.rebornIdx = R.rebornIdx LEFT OUTER JOIN Store AS S ON R.storeIdx = S.storeIdx WHERE (T.userIdx = ? AND T.status = ?)";
+        List<GetHistoryRes> result = this.jdbcTemplate.query(
+                getHistroiesQuery,
+                (rs, rowNum) -> new GetHistoryRes(
+                        rs.getInt("rebornTaskIdx"),
+                        rs.getString("storeName"),
+                        rs.getFloat("storeScore"),
+                        rs.getString("storeAddress"),
+                        rs.getString("createdAt"))
+                ,
+                userIdx,
+                "COMPLETE"
+        );
+        return result;
+    }
+    
+    public GetHistroyDetailRes getHistoryDetail(Integer rebornTaskIdx) {
+        System.out.println("dao 시작");
+        String getHistoryQeury = "SELECT R.productName, R.productGuide, R.productComment, S.storeName, S.storeScore, S.storeAddress, T.productExchangeCode, T.createdAt, T.status FROM Reborn AS R LEFT OUTER JOIN RebornTask AS T ON T.rebornIdx = R.rebornIdx LEFT OUTER JOIN Store AS S ON R.storeIdx = S.storeIdx WHERE T.rebornTaskIdx = ?";
+        return this.jdbcTemplate.queryForObject(getHistoryQeury,
+                (rs, rowNum) -> new GetHistroyDetailRes(
+                        rs.getString("productName"),
+                        rs.getString("productGuide"),
+                        rs.getString("productComment"),
+                        rs.getString("storeName"),
+                        rs.getFloat("storeScore"),
+                        rs.getString("storeAddress"),
+                        rs.getInt("productExchangeCode"),
+                        rs.getString("createdAt"),
+                        rs.getString("status")
+                ),
+                rebornTaskIdx
+        );
+    }
+
+    @Transactional
+    public int postHistory(int rebornTaskIdx) throws BaseException {
+        try {
+            System.out.println("dao 시작");
+            GetRebornWhenPostHistory getRebornWhenPostHistory = this.jdbcTemplate.queryForObject("SELECT productCnt, status FROM Reborn WHERE" +
+                    "(rebornIdx = (SELECT rebornIdx FROM RebornTask WHERE rebornTaskIdx = ?))",
+                    (rs, rowNum) -> new GetRebornWhenPostHistory(
+                            rs.getInt("productCnt"),
+                            rs.getString("status")),
+                    rebornTaskIdx
+                    );
+            int productCnt = getRebornWhenPostHistory.getProductCnt();
+            if (productCnt > 0 && getRebornWhenPostHistory.getStatus().equals("ACTIVE")) {
+                // rebornTask 컬럼 추가
+                this.jdbcTemplate.update("update RebornTask set status = 'COMPLETE' WHERE rebornTaskIdx = ?", rebornTaskIdx);
+                System.out.println("createDinnerQuery 끝");
+
+                productCnt -= 1;
+                this.jdbcTemplate.update("update Reborn set productCnt = ? WHERE rebornIdx = (SELECT rebornIdx FROM RebornTask WHERE rebornTaskIdx = ?)",
+                        productCnt, rebornTaskIdx);
+                System.out.println("update 끝");
+
+                // rebornCnt == 0이면, reborn.status : ACTIVE -> INACTIVE
+                if (productCnt <= 0) {
+                    this.jdbcTemplate.update("UPDATE Reborn set status = 'INACTIVE' WHERE rebornIdx = (SELECT rebornIdx FROM RebornTask WHERE rebornTaskIdx = ?)",
+                            rebornTaskIdx);
+                }
+            }
+            return 1;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }

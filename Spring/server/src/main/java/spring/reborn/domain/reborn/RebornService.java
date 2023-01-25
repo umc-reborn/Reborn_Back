@@ -7,11 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spring.reborn.config.BaseException;
 import spring.reborn.config.BaseResponse;
-import spring.reborn.domain.reborn.model.PatchRebornReq;
-import spring.reborn.domain.reborn.model.PostRebornReq;
-import spring.reborn.domain.reborn.model.PostRebornRes;
-
-import javax.sound.midi.Patch;
+import spring.reborn.domain.reborn.model.*;
 
 import static spring.reborn.config.BaseResponseStatus.DATABASE_ERROR;
 import static spring.reborn.config.BaseResponseStatus.MODIFY_FAIL_REBORN;
@@ -50,6 +46,19 @@ public class RebornService {
             String result = "상품 수정 성공!";
             return result;
         } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    @Transactional
+    public int postHistory(int rebornTaskIdx) throws BaseException {
+        try {
+            System.out.println("service 시작");
+            if (rebornDao.postHistory(rebornTaskIdx) == 1) {
+                System.out.println("dao 끝");
+            };
+            return 1;
+        } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
