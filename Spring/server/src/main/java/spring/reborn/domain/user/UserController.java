@@ -56,6 +56,14 @@ public class UserController {
         if (!isRegexEmail(postUserReq.getUserEmail())) {
             return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
         }
+        // id에 값이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
+        if (postUserReq.getUserId().length() == 0) {
+            return new BaseResponse<>(POST_USERS_EMPTY_ID);
+        }
+        //id 정규표현: 입력받은 id가 영문 대소문자,숫자 4-16자리 형식인지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
+        if (!isRegexId(postUserReq.getUserId())) {
+            return new BaseResponse<>(POST_USERS_INVALID_ID);
+        }
         // password에 값이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
         if (postUserReq.getUserPwd().length() == 0) {
             return new BaseResponse<>(POST_USERS_EMPTY_PASSWORD);
@@ -116,6 +124,14 @@ public class UserController {
         //이메일 정규표현: 입력받은 이메일이 email@domain.xxx와 같은 형식인지 검사
         if (!isRegexEmail(postUserStoreReq.getUserEmail())) {
             return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
+        }
+        // id에 값이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
+        if (postUserStoreReq.getUserId().length() == 0) {
+            return new BaseResponse<>(POST_USERS_EMPTY_ID);
+        }
+        //id 정규표현: 입력받은 id가 영문 대소문자,숫자 4-16자리 형식인지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
+        if (!isRegexId(postUserStoreReq.getUserId())) {
+            return new BaseResponse<>(POST_USERS_INVALID_ID);
         }
         // password에 값이 존재하는지 검사
         if (postUserStoreReq.getUserPwd().length() == 0) {
@@ -303,12 +319,12 @@ public class UserController {
     @PostMapping("/log-in")
     @Transactional
     public BaseResponse<PostLoginRes> logIn(@RequestBody PostLoginReq postLoginReq) {
-        if (postLoginReq.getUserEmail().length() == 0) {
-            return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
+        if (postLoginReq.getUserId().length() == 0) {
+            return new BaseResponse<>(POST_USERS_EMPTY_ID);
         }
-        //이메일 정규표현: 입력받은 이메일이 email@domain.xxx와 같은 형식인지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
-        if (!isRegexEmail(postLoginReq.getUserEmail())) {
-            return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
+        //id 정규표현: 입력받은 id가 영문 대소문자,숫자 4-16자리 형식인지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
+        if (!isRegexId(postLoginReq.getUserId())) {
+            return new BaseResponse<>(POST_USERS_INVALID_ID);
         }
         // password에 값이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
         if (postLoginReq.getUserPwd().length() == 0) {
@@ -333,12 +349,12 @@ public class UserController {
     @PostMapping("/log-in-store")
     @Transactional
     public BaseResponse<PostStoreLoginRes> storeLogIn(@RequestBody PostLoginReq postLoginReq) {
-        if (postLoginReq.getUserEmail().length() == 0) {
-            return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
+        if (postLoginReq.getUserId().length() == 0) {
+            return new BaseResponse<>(POST_USERS_EMPTY_ID);
         }
-        //이메일 정규표현: 입력받은 이메일이 email@domain.xxx와 같은 형식인지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
-        if (!isRegexEmail(postLoginReq.getUserEmail())) {
-            return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
+        //id 정규표현: 입력받은 id가 영문 대소문자,숫자 4-16자리 형식인지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
+        if (!isRegexId(postLoginReq.getUserId())) {
+            return new BaseResponse<>(POST_USERS_INVALID_ID);
         }
         // password에 값이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
         if (postLoginReq.getUserPwd().length() == 0) {

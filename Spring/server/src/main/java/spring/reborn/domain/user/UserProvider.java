@@ -45,6 +45,14 @@ public class UserProvider {
         }
     }
 
+    public int checkUserId(String userId) throws BaseException {
+        try {
+            return userDao.checkUserId(userId);
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
     // 해당 userIdx를 갖는 User의 포인트 조회
     public GetUserPointRes getUserPoint(int userIdx) throws BaseException {
         try {

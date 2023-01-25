@@ -57,6 +57,10 @@ public class UserService {
         if (userProvider.checkUserEmail(postUserReq.getUserEmail()) == 1) {
             throw new BaseException(POST_USERS_EXISTS_EMAIL);
         }
+        // 중복 확인: 해당 ID를 가진 유저가 있는지 확인합니다. 중복될 경우, 에러 메시지를 보냅니다.
+        if (userProvider.checkUserId(postUserReq.getUserId()) == 1) {
+            throw new BaseException(POST_USERS_EXISTS_ID);
+        }
         String pwd;
         try {
             // 암호화: postUserReq에서 제공받은 비밀번호를 보안을 위해 암호화시켜 DB에 저장합니다.
@@ -85,6 +89,10 @@ public class UserService {
         // 중복 확인: 해당 이메일을 가진 유저가 있는지 확인합니다. 중복될 경우, 에러 메시지를 보냅니다.
         if (userProvider.checkUserEmail(postUserStoreReq.getUserEmail()) == 1) {
             throw new BaseException(POST_USERS_EXISTS_EMAIL);
+        }
+        // 중복 확인: 해당 ID를 가진 유저가 있는지 확인합니다. 중복될 경우, 에러 메시지를 보냅니다.
+        if (userProvider.checkUserId(postUserStoreReq.getUserId()) == 1) {
+            throw new BaseException(POST_USERS_EXISTS_ID);
         }
         String pwd;
         try {
