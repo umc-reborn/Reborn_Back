@@ -2,9 +2,6 @@ package spring.reborn.domain.user.model;
 
 import lombok.*;
 
-import javax.persistence.EnumType;
-import javax.persistence.*;
-
 @NoArgsConstructor
 @Getter // 해당 클래스에 대한 접근자 생성
 @Setter // 해당 클래스에 대한 설정자 생성
@@ -14,16 +11,15 @@ import javax.persistence.*;
  * GetUserRes는 클라이언트한테 response줄 때 DTO고(DTO란 DB의 정보를 Service나 Controller등에 보낼때 사용하는 객체를 의미한다.)
  * User 클래스는 스프링에서 사용하는 Objec이다.(내부에서 사용하기 위한 객체라고 보면 된다.)
  */
-public class User {
+public class Store {
+    private int storeIdx;
     private int userIdx;
-    private String userEmail;
-    private String userPwd;
-    private String userNickname;
-    private int userPoint;
-    private String userImg;
-    private String userAdAgreement;
-    private String userBirthDate;
-    private String userAddress;//맞나?
-    private String userLikes;
+    private String storeName;
+    private String storeRegister;
+    private String storeImage;
+    private String storeAddress;
+    private String storeDescription;
+    private String category;
     private String status;
+    private int storeScore;
 }
