@@ -26,4 +26,8 @@ public class JjimProvider {
         return jjimDao.getJjimStoreList(userIdx);
     }
 
+    public List<JjimStoreRes> getSortedJjimStoreList(Integer userIdx, String sort) throws BaseException {
+        return jjimDao.getSortedJjimStoreList(userIdx, sort);
+    }
+
 }

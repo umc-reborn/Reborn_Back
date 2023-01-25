@@ -53,7 +53,16 @@ public class JjimController {
 
     @ResponseBody
     @GetMapping("/jjim/{userIdx}")
-    public BaseResponse<List<JjimStoreRes>> getJjimStoreList(@PathVariable Integer userIdx) throws BaseException {
-        return new BaseResponse<>(jjimProvider.getJjimStoreList(userIdx));
+    public BaseResponse<List<JjimStoreRes>> getSortedJjimStoreList(@PathVariable("userIdx") Integer userIdx,
+                                                                   @RequestParam(value = "sort",required = false) String sort) throws BaseException {
+        if (sort == null){
+            // 분류 선택 X
+            return new BaseResponse<>(jjimProvider.getJjimStoreList(userIdx));
+        }
+        else{
+            // 분류 선택 O
+            // jjimCnt(인기순), storeName(스토어이름), storeScore(스토어점수)
+            return new BaseResponse<>(jjimProvider.getSortedJjimStoreList(userIdx, sort));
+        }
     }
 }
