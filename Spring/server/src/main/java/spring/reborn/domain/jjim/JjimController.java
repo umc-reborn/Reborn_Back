@@ -43,7 +43,7 @@ public class JjimController {
     }
 
     @ResponseBody
-    @GetMapping("/jjim/{userIdx}")
+    @GetMapping("/jjim/cnt/{userIdx}")
     public BaseResponse<Integer> countJjim(@PathVariable Integer userIdx) throws BaseException {
         return new BaseResponse<>(jjimProvider.countJjim(userIdx));
     }
