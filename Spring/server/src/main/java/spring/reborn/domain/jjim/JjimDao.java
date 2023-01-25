@@ -82,4 +82,16 @@ public class JjimDao {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    @Transactional
+    public Integer countJjim(Integer userIdx) throws BaseException {
+        String countJjimQuery = "SELECT COUNT(Jjim.jjimIdx) FROM reborn.Jjim WHERE userIdx = ?;"; // 실행될 동적 쿼리문
+        Object[] countJjimParams = new Object[]{
+                userIdx,}; // 동적 쿼리의 ?부분에 주입될 값
+
+        Integer count = jdbcTemplate.queryForObject(
+                countJjimQuery,countJjimParams, Integer.class);
+
+        return count;
+    }
 }

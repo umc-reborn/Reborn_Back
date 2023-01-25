@@ -25,7 +25,6 @@ public class JjimController {
     public BaseResponse<JjimRes> createJjim(@RequestBody JjimReq jjimReq) {
         try {
             JjimRes jjimRes = jjimService.createJjim(jjimReq);
-
             return new BaseResponse<>(jjimRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
@@ -36,14 +35,16 @@ public class JjimController {
     @DeleteMapping("/jjim")
     public BaseResponse<JjimRes> deleteJjim(@RequestBody JjimReq jjimReq) {
         try {
-
-            System.out.println("controller 시작");
             JjimRes jjimRes = jjimService.deleteJjim(jjimReq);
-
-            System.out.println("controller 끝");
             return new BaseResponse<>(jjimRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
+    }
+
+    @ResponseBody
+    @GetMapping("/jjim/{userIdx}")
+    public BaseResponse<Integer> countJjim(@PathVariable Integer userIdx) throws BaseException {
+        return new BaseResponse<>(jjimProvider.countJjim(userIdx));
     }
 }
