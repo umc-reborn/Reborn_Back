@@ -11,9 +11,10 @@ import lombok.Setter;
  * Res.java : From Server To Client
  * 로그인의 결과(Respone)를 보여주는 데이터의 형태
  */
-public class PostLoginRes {
+public class PostStoreLoginRes {
     private int userIdx;
-    private String userNickname;
+    private int storeIdx;
+    private String storeName;
     //    해당 부분은 7주차 - JWT 수업 후 주석해제 및 대체해주세요!
     private String jwt;
 }

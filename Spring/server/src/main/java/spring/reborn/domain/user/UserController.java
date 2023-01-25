@@ -303,9 +303,6 @@ public class UserController {
     @PostMapping("/log-in")
     @Transactional
     public BaseResponse<PostLoginRes> logIn(@RequestBody PostLoginReq postLoginReq) {
-        /*if (postLoginReq.getStatus() == "DELETE" || postLoginReq.getStatus() == "BLACK") {
-            return new BaseResponse<>(INVALID_USER);
-        }*/
         if (postLoginReq.getUserEmail().length() == 0) {
             return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
         }
@@ -324,6 +321,36 @@ public class UserController {
         try {
             PostLoginRes postLoginRes = userProvider.logIn(postLoginReq);
             return new BaseResponse<>(postLoginRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+    /**
+     * 스토어 로그인 API
+     * [POST]
+     */
+    @ResponseBody
+    @PostMapping("/log-in-store")
+    @Transactional
+    public BaseResponse<PostStoreLoginRes> storeLogIn(@RequestBody PostLoginReq postLoginReq) {
+        if (postLoginReq.getUserEmail().length() == 0) {
+            return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
+        }
+        //이메일 정규표현: 입력받은 이메일이 email@domain.xxx와 같은 형식인지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
+        if (!isRegexEmail(postLoginReq.getUserEmail())) {
+            return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
+        }
+        // password에 값이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
+        if (postLoginReq.getUserPwd().length() == 0) {
+            return new BaseResponse<>(POST_USERS_EMPTY_PASSWORD);
+        }
+        //비밀번호 정규표현: 입력받은 비밀번호가 숫자, 특문 각 1회 이상, 영문은 대소문자 모두 사용하여 8~16자리 입력과 같은 형식인지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
+        if (!isRegexPassword(postLoginReq.getUserPwd())) {
+            return new BaseResponse<>(POST_USERS_INVALID_PASSWORD);
+        }
+        try {
+            PostStoreLoginRes postStoreLoginRes = userProvider.storeLogIn(postLoginReq);
+            return new BaseResponse<>(postStoreLoginRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
