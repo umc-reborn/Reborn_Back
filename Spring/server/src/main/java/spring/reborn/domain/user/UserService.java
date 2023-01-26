@@ -204,6 +204,39 @@ public class UserService {
         return message;
     }
 
+    // 이메일로 임시비번 전송
+    // 메일 내용 작성(Post)
+    public MimeMessage createPwdMessage(String to) throws MessagingException, UnsupportedEncodingException {
+//		System.out.println("보내는 대상 : " + to);
+//		System.out.println("인증 번호 : " + ePw);
+
+        MimeMessage message = emailsender.createMimeMessage();
+
+        message.addRecipients(MimeMessage.RecipientType.TO, to);// 보내는 대상
+        message.setSubject("Reborn 회원가입 이메일 인증");// 제목
+
+        String msgg = "";
+        msgg += "<div style='margin:100px;'>";
+        msgg += "<h1> 안녕하세요</h1>";
+        msgg += "<h1> 폐기 대신 무료나눔을 실천하는 Reborn 입니다</h1>";
+        msgg += "<br>";
+        msgg += "<p>아래 임시 비밀번호가 발급되었으니 이를 이용하여 로그인 후 비밀번호를 변경해 주세요.<p>";
+        msgg += "<br>";
+        msgg += "<p>감사합니다!<p>";
+        msgg += "<br>";
+        msgg += "<div align='center' style='border:1px solid black; font-family:verdana';>";
+        msgg += "<h3 style='color:blue;'>임시 비밀번호입니다.</h3>";
+        msgg += "<div style='font-size:130%'>";
+        msgg += "CODE : <strong>";
+        msgg += ePw + "</strong><div><br/> "; // 메일에 인증번호 넣기
+        msgg += "</div>";
+        message.setText(msgg, "utf-8", "html");// 내용, charset 타입, subtype
+        // 보내는 사람의 이메일 주소, 보내는 사람 이름
+        message.setFrom(new InternetAddress("reborn_umc@naver.com", "Reborn_Admin"));// 보내는 사람
+
+        return message;
+    }
+
     // 이메일 본인인증
     // 랜덤 인증 코드 전송(Post)
     public String createKey() {
@@ -232,6 +265,61 @@ public class UserService {
         return key.toString();
     }
 
+    // 임시 비번 발급
+    // 랜덤 인증 코드 전송(Post)
+    public String createPwd() {
+        StringBuffer key = new StringBuffer();
+        Random rnd = new Random();
+
+        for (int i = 0; i < 8; i++) { // 인증코드 8자리
+            int index = rnd.nextInt(3); // 0~2 까지 랜덤, rnd 값에 따라서 아래 switch 문이 실행됨
+
+            switch (index) {
+                case 0:
+                    key.append((char) ((int) (rnd.nextInt(26)) + 97));
+                    // a~z (ex. 1+97=98 => (char)98 = 'b')
+                    break;
+                case 1:
+                    key.append((char) ((int) (rnd.nextInt(26)) + 65));
+                    // A~Z
+                    break;
+                case 2:
+                    key.append((rnd.nextInt(10)));
+                    // 0~9
+                    break;
+            }
+        }
+        key.append((char) ((int) (rnd.nextInt(26)) + 97));
+        key.append((rnd.nextInt(10)));
+        int i = rnd.nextInt(7);
+
+        switch (i) {
+            case 0:
+                key.append("!");
+                break;
+            case 1:
+                key.append("@");
+                break;
+            case 2:
+                key.append("#");
+                break;
+            case 3:
+                key.append("$");
+                break;
+            case 4:
+                key.append("%");
+                break;
+            case 5:
+                key.append("&");
+                break;
+            case 6:
+                key.append("*");
+                break;
+        }
+
+        return key.toString();
+    }
+
     // 이메일 본인인증
     // 메일 발송(Post)
     // sendSimpleMessage 의 매개변수로 들어온 to 는 곧 이메일 주소가 되고,
@@ -248,6 +336,40 @@ public class UserService {
         } catch (MailException es) {
             es.printStackTrace();
             throw new IllegalArgumentException();
+        }
+
+        return ePw; // 메일로 보냈던 인증 코드를 서버로 반환
+    }
+
+    // 임시 비밀번호 전송
+    public String sendTempPwd(PatchUserIdResetReq patchUserIdResetReq) throws Exception {
+
+        // 가입 확인: 해당 이메일을 가진 유저가 있는지 확인합니다. 없을 경우, 에러 메시지를 보냅니다.
+        if (userProvider.checkUserEmail(patchUserIdResetReq.getUserEmail()) != 1) {
+            throw new BaseException(NO_JOINED_EMAIL);
+        }
+        // 가입 확인: 해당 ID를 가진 유저가 있는지 확인합니다. 없을 경우, 에러 메시지를 보냅니다.
+        if (userProvider.checkUserId(patchUserIdResetReq.getUserId()) != 1) {
+            throw new BaseException(NO_JOINED_ID);
+        }
+
+        ePw = createPwd(); // 랜덤 인증번호 생성
+
+        // TODO Auto-generated method stub
+        MimeMessage message = createPwdMessage(patchUserIdResetReq.getUserEmail()); // 메일 발송
+        try {// 예외처리
+            emailsender.send(message);
+        } catch (MailException es) {
+            es.printStackTrace();
+            throw new IllegalArgumentException();
+        }
+        String tempPwd;
+        try {
+            tempPwd = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(ePw); // 암호화코드
+            patchUserIdResetReq.setUserPwd(tempPwd);
+            userDao.modifyUserPwd(patchUserIdResetReq);
+        } catch (Exception ignored) { // 암호화가 실패하였을 경우 에러 발생
+            throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
         }
 
         return ePw; // 메일로 보냈던 인증 코드를 서버로 반환
