@@ -66,7 +66,7 @@ public enum BaseResponseStatus {
     MODIFY_FAIL_REBORN(false, 2303, "리본 수정에 실패했습니다."),
     //민몰리
     POST_USERS_EMPTY_PASSWORD(false, 2400, "비밀번호를 입력해주세요."),
-    POST_USERS_INVALID_PASSWORD(false, 2401, "비밀번호 형식은 숫자, 특문 각 1회 이상, 영문은 2개 이상 사용하여 8자리 이상이어야 합니다."),
+    POST_USERS_INVALID_PASSWORD(false, 2401, "비밀번호 형식은 숫자, 특수문자 각 1회 이상, 영문은 대소문자 각 1개 이상 사용하여 8자리 이상 16자리 이하여야 합니다."),
     POST_USERS_EMPTY_NICKNAME(false, 2402, "닉네임을 입력해주세요."),
     POST_USERS_INVALID_NICKNAME(false, 2403, "닉네임은 한글, 영문, 숫자만 가능합니다."),
     POST_USERS_EMPTY_STORENAME(false, 2404, "상호명을 입력해주세요."),
