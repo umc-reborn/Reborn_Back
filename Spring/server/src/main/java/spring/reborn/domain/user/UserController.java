@@ -387,4 +387,21 @@ public class UserController {
             return new BaseResponse<>(exception.getStatus());
         }
     }
+
+    /**
+     * 비밀번호 초기화 API
+     * [PATCH] /users/pwd-reset
+     */
+    @PatchMapping("pwd-reset")
+    @ResponseBody
+    public BaseResponse<String> resetPwd(@RequestBody PatchUserIdResetReq patchUserIdResetReq) throws Exception {
+
+        try {
+            userService.sendTempPwd(patchUserIdResetReq);
+            String code = "이메일로 임시 비밀번호가 발급되었습니다";
+            return new BaseResponse<>(code);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
 }

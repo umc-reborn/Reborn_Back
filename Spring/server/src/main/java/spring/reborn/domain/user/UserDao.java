@@ -297,4 +297,14 @@ public class UserDao {
                 getUserParams
         ); // 한 개의 회원정보를 얻기 위한 jdbcTemplate 함수(Query, 객체 매핑 정보, Params)의 결과 반환
     }
+
+    // 유저 비번 임시 비번으로 변경
+    @Transactional
+    public int modifyUserPwd(PatchUserIdResetReq patchUserIdResetReq) {
+        String modifyUserPwdQuery = "update User set userPwd = ? where userId = ? "; // 해당 userId 만족하는 User의 userPwd를 해당 userPed로 변경한다.
+        Object[] modifyUserPwdParams = new Object[]{patchUserIdResetReq.getUserPwd(), patchUserIdResetReq.getUserId()}; // 주입될 값들(status, userIdx) 순
+
+        return this.jdbcTemplate.update(modifyUserPwdQuery, modifyUserPwdParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0)
+
+    }
 }
