@@ -24,9 +24,9 @@ public class ReviewProvider {
         return reviewDao.getReviewByStoreIdx(storeIdx);
     }
 
-//    public List<GetReviewRes> getBestReview() throws BaseException {
-//        return reviewDao.getBestReview();
-//    }
+    public List<GetReviewRes> getBestReview() throws BaseException {
+        return reviewDao.getBestReview();
+    }
 
     public Integer getReviewCntByStoreIdx(Integer storeIdx) throws BaseException {
         return reviewDao.getReviewCntByStoreIdx(storeIdx);

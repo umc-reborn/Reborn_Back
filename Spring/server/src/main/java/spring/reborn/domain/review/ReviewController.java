@@ -106,16 +106,16 @@ public class ReviewController {
         }
     }
 
-//    @ResponseBody
-//    @GetMapping("/review/best")
-//    public BaseResponse<List<GetReviewRes>> getBestReview() {
-//        try {
-//            List<GetReviewRes> getReviewRes = reviewProvider.getBestReview();
-//            return new BaseResponse<>(getReviewRes);
-//        } catch (BaseException exception) {
-//            return new BaseResponse<>((exception.getStatus()));
-//        }
-//    }
+    @ResponseBody
+    @GetMapping("/review/best")
+    public BaseResponse<List<GetReviewRes>> getBestReview() {
+        try {
+            List<GetReviewRes> getReviewRes = reviewProvider.getBestReview();
+            return new BaseResponse<>(getReviewRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
 
     @ResponseBody
     @GetMapping("/review/cnt/{storeIdx}")
