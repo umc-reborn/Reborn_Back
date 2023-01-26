@@ -9,6 +9,7 @@ import spring.reborn.domain.awsS3.AwsS3Controller;
 import spring.reborn.domain.awsS3.AwsS3Service;
 import spring.reborn.domain.jjim.model.JjimRes;
 import spring.reborn.domain.review.model.*;
+import spring.reborn.domain.store.model.StoreCategory;
 
 import javax.sql.DataSource;
 
@@ -88,11 +89,14 @@ public class ReviewDao {
 
     @Transactional
     public List<GetReviewRes> getReviewByStoreIdx(Integer storeIdx) throws BaseException {
-        String getReviewByStoreIdxQuery = "SELECT Review.reviewIdx, Review.userIdx, Review.rebornIdx, Review.reviewScore, \n" +
+        String getReviewByStoreIdxQuery = "SELECT Review.reviewIdx, Review.userIdx, User.userImg, User.userNickname, \n" +
+                "Store.storeName, Store.category, Review.rebornIdx, Reborn.productName, Review.reviewScore,\n" +
                 "Review.reviewComment, Review.reviewImage1, Review.reviewImage2, Review.reviewImage3,\n" +
-                "Review.reviewImage4, Review.reviewImage5\n" +
+                "Review.reviewImage4, Review.reviewImage5, Review.createdAt\n" +
                 "FROM reborn.Review JOIN reborn.Reborn\n" +
                 "ON Review.rebornIdx = Reborn.rebornIdx\n" +
+                "JOIN reborn.User ON Review.userIdx=User.userIdx\n" +
+                "JOIN reborn.Store ON Reborn.storeIdx=Store.storeIdx\n" +
                 "WHERE Reborn.storeIdx = ?;"; // 실행될 동적 쿼리문
         Object[] getReviewByStoreIdxParams = new Object[]{
                 storeIdx,}; // 동적 쿼리의 ?부분에 주입될 값
@@ -102,15 +106,56 @@ public class ReviewDao {
                 (rs, rowNum) -> new GetReviewRes(
                         rs.getInt("reviewIdx"),
                         rs.getInt("userIdx"),
+                        rs.getString("userImg"),
+                        rs.getString("userNickname"),
+                        rs.getString("storeName"),
+                        StoreCategory.valueOf(rs.getString("category")).label(),
                         rs.getInt("rebornIdx"),
+                        rs.getString("productName"),
                         rs.getInt("reviewScore"),
                         rs.getString("reviewComment"),
                         rs.getString("reviewImage1"),
                         rs.getString("reviewImage2"),
                         rs.getString("reviewImage3"),
                         rs.getString("reviewImage4"),
-                        rs.getString("reviewImage5")),
+                        rs.getString("reviewImage5"),
+                        rs.getTimestamp("createdAt")),
                 getReviewByStoreIdxParams
+        );
+        return getReviewRes;
+    }
+
+    @Transactional
+    public List<GetReviewRes> getBestReview() throws BaseException {
+        String GetReviewResQuery = "SELECT Review.reviewIdx, Review.userIdx, User.userImg, User.userNickname, \n" +
+                "Store.storeName, Store.category, Review.rebornIdx, Reborn.productName, Review.reviewScore,\n" +
+                "Review.reviewComment, Review.reviewImage1, Review.reviewImage2, Review.reviewImage3,\n" +
+                "Review.reviewImage4, Review.reviewImage5, Review.createdAt\n" +
+                "FROM reborn.Review JOIN reborn.Reborn\n" +
+                "ON Review.rebornIdx = Reborn.rebornIdx\n" +
+                "JOIN reborn.User ON Review.userIdx=User.userIdx\n" +
+                "JOIN reborn.Store ON Reborn.storeIdx=Store.storeIdx\n" +
+                "ORDER BY Review.reviewScore DESC LIMIT 5;"; // 실행될 동적 쿼리문
+
+        //queryForObject : DTO 여러개 값 반환
+        List<GetReviewRes> getReviewRes = this.jdbcTemplate.query(GetReviewResQuery,
+                (rs, rowNum) -> new GetReviewRes(
+                        rs.getInt("reviewIdx"),
+                        rs.getInt("userIdx"),
+                        rs.getString("userImg"),
+                        rs.getString("userNickname"),
+                        rs.getString("storeName"),
+                        StoreCategory.valueOf(rs.getString("category")).label(),
+                        rs.getInt("rebornIdx"),
+                        rs.getString("productName"),
+                        rs.getInt("reviewScore"),
+                        rs.getString("reviewComment"),
+                        rs.getString("reviewImage1"),
+                        rs.getString("reviewImage2"),
+                        rs.getString("reviewImage3"),
+                        rs.getString("reviewImage4"),
+                        rs.getString("reviewImage5"),
+                        rs.getTimestamp("createdAt"))
         );
         return getReviewRes;
     }
@@ -149,7 +194,7 @@ public class ReviewDao {
                 storeIdx,}; // 동적 쿼리의 ?부분에 주입될 값
 
         Integer count = jdbcTemplate.queryForObject(
-                getReviewCntByStoreIdxQuery,getReviewCntByStoreIdxParams, Integer.class);
+                getReviewCntByStoreIdxQuery, getReviewCntByStoreIdxParams, Integer.class);
 
         return count;
     }
