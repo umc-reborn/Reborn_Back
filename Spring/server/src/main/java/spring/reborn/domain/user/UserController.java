@@ -149,6 +149,14 @@ public class UserController {
         if (!isRegexNickname(postUserStoreReq.getStoreName())) {
             return new BaseResponse<>(POST_USERS_INVALID_STORENAME);
         }
+        // 사업자등록번호 값이 존재하는지 검사
+        if (postUserStoreReq.getStoreRegister().length() == 0) {
+            return new BaseResponse<>(POST_USERS_EMPTY_STOREREGISTER);
+        }
+        // 사업자등록번호 정규표현: 000-00-00000 형식으로 이루어졌는지 검사
+        if (!isRegexStoreRegister(postUserStoreReq.getStoreRegister())) {
+            return new BaseResponse<>(POST_USERS_INVALID_STOREREGISTER);
+        }
         // 가게주소 값이 존재하는지 검사
         if (postUserStoreReq.getStoreAddress().length() == 0) {
             return new BaseResponse<>(POST_USERS_EMPTY_STOREADDRESS);

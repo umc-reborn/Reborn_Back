@@ -73,6 +73,8 @@ public enum BaseResponseStatus {
     POST_USERS_INVALID_STORENAME(false, 2405, "상호명은 한글, 영문, 숫자만 가능합니다."),
     POST_USERS_EMPTY_STOREADDRESS(false, 2406, "가게 주소를 입력해주세요."),
     POST_USERS_EMPTY_STORECATEGORY(false, 2407, "카테고리를 설정해주세요."),
+    POST_USERS_EMPTY_STOREREGISTER(false, 2408, "사업자 등록번호를 입력해주세요."),
+    POST_USERS_INVALID_STOREREGISTER(false, 2409, "사업자 등록번호 형식을 확인해주세요."),
 
 
     /**
