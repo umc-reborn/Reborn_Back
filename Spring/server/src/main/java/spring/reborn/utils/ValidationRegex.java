@@ -27,6 +27,15 @@ public class ValidationRegex {
         System.out.println(target);
         return matcher.find();
     }
+
+    // 사업자 등록번호 형식 체크
+    public static boolean isRegexStoreRegister(String target){
+        String regex = "([0-9]{3})-?([0-9]{2})-?([0-9]{5})";
+        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(target);
+        return matcher.find();
+    }
+
     // 닉네임 형식 체크
     public static boolean isRegexNickname(String target){
         String regex = "^[0-9a-zA-Zㄱ-ㅎ가-힣]*$";
