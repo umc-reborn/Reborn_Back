@@ -89,7 +89,7 @@ public class ReviewDao {
     @Transactional
     public List<GetReviewRes> getReviewByStoreIdx(Integer storeIdx) throws BaseException {
         String getReviewByStoreIdxQuery = "SELECT Review.reviewIdx, Review.userIdx, User.userImg, User.userNickname, \n" +
-                "Store.storeName, Review.rebornIdx, Reborn.productName, Review.reviewScore,\n" +
+                "Store.storeName, Store.category, Review.rebornIdx, Reborn.productName, Review.reviewScore,\n" +
                 "Review.reviewComment, Review.reviewImage1, Review.reviewImage2, Review.reviewImage3,\n" +
                 "Review.reviewImage4, Review.reviewImage5, Review.createdAt\n" +
                 "FROM reborn.Review JOIN reborn.Reborn\n" +
@@ -108,6 +108,7 @@ public class ReviewDao {
                         rs.getString("userImg"),
                         rs.getString("userNickname"),
                         rs.getString("storeName"),
+                        rs.getString("category"),
                         rs.getInt("rebornIdx"),
                         rs.getString("productName"),
                         rs.getInt("reviewScore"),
@@ -126,7 +127,7 @@ public class ReviewDao {
     @Transactional
     public List<GetReviewRes> getBestReview() throws BaseException {
         String GetReviewResQuery = "SELECT Review.reviewIdx, Review.userIdx, User.userImg, User.userNickname, \n" +
-                "Store.storeName, Review.rebornIdx, Reborn.productName, Review.reviewScore,\n" +
+                "Store.storeName, Store.category, Review.rebornIdx, Reborn.productName, Review.reviewScore,\n" +
                 "Review.reviewComment, Review.reviewImage1, Review.reviewImage2, Review.reviewImage3,\n" +
                 "Review.reviewImage4, Review.reviewImage5, Review.createdAt\n" +
                 "FROM reborn.Review JOIN reborn.Reborn\n" +
@@ -143,6 +144,7 @@ public class ReviewDao {
                         rs.getString("userImg"),
                         rs.getString("userNickname"),
                         rs.getString("storeName"),
+                        rs.getString("category"),
                         rs.getInt("rebornIdx"),
                         rs.getString("productName"),
                         rs.getInt("reviewScore"),

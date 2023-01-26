@@ -15,6 +15,7 @@ public class GetReviewRes {
     private String userImg;
     private String userNickname;
     private String storeName;
+    private String storeCategory;
     private int rebornIdx;
     private String productName;
     private int reviewScore;
