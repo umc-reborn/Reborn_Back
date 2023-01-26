@@ -3,6 +3,7 @@ package spring.reborn.domain.store;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import spring.reborn.config.BaseException;
@@ -21,6 +22,7 @@ public class StoreController {
 
     private final StoreService storeService;
 
+    private final StoreProvider storeProvider;
     /*
     가게 리스트 조회(업데이트 순)
      */
@@ -145,5 +147,18 @@ public class StoreController {
             return new BaseResponse<>(e.getStatus());
         }
 
+    }
+
+    /* 인기가게 조회 */
+    @ResponseBody
+    @GetMapping("/popular")
+    @Transactional
+    public BaseResponse<List<GetPopularStoreRes>> getPopularStore() {
+        try {
+            List<GetPopularStoreRes> getPopularStores = storeProvider.getPopularStore();
+            return new BaseResponse<>(getPopularStores);
+        } catch (BaseException baseException) {
+            return new BaseResponse<>(baseException.getStatus());
+        }
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import spring.reborn.config.BaseException;
 import spring.reborn.domain.reborn.model.*;
+import spring.reborn.domain.store.model.GetPopularStoreRes;
 
 import javax.sql.DataSource;
 
@@ -161,20 +162,5 @@ public class RebornDao {
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
-    }
-
-    public List<GetPopularStoreRes> getPopularStore() {
-        System.out.println("dao 시작");
-        String getHistroiesQuery = "SELECT storeIdx, storeName, storeAddress, category, storeScore FROM Store ORDER BY storeScore DESC LIMIT 3";
-        List<GetPopularStoreRes> result = this.jdbcTemplate.query(
-                getHistroiesQuery,
-                (rs, rowNum) -> new GetPopularStoreRes(
-                        rs.getInt("storeIdx"),
-                        rs.getString("storeName"),
-                        rs.getString("storeAddress"),
-                        rs.getString("category"),
-                        rs.getFloat("storeScore"))
-        );
-        return result;
     }
 }

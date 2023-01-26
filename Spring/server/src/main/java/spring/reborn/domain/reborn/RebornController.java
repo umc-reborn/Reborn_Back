@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import spring.reborn.config.BaseException;
 import spring.reborn.config.BaseResponse;
 import spring.reborn.domain.reborn.model.*;
+import spring.reborn.domain.store.model.GetPopularStoreRes;
+
 import java.util.List;
 import static spring.reborn.config.BaseResponseStatus.*;
 
@@ -120,19 +122,6 @@ public class RebornController {
             };
             String result = "히스토리 생성에 성공하였습니다.";
             return new BaseResponse<>(result);
-        } catch (BaseException baseException) {
-            return new BaseResponse<>(baseException.getStatus());
-        }
-    }
-
-    /* 인기가게 조회 */
-    @ResponseBody
-    @GetMapping("/popular")
-    @Transactional
-    public BaseResponse<List<GetPopularStoreRes>> getPopularStore() {
-        try {
-            List<GetPopularStoreRes> getPopularStores = rebornProvider.getPopularStore();
-            return new BaseResponse<>(getPopularStores);
         } catch (BaseException baseException) {
             return new BaseResponse<>(baseException.getStatus());
         }

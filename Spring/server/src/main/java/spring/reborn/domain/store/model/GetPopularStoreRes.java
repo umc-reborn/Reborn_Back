@@ -1,4 +1,4 @@
-package spring.reborn.domain.reborn.model;
+package spring.reborn.domain.store.model;
 import lombok.*;
 
 @Getter

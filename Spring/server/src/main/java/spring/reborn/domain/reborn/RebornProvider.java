@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import spring.reborn.config.BaseException;
 import spring.reborn.domain.reborn.model.*;
+import spring.reborn.domain.store.model.GetPopularStoreRes;
 
 import java.util.List;
 
@@ -62,17 +63,6 @@ public class RebornProvider {
             GetHistroyDetailRes getHistroyDetailRes = rebornDao.getHistoryDetail(rebornTaskIdx);
             System.out.println("provider 끝");
             return getHistroyDetailRes;
-        } catch (Exception exception) {
-            throw new BaseException(DATABASE_ERROR);
-        }
-    }
-
-    public List<GetPopularStoreRes> getPopularStore() throws BaseException {
-        try {
-            System.out.println("provider 시작");
-            List<GetPopularStoreRes> getHistories = rebornDao.getPopularStore();
-            System.out.println("provider 끝");
-            return getHistories;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
