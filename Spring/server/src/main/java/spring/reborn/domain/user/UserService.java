@@ -338,7 +338,25 @@ public class UserService {
             throw new IllegalArgumentException();
         }
 
+        // 암호화
+        try {
+            ePw = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(ePw); // 암호화코드
+        } catch (Exception ignored) { // 암호화가 실패하였을 경우 에러 발생
+            throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
+        }
+
         return ePw; // 메일로 보냈던 인증 코드를 서버로 반환
+    }
+
+    // 인증 번호 암호화(Get)
+    public String encryptionCode(String code) throws Exception{
+        // 암호화
+        try {
+            ePw = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(code); // 암호화코드
+        } catch (Exception ignored) { // 암호화가 실패하였을 경우 에러 발생
+            throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
+        }
+        return ePw;
     }
 
     // 임시 비밀번호 전송
