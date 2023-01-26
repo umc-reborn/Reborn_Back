@@ -66,4 +66,15 @@ public class RebornProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public List<GetPopularStoreRes> getPopularStore() throws BaseException {
+        try {
+            System.out.println("provider 시작");
+            List<GetPopularStoreRes> getHistories = rebornDao.getPopularStore();
+            System.out.println("provider 끝");
+            return getHistories;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }

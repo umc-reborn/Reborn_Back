@@ -124,4 +124,17 @@ public class RebornController {
             return new BaseResponse<>(baseException.getStatus());
         }
     }
+
+    /* 인기가게 조회 */
+    @ResponseBody
+    @GetMapping("/popular")
+    @Transactional
+    public BaseResponse<List<GetPopularStoreRes>> getPopularStore() {
+        try {
+            List<GetPopularStoreRes> getPopularStores = rebornProvider.getPopularStore();
+            return new BaseResponse<>(getPopularStores);
+        } catch (BaseException baseException) {
+            return new BaseResponse<>(baseException.getStatus());
+        }
+    }
 }
