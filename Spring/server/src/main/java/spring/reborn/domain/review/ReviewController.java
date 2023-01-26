@@ -100,12 +100,22 @@ public class ReviewController {
     public BaseResponse<List<GetReviewRes>> getReviewByStoreIdx(@PathVariable Integer storeIdx) {
         try {
             List<GetReviewRes> getReviewRes = reviewProvider.getReviewByStoreIdx(storeIdx);
-
             return new BaseResponse<>(getReviewRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+
+//    @ResponseBody
+//    @GetMapping("/review/best")
+//    public BaseResponse<List<GetReviewRes>> getBestReview() {
+//        try {
+//            List<GetReviewRes> getReviewRes = reviewProvider.getBestReview();
+//            return new BaseResponse<>(getReviewRes);
+//        } catch (BaseException exception) {
+//            return new BaseResponse<>((exception.getStatus()));
+//        }
+//    }
 
     @ResponseBody
     @GetMapping("/review/cnt/{storeIdx}")
