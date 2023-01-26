@@ -41,6 +41,8 @@ public enum BaseResponseStatus {
     POST_USERS_EMPTY_ID(false, 2106, "ID를 입력해주세요."),
     POST_USERS_INVALID_ID(false, 2107, "ID 형식을 확인해주세요."),
     POST_USERS_EXISTS_ID(false,2108,"중복된 ID입니다."),
+    NO_JOINED_EMAIL(false, 2109, "가입되지 않은 이메일입니다."),
+    NO_JOINED_ID(false, 2110, "가입되지 않은 ID입니다."),
 
 
     //준몰리
@@ -71,6 +73,8 @@ public enum BaseResponseStatus {
     POST_USERS_INVALID_STORENAME(false, 2405, "상호명은 한글, 영문, 숫자만 가능합니다."),
     POST_USERS_EMPTY_STOREADDRESS(false, 2406, "가게 주소를 입력해주세요."),
     POST_USERS_EMPTY_STORECATEGORY(false, 2407, "카테고리를 설정해주세요."),
+    POST_USERS_EMPTY_STOREREGISTER(false, 2408, "사업자 등록번호를 입력해주세요."),
+    POST_USERS_INVALID_STOREREGISTER(false, 2409, "사업자 등록번호 형식을 확인해주세요."),
 
 
     /**

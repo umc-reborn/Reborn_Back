@@ -149,6 +149,14 @@ public class UserController {
         if (!isRegexNickname(postUserStoreReq.getStoreName())) {
             return new BaseResponse<>(POST_USERS_INVALID_STORENAME);
         }
+        // 사업자등록번호 값이 존재하는지 검사
+        if (postUserStoreReq.getStoreRegister().length() == 0) {
+            return new BaseResponse<>(POST_USERS_EMPTY_STOREREGISTER);
+        }
+        // 사업자등록번호 정규표현: 000-00-00000 형식으로 이루어졌는지 검사
+        if (!isRegexStoreRegister(postUserStoreReq.getStoreRegister())) {
+            return new BaseResponse<>(POST_USERS_INVALID_STOREREGISTER);
+        }
         // 가게주소 값이 존재하는지 검사
         if (postUserStoreReq.getStoreAddress().length() == 0) {
             return new BaseResponse<>(POST_USERS_EMPTY_STOREADDRESS);
@@ -373,7 +381,7 @@ public class UserController {
     }
 
     /**
-     * 이메일 인증 API
+     * 이메일 인증 요청 API
      * [POST] /users/logIn/mailConfirm
      */
     @PostMapping("login/mailConfirm")
@@ -381,7 +389,38 @@ public class UserController {
     public BaseResponse<String> mailConfirm(@RequestParam("email") String email) throws Exception {
         try {
             String code = userService.sendSimpleMessage(email);
-            System.out.println("인증코드 : " + code);
+            return new BaseResponse<>(code);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    /**
+     * 이메일 인증 확인 API - 암호화
+     * [GET] /users/logIn/mailConfirm
+     */
+    @GetMapping("login/mailCheck")
+    @ResponseBody
+    public BaseResponse<String> mailCheck(@RequestParam("code") String code) throws Exception {
+        try {
+            String result = userService.encryptionCode(code);
+            return new BaseResponse<>(result);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    /**
+     * 비밀번호 초기화 API
+     * [PATCH] /users/pwd-reset
+     */
+    @PatchMapping("pwd-reset")
+    @ResponseBody
+    public BaseResponse<String> resetPwd(@RequestBody PatchUserIdResetReq patchUserIdResetReq) throws Exception {
+
+        try {
+            userService.sendTempPwd(patchUserIdResetReq);
+            String code = "이메일로 임시 비밀번호가 발급되었습니다";
             return new BaseResponse<>(code);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());

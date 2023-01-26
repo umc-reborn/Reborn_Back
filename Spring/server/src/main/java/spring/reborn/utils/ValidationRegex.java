@@ -12,9 +12,25 @@ public class ValidationRegex {
         return matcher.find();
     }
 
-    // 비밀번호 형식 체크
+//    // 비밀번호 형식 체크
+//    public static boolean isRegexPassword(String target){
+//        String regex = "(?=.*[A-Za-z])(?=.*[0-9])(?=.*[$@$!%*#?&])[A-Za-z[0-9]$@$!%*#?&]{8,16}$";
+//        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+//        Matcher matcher = pattern.matcher(target);
+//        return matcher.find();
+//    }
+// 비밀번호 형식 체크
     public static boolean isRegexPassword(String target){
-        String regex = "(?=.*[A-Za-z])(?=.*[0-9])(?=.*[$@$!%*#?&])[A-Za-z[0-9]$@$!%*#?&]{8,16}$";
+        String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@$!%*?&])[A-Za-z[0-9]@$!%*?&]{8,16}$";
+        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(target);
+        System.out.println(target);
+        return matcher.find();
+    }
+
+    // 사업자 등록번호 형식 체크
+    public static boolean isRegexStoreRegister(String target){
+        String regex = "([0-9]{3})-?([0-9]{2})-?([0-9]{5})";
         Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(target);
         return matcher.find();
