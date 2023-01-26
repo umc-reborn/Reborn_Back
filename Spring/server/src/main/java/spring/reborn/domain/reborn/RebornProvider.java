@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import spring.reborn.config.BaseException;
 import spring.reborn.domain.reborn.model.*;
-import spring.reborn.domain.store.model.GetPopularStoreRes;
 
 import java.util.List;
 

@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import spring.reborn.config.BaseException;
 import spring.reborn.domain.reborn.model.*;
-import spring.reborn.domain.store.model.GetPopularStoreRes;
 
 import javax.sql.DataSource;
 
