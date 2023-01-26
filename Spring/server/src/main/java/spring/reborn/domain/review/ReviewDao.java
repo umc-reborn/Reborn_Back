@@ -9,6 +9,7 @@ import spring.reborn.domain.awsS3.AwsS3Controller;
 import spring.reborn.domain.awsS3.AwsS3Service;
 import spring.reborn.domain.jjim.model.JjimRes;
 import spring.reborn.domain.review.model.*;
+import spring.reborn.domain.store.model.StoreCategory;
 
 import javax.sql.DataSource;
 
@@ -108,7 +109,7 @@ public class ReviewDao {
                         rs.getString("userImg"),
                         rs.getString("userNickname"),
                         rs.getString("storeName"),
-                        rs.getString("category"),
+                        StoreCategory.valueOf(rs.getString("category")).label(),
                         rs.getInt("rebornIdx"),
                         rs.getString("productName"),
                         rs.getInt("reviewScore"),
@@ -144,7 +145,7 @@ public class ReviewDao {
                         rs.getString("userImg"),
                         rs.getString("userNickname"),
                         rs.getString("storeName"),
-                        rs.getString("category"),
+                        StoreCategory.valueOf(rs.getString("category")).label(),
                         rs.getInt("rebornIdx"),
                         rs.getString("productName"),
                         rs.getInt("reviewScore"),
