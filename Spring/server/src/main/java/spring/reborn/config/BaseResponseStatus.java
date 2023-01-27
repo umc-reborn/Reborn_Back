@@ -55,6 +55,11 @@ public enum BaseResponseStatus {
     MODIFY_FAIL_STORE_EMPTY_NAME(false,2204,"해당 스토어의 이름을 입력해주세요."),
     MODIFY_FAIL_STORE_EMPTY_LOCATION(false,2205,"해당 스토어의 위치를 입력해주세요."),
 
+    CAN_NOT_CREATE_REBORN_TASK(false, 2210, "리본을 생성할 수 없습니다. 다시 시도해주세요."),
+    NOT_AVAILABLE_REBORN_TASK(false, 2211, "리본을 진행할 수 없는 상태입니다. 다시 확인해주세요."),
+    UPDATE_FAIL_REBORN_TASK(false, 2212, "리본 태스크 업데이트 실패."),
+    UPDATE_FAIL_REBORN_STATUS(false, 2213, "리본 상태 업데이트 실패."),
+    NOT_ENOUGH_REBORN(false, 2214, "리본이 모두 소진 되었습니다."),
 
     AWS_UPLOAD_FAIL_ERROR(false,2297, "AWS에서 해당 이미지를 업로드에 실패하였습니다."),
     AWS_DELETE_FAIL_ERROR(false,2298, "AWS에서 해당 이미지를 제거에 실패하였습니다."),
