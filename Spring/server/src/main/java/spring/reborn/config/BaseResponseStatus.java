@@ -64,6 +64,11 @@ public enum BaseResponseStatus {
     PATCH_REBORN_EMPTY_PRODUCTGUIDE(false, 2301, "상품 가이드가 없습니다."),
     PATCH_REBORN_EMPTY_PRODUCTCOMMENT(false, 2302, "상품 설명이 없습니다."),
     MODIFY_FAIL_REBORN(false, 2303, "리본 수정에 실패했습니다."),
+
+    DELETE_FAIL_REBORN(false, 2304, "상품 삭제에 실패했습니다."),
+
+    INACTIVE_FAIL_REBORNTASK(false, 2305, "나눔 취소에 실패했습니다."),
+
     //민몰리
     POST_USERS_EMPTY_PASSWORD(false, 2400, "비밀번호를 입력해주세요."),
     POST_USERS_INVALID_PASSWORD(false, 2401, "비밀번호 형식은 숫자, 특수문자 각 1회 이상, 영문은 대소문자 각 1개 이상 사용하여 8자리 이상 16자리 이하여야 합니다."),
