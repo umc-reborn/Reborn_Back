@@ -161,4 +161,9 @@ public class RebornDao {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public int deleteReborn(int rebornIdx) {
+        String deleteRebornQuery = "update Reborn set status = 'DELETE' WHERE rebornIdx = ?";
+        return this.jdbcTemplate.update(deleteRebornQuery, rebornIdx);
+    }
 }

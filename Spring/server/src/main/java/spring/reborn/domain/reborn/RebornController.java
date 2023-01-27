@@ -125,4 +125,17 @@ public class RebornController {
             return new BaseResponse<>(baseException.getStatus());
         }
     }
+
+    /* 상품 삭제 */
+    @ResponseBody
+    @PatchMapping("/delete/{rebornIdx}")
+    @Transactional
+    public BaseResponse<String> deleteReborn(@PathVariable int rebornIdx) {
+        try {
+            String result = rebornService.deleteReborn(rebornIdx);
+            return new BaseResponse<>(result);
+        } catch (BaseException baseException) {
+            return new BaseResponse<>(baseException.getStatus());
+        }
+    }
 }
