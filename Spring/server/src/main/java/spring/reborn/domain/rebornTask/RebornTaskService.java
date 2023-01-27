@@ -2,9 +2,6 @@ package spring.reborn.domain.rebornTask;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spring.reborn.config.BaseException;
@@ -18,7 +15,7 @@ import static spring.reborn.config.BaseResponseStatus.DATABASE_ERROR;
 public class RebornTaskService {
     private final RebornTaskDao rebornTaskDao;
     @Transactional
-    public PostRebornTaskRes createReborn(PostRebornTaskReq postRebornTaskReq) throws BaseException {
+    public PostRebornTaskRes createRebornTask(PostRebornTaskReq postRebornTaskReq) throws BaseException {
         try {
             Long rebornIdx = rebornTaskDao.createRebornTask(postRebornTaskReq);
             return new PostRebornTaskRes(rebornIdx);
