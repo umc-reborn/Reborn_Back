@@ -43,6 +43,8 @@ public enum BaseResponseStatus {
     POST_USERS_EXISTS_ID(false,2108,"중복된 ID입니다."),
     NO_JOINED_EMAIL(false, 2109, "가입되지 않은 이메일입니다."),
     NO_JOINED_ID(false, 2110, "가입되지 않은 ID입니다."),
+    WRONG_PWD(false, 2111, "입력된 비밀번호가 틀렸습니다."),
+    DIFFERENT_PWD(false, 2112, "비밀번호가 일치하지 않습니다.."),
 
 
     //준몰리

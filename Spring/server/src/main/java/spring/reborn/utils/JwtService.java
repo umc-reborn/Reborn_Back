@@ -34,6 +34,17 @@ public class JwtService {
                 .compact();
     }
 
+    public String createEmptyJwt(int userIdx){
+        Date now = new Date();
+        return Jwts.builder()
+                .setHeaderParam("type","jwt")
+                .claim("userIdx",userIdx)
+                .setIssuedAt(now)
+                .setExpiration(new Date(System.currentTimeMillis()+1*(0)))
+                .signWith(SignatureAlgorithm.HS256, Secret.JWT_SECRET_KEY)
+                .compact();
+    }
+
     /*
     Header에서 X-ACCESS-TOKEN 으로 JWT 추출
     @return String
