@@ -73,6 +73,16 @@ public class UserProvider {
         }
     }
 
+    // 해당 이메일을 갖는 유저 아이디 조회
+    public GetUserIdRes getUserIdInform(String email) throws BaseException {
+        try {
+            GetUserIdRes getUserIdRes = userDao.getUserIdInform(email);
+            return getUserIdRes;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
     //이웃 로그인(password 검사)
     @Transactional
     public PostLoginRes logIn(PostLoginReq postLoginReq) throws BaseException {

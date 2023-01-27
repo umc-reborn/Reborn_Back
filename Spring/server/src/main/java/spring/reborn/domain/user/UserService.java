@@ -174,8 +174,6 @@ public class UserService {
     // 이메일 본인인증
     // 메일 내용 작성(Post)
     public MimeMessage createMessage(String to) throws MessagingException, UnsupportedEncodingException {
-//		System.out.println("보내는 대상 : " + to);
-//		System.out.println("인증 번호 : " + ePw);
 
         MimeMessage message = emailsender.createMimeMessage();
 
@@ -195,6 +193,39 @@ public class UserService {
         msgg += "<h3 style='color:blue;'>회원가입 인증 코드입니다.</h3>";
         msgg += "<div style='font-size:130%'>";
         msgg += "CODE : <strong>";
+        msgg += ePw + "</strong><div><br/> "; // 메일에 인증번호 넣기
+        msgg += "</div>";
+        message.setText(msgg, "utf-8", "html");// 내용, charset 타입, subtype
+        // 보내는 사람의 이메일 주소, 보내는 사람 이름
+        message.setFrom(new InternetAddress("reborn_umc@naver.com", "Reborn_Admin"));// 보내는 사람
+
+        return message;
+    }
+
+    // 이메일 내용-아이디 찾기
+    // 메일 내용 작성(Post)
+    public MimeMessage createIDMessage(String to) throws MessagingException, UnsupportedEncodingException {
+
+        MimeMessage message = emailsender.createMimeMessage();
+
+        message.addRecipients(MimeMessage.RecipientType.TO, to);// 보내는 대상
+        message.setSubject("Reborn 아이디 확인 메일");// 제목
+
+        String msgg = "";
+        msgg += "<div style='margin:100px;'>";
+        msgg += "<h1> 안녕하세요</h1>";
+        msgg += "<h1> 폐기 대신 무료나눔을 실천하는 Reborn 입니다</h1>";
+        msgg += "<br>";
+        msgg += "<p>회원님께서 조회하신 아이디는 다음과 같습니다<p>";
+        msgg += "<br>";
+        msgg += "<p>아이디 확인 요청을 한 사람이 본인이 아닌 경우, 보안을 위해 Reborn으로 연락해 주시기 바랍니다.<p>";
+        msgg += "<br>";
+        msgg += "<p>감사합니다!<p>";
+        msgg += "<br>";
+        msgg += "<div align='center' style='border:1px solid black; font-family:verdana';>";
+        msgg += "<h3 style='color:blue;'>조회하신 아이디입니다.</h3>";
+        msgg += "<div style='font-size:130%'>";
+        msgg += "아이디 : <strong>";
         msgg += ePw + "</strong><div><br/> "; // 메일에 인증번호 넣기
         msgg += "</div>";
         message.setText(msgg, "utf-8", "html");// 내용, charset 타입, subtype
@@ -391,6 +422,51 @@ public class UserService {
         }
 
         return ePw; // 메일로 보냈던 인증 코드를 서버로 반환
+    }
+
+    // ID 찾기 - 메일 발송(Post)
+    public void sendIDMessage(String to) throws Exception {
+
+        // 가입 확인: 해당 이메일을 가진 유저가 있는지 확인합니다. 없을 경우, 에러 메시지를 보냅니다.
+        if (userProvider.checkUserEmail(to) != 1) {
+            throw new BaseException(NO_JOINED_EMAIL);
+        }
+
+        // 이메일로 아이디 찾기
+        try{
+            GetUserIdRes getUserIdRes = userProvider.getUserIdInform(to);
+            ePw = getUserIdRes.getUserId();     // 아이디 저장
+        } catch (Exception ignored){
+            throw new BaseException(DATABASE_ERROR);
+        }
+
+        MimeMessage message = createIDMessage(to); // 메일 발송
+        try {// 예외처리
+            emailsender.send(message);
+        } catch (MailException es) {
+            es.printStackTrace();
+            throw new IllegalArgumentException();
+        }
+    }
+
+    // ID 찾기 - 부분(Get)
+    public GetUserIdRes idFindPart(String to) throws Exception {
+
+        GetUserIdRes getUserIdRes;
+
+        // 가입 확인: 해당 이메일을 가진 유저가 있는지 확인합니다. 없을 경우, 에러 메시지를 보냅니다.
+        if (userProvider.checkUserEmail(to) != 1) {
+            throw new BaseException(NO_JOINED_EMAIL);
+        }
+
+        // 이메일로 아이디, 가입일 찾기
+        try{
+            getUserIdRes = userProvider.getUserIdInform(to);
+        } catch (Exception ignored){
+            throw new BaseException(DATABASE_ERROR);
+        }
+
+        return getUserIdRes;
     }
     
 }

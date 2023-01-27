@@ -411,6 +411,37 @@ public class UserController {
     }
 
     /**
+     * 아이디 찾기 - 부분 암호 API
+     * [GET] /users/IdFindPart
+     */
+    @GetMapping("IdFindPart")
+    @ResponseBody
+    public BaseResponse<GetUserIdRes> idFindPart(@RequestParam("email") String email) throws Exception {
+        try {
+            GetUserIdRes getUserIdRes = userService.idFindPart(email);
+            return new BaseResponse<>(getUserIdRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    /**
+     * 아이디 찾기 - 메일 전송 API
+     * [POST] /users/IdFindMail
+     */
+    @PostMapping("IdFindMail")
+    @ResponseBody
+    public BaseResponse<String> idMailSend(@RequestParam("email") String email) throws Exception {
+        try {
+            userService.sendIDMessage(email);
+            String result = "가입하신 이메일로 아이디가 발송 되었습니다.";
+            return new BaseResponse<>(result);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    /**
      * 비밀번호 초기화 API
      * [PATCH] /users/pwd-reset
      */
