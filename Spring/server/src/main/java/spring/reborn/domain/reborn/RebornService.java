@@ -63,12 +63,25 @@ public class RebornService {
     }
 
     @Transactional
-    public String deleteReborn(int rebornIdx) throws BaseException {
+    public String deleteProduct(int rebornIdx) throws BaseException {
         try {
-            int v = rebornDao.deleteReborn(rebornIdx);
+            int v = rebornDao.deleteProduct(rebornIdx);
             if (v == 0)
                 throw new BaseException(DELETE_FAIL_REBORN);
             String result = "상품이 삭제되었습니다!";
+            return result;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    @Transactional
+    public String inactiveRebornTask(int rebornTaskIdx) throws BaseException {
+        try {
+            int v = rebornDao.inactiveRebornTask(rebornTaskIdx);
+            if (v == 0)
+                throw new BaseException(INACTIVE_FAIL_REBORNTASK);
+            String result = "나눔이 취소되었습니다!";
             return result;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);

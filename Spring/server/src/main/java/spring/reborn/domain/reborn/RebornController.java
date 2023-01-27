@@ -27,6 +27,7 @@ public class RebornController {
         this.rebornService = rebornService;
     }
 
+    /* 상품 생성 */
     @ResponseBody
     @PostMapping("/create")
     @Transactional
@@ -84,7 +85,7 @@ public class RebornController {
         }
     }
 
-    /* 리본 히스토리 조회*/
+    /* 리본 히스토리 조회(유저) */
     @ResponseBody
     @GetMapping("/history/{userIdx}")
     @Transactional
@@ -130,9 +131,22 @@ public class RebornController {
     @ResponseBody
     @PatchMapping("/delete/{rebornIdx}")
     @Transactional
-    public BaseResponse<String> deleteReborn(@PathVariable int rebornIdx) {
+    public BaseResponse<String> deleteProduct(@PathVariable int rebornIdx) {
         try {
-            String result = rebornService.deleteReborn(rebornIdx);
+            String result = rebornService.deleteProduct(rebornIdx);
+            return new BaseResponse<>(result);
+        } catch (BaseException baseException) {
+            return new BaseResponse<>(baseException.getStatus());
+        }
+    }
+
+    /* 나눔 취소 */
+    @ResponseBody
+    @PatchMapping("/task/inactive/{rebornTaskIdx}")
+    @Transactional
+    public BaseResponse<String> inactiveRebornTask(@PathVariable int rebornTaskIdx) {
+        try {
+            String result = rebornService.inactiveRebornTask(rebornTaskIdx);
             return new BaseResponse<>(result);
         } catch (BaseException baseException) {
             return new BaseResponse<>(baseException.getStatus());
