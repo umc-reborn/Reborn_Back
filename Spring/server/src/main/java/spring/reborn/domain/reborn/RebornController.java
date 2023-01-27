@@ -39,9 +39,9 @@ public class RebornController {
         }
     }
 
-    /* 진행 중인 리본 조회 (스토어) */
+    /* 전체 리본 조회 (스토어) */
     @ResponseBody
-    @GetMapping("/inprogress/store/{storeIdx}")
+    @GetMapping("/store/{storeIdx}")
     @Transactional
     public BaseResponse<List<GetRebornRes>> getReborns(@PathVariable Integer storeIdx) {
         try {

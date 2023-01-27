@@ -44,7 +44,7 @@ public class RebornDao {
 
     public List<GetRebornRes> getReborns(Integer storeIdx) {
         System.out.println("dao 시작");
-        String getRebornsQuery = "SELECT rebornIdx, productName, productGuide, productComment, productImg, productLimitTime, productCnt, status FROM Reborn WHERE storeIdx = ? AND status = ?";
+        String getRebornsQuery = "SELECT rebornIdx, productName, productGuide, productComment, productImg, productLimitTime, productCnt, status FROM Reborn WHERE storeIdx = ?";
         List<GetRebornRes> result = this.jdbcTemplate.query(
                 getRebornsQuery,
                 (rs, rowNum) -> new GetRebornRes(
@@ -57,8 +57,7 @@ public class RebornDao {
                         rs.getInt("productCnt"),
                         rs.getString("status"))
                         ,
-                storeIdx,
-                "ACTIVE"
+                storeIdx
         );
         return result;
     }
