@@ -42,11 +42,11 @@ public class RebornController {
 
     /* 전체 리본 조회 (스토어) */
     @ResponseBody
-    @GetMapping("/store/{storeIdx}")
+    @GetMapping("/store/{storeIdx}/status")
     @Transactional
-    public BaseResponse<List<GetRebornRes>> getReborns(@PathVariable Integer storeIdx) {
+    public BaseResponse<List<GetRebornRes>> getReborns(@PathVariable Integer storeIdx, @RequestParam String status) {
         try {
-            List<GetRebornRes> getRebornsRes= rebornProvider.getReborns(storeIdx);
+            List<GetRebornRes> getRebornsRes= rebornProvider.getReborns(storeIdx, status);
             return new BaseResponse<>(getRebornsRes);
         } catch (BaseException baseException) {
             return new BaseResponse<>(baseException.getStatus());

@@ -69,6 +69,9 @@ public enum BaseResponseStatus {
 
     INACTIVE_FAIL_REBORNTASK(false, 2305, "나눔 취소에 실패했습니다."),
 
+    GET_FAIL_REBORN(false, 2306, "리본 조회를 실패하였습니다."),
+
+
     //민몰리
     POST_USERS_EMPTY_PASSWORD(false, 2400, "비밀번호를 입력해주세요."),
     POST_USERS_INVALID_PASSWORD(false, 2401, "비밀번호 형식은 숫자, 특수문자 각 1회 이상, 영문은 대소문자 각 1개 이상 사용하여 8자리 이상 16자리 이하여야 합니다."),
