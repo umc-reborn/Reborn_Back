@@ -63,6 +63,7 @@ public enum BaseResponseStatus {
     INVALID_EXCHANGE_CODE(false, 2215, "유효하지 않은 교환 코드입니다."),
     CAN_NOT_FOUND_REBORN_TASK(false, 2216, "해당 리본태스크를 찾을 수 없습니다."),
     UPDATE_FAIL_REBORN_PRODUCT_COUNT(false,2217,"리본 개수 감소 실패"),
+    NOT_ENOUGH_REBORN_PRODUCT_COUNT(false,2217,"잔여 리본이 없습니다. 다시 확인해주세요."),
 
 
     AWS_UPLOAD_FAIL_ERROR(false,2297, "AWS에서 해당 이미지를 업로드에 실패하였습니다."),

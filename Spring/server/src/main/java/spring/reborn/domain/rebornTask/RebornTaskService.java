@@ -29,6 +29,7 @@ public class RebornTaskService {
         }
     }
 
+    @Transactional
     public PatchRebornTaskRes updateRebornTask(PatchRebornTaskReq patchRebornTaskReq) throws BaseException{
         try {
             PatchRebornTaskRes patchRebornTaskRes = rebornTaskDao.findByRebornTaskIdAndCode(
