@@ -71,6 +71,8 @@ public enum BaseResponseStatus {
 
     GET_FAIL_REBORN(false, 2306, "리본 조회를 실패하였습니다."),
 
+    WRONG_CATEGORY_INPUT_ERROR(false, 2307, "잘못된 카테고리를 입력했습니다."),
+
 
     //민몰리
     POST_USERS_EMPTY_PASSWORD(false, 2400, "비밀번호를 입력해주세요."),
