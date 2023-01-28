@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import spring.reborn.config.BaseException;
 import spring.reborn.domain.reborn.RebornDao;
-import spring.reborn.domain.rebornTask.model.PatchRebornTaskForCode;
+import spring.reborn.domain.rebornTask.model.PatchRebornTaskForExchange;
 import spring.reborn.domain.rebornTask.model.PatchRebornTaskRes;
 import spring.reborn.domain.rebornTask.model.PostRebornTaskReq;
 import spring.reborn.domain.rebornTask.model.RebornTaskStatus;
@@ -88,16 +88,17 @@ public class RebornTaskDao {
             // todo 시간고려는 프론트가 처리해서 만료된 api 따로처리
 
             // 가능한 상태인지 -> 교환 코드 확인
-            String selectRebornTaskQuery = "select rebornTaskIdx, rebornIdx, productExchangeCode, status " +
-                    "from RebornTask " +
+            String selectRebornTaskQuery = "select rebornTaskIdx, rt.rebornIdx rebornIdx, productExchangeCode, rt.status status, productCnt " +
+                    "from RebornTask rt join Reborn r on rt.rebornIdx = r.rebornIdx " +
                     "where rebornTaskIdx = ?";
 
-            PatchRebornTaskForCode rebornTask = this.jdbcTemplate.queryForObject(selectRebornTaskQuery,
-                    (rs, rowNum) -> PatchRebornTaskForCode.builder()
+            PatchRebornTaskForExchange rebornTask = this.jdbcTemplate.queryForObject(selectRebornTaskQuery,
+                    (rs, rowNum) -> PatchRebornTaskForExchange.builder()
                             .rebornTaskIdx(rs.getLong("rebornTaskIdx"))
                             .rebornIdx(rs.getLong("rebornIdx"))
                             .productExchangeCode(rs.getLong("productExchangeCode"))
                             .status(rs.getString("status"))
+                            .productCnt(rs.getLong("productCnt"))
                             .build()
                     ,
                     rebornTaskIdx);
@@ -109,6 +110,9 @@ public class RebornTaskDao {
             }
             if (!rebornTask.getProductExchangeCode().equals(Code)) {
                 throw new BaseException(INVALID_EXCHANGE_CODE);
+            }
+            if(rebornTask.getProductCnt()==0){
+                throw new BaseException(NOT_ENOUGH_REBORN_PRODUCT_COUNT);
             }
 
             // 가능한 상태인 경우
