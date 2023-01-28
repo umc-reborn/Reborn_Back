@@ -1,5 +1,6 @@
 package spring.reborn.domain.reborn;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -11,8 +12,9 @@ import javax.sql.DataSource;
 
 import java.util.List;
 
-import static spring.reborn.config.BaseResponseStatus.DATABASE_ERROR;
+import static spring.reborn.config.BaseResponseStatus.*;
 
+@Slf4j
 @Repository
 public class RebornDao {
     private JdbcTemplate jdbcTemplate;
@@ -161,6 +163,24 @@ public class RebornDao {
         }
     }
 
+    public GetRebornRes findByUserId(Long userId) {
+        String getRebornsQuery = "SELECT rebornIdx, productName, productGuide, productComment, productImg, productLimitTime, productCnt, status FROM Reborn WHERE (userIdx = ? AND status = ?)";
+        GetRebornRes result = this.jdbcTemplate.queryForObject(
+                getRebornsQuery,
+                (rs, rowNum) -> new GetRebornRes(
+                        rs.getInt("rebornIdx"),
+                        rs.getString("productName"),
+                        rs.getString("productGuide"),
+                        rs.getString("productComment"),
+                        rs.getString("productImg"),
+                        rs.getString("productLimitTime"),
+                        rs.getInt("productCnt"),
+                        rs.getString("status"))
+                ,
+                userId,RebornStatus.ACTIVE);
+        return result;
+    }
+
     public int deleteProduct(int rebornIdx) {
         String deleteRebornQuery = "UPDATE Reborn SET status = 'DELETE' WHERE rebornIdx = ?";
         return this.jdbcTemplate.update(deleteRebornQuery, rebornIdx);
@@ -171,5 +191,24 @@ public class RebornDao {
         return this.jdbcTemplate.update(inactiveRebornTaskQuery, rebornTaskIdx);
     }
 
+    public void decreaseRebornProductCnt(Long rebornIdx) throws BaseException{
+        try {
+            String updateRebornQuery = "update Reborn " +
+                    "set updatedAt = now(), productCnt = productCnt - 1, status = case when productCnt = 0 then 'INACTIVE' else 'ACTIVE' end " +
+                    "where rebornIdx = ? and status = 'ACTIVE' and productCnt >0";
+
+            if (this.jdbcTemplate.update(updateRebornQuery, rebornIdx) != 1) {
+                throw new BaseException(UPDATE_FAIL_REBORN_PRODUCT_COUNT);
+            }
+        }
+        catch (BaseException e){
+            log.error(e.getStatus().getMessage());
+            throw new BaseException(e.getStatus());
+        }
+        catch (Exception e){
+            log.error(e.getMessage());
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 
 }

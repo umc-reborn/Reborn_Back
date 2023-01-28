@@ -60,6 +60,10 @@ public enum BaseResponseStatus {
     UPDATE_FAIL_REBORN_TASK(false, 2212, "리본 태스크 업데이트 실패."),
     UPDATE_FAIL_REBORN_STATUS(false, 2213, "리본 상태 업데이트 실패."),
     NOT_ENOUGH_REBORN(false, 2214, "리본이 모두 소진 되었습니다."),
+    INVALID_EXCHANGE_CODE(false, 2215, "유효하지 않은 교환 코드입니다."),
+    CAN_NOT_FOUND_REBORN_TASK(false, 2216, "해당 리본태스크를 찾을 수 없습니다."),
+    UPDATE_FAIL_REBORN_PRODUCT_COUNT(false,2217,"리본 개수 감소 실패"),
+
 
     AWS_UPLOAD_FAIL_ERROR(false,2297, "AWS에서 해당 이미지를 업로드에 실패하였습니다."),
     AWS_DELETE_FAIL_ERROR(false,2298, "AWS에서 해당 이미지를 제거에 실패하였습니다."),
