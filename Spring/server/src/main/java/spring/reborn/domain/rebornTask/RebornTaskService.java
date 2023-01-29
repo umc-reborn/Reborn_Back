@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import spring.reborn.config.BaseException;
 import spring.reborn.domain.reborn.RebornDao;
 import spring.reborn.domain.rebornTask.model.*;
+import spring.reborn.domain.user.UserDao;
 
 import static spring.reborn.config.BaseResponseStatus.DATABASE_ERROR;
 
@@ -16,6 +17,9 @@ import static spring.reborn.config.BaseResponseStatus.DATABASE_ERROR;
 public class RebornTaskService {
     private final RebornTaskDao rebornTaskDao;
     private final RebornDao rebornDao;
+    private final UserDao userDao;
+
+
     @Transactional
     public PostRebornTaskRes createRebornTask(PostRebornTaskReq postRebornTaskReq) throws BaseException {
         try {
@@ -42,8 +46,14 @@ public class RebornTaskService {
         catch (BaseException e){
             throw new BaseException(e.getStatus());
         }
-        catch (Exception e){
-            throw new BaseException(DATABASE_ERROR);
+    }
+
+    public GetRebornExchangeCodeRes getExchangeCode(Long rebornTaskIdx, Long userIdx) throws BaseException{
+        try {
+            return rebornTaskDao.getRebornExchangeCode(rebornTaskIdx,userIdx);
+        }
+        catch (BaseException e){
+            throw new BaseException(e.getStatus());
         }
     }
 }

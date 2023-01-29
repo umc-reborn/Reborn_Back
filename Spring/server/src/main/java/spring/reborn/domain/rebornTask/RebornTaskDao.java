@@ -8,10 +8,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import spring.reborn.config.BaseException;
 import spring.reborn.domain.reborn.RebornDao;
-import spring.reborn.domain.rebornTask.model.PatchRebornTaskForExchange;
-import spring.reborn.domain.rebornTask.model.PatchRebornTaskRes;
-import spring.reborn.domain.rebornTask.model.PostRebornTaskReq;
-import spring.reborn.domain.rebornTask.model.RebornTaskStatus;
+import spring.reborn.domain.rebornTask.model.*;
+import spring.reborn.domain.user.UserDao;
 
 import javax.sql.DataSource;
 
@@ -29,6 +27,7 @@ public class RebornTaskDao {
     }
 
     private final RebornDao rebornDao;
+    private final UserDao userDao;
 
 
     @Transactional
@@ -45,10 +44,9 @@ public class RebornTaskDao {
                     "where rebornIdx = ? and status = 'ACTIVE'";
 
             // 리본의 상품 수보다 이미 생성된 task 수가 많다면
-            if(this.jdbcTemplate.queryForObject(countRebornQuery,new Object[]{postRebornTaskReq.getRebornIdx()},Integer.class)
+            if (this.jdbcTemplate.queryForObject(countRebornQuery, new Object[]{postRebornTaskReq.getRebornIdx()}, Integer.class)
                     <=
-                    this.jdbcTemplate.queryForObject(countRebornTaskQuery, new Object[]{postRebornTaskReq.getRebornIdx()}, Integer.class))
-            {
+                    this.jdbcTemplate.queryForObject(countRebornTaskQuery, new Object[]{postRebornTaskReq.getRebornIdx()}, Integer.class)) {
                 throw new BaseException(NOT_ENOUGH_REBORN);
             }
 
@@ -59,9 +57,9 @@ public class RebornTaskDao {
             Object[] createRebornTaskParams = new Object[]{
                     postRebornTaskReq.getUserIdx(),
                     postRebornTaskReq.getRebornIdx(),
-                    (int)(Math.random()*89999+10000)
+                    (int) (Math.random() * 89999 + 10000)
             };
-            if(this.jdbcTemplate.update(createRebornTaskQuery, createRebornTaskParams)==0){
+            if (this.jdbcTemplate.update(createRebornTaskQuery, createRebornTaskParams) == 0) {
                 throw new BaseException(UPDATE_FAIL_REBORN_TASK);
             }
 
@@ -69,12 +67,10 @@ public class RebornTaskDao {
 
             Long rebornTaskIdx = this.jdbcTemplate.queryForObject(selectRebornTaskQuery, Long.class);
             return rebornTaskIdx;
-        }
-        catch (BaseException e){
+        } catch (BaseException e) {
             log.error(e.getStatus().getMessage());
             throw new BaseException(e.getStatus());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.getStackTrace();
             log.error(e.getMessage());
             throw new BaseException(CAN_NOT_CREATE_REBORN_TASK);
@@ -82,7 +78,7 @@ public class RebornTaskDao {
     }
 
     @Transactional
-    public PatchRebornTaskRes findByRebornTaskIdAndCode(Long rebornTaskIdx, Long Code) throws BaseException{
+    public PatchRebornTaskRes findByRebornTaskIdAndCode(Long rebornTaskIdx, Long Code) throws BaseException {
         try {
 
             // todo 시간고려는 프론트가 처리해서 만료된 api 따로처리
@@ -111,7 +107,7 @@ public class RebornTaskDao {
             if (!rebornTask.getProductExchangeCode().equals(Code)) {
                 throw new BaseException(INVALID_EXCHANGE_CODE);
             }
-            if(rebornTask.getProductCnt()==0){
+            if (rebornTask.getProductCnt() == 0) {
                 throw new BaseException(NOT_ENOUGH_REBORN_PRODUCT_COUNT);
             }
 
@@ -121,7 +117,7 @@ public class RebornTaskDao {
                     "set updatedAt = now(), status = 'COMPLETE' " +
                     "where rebornTaskIdx = ?";
 
-            if(this.jdbcTemplate.update(updateRebornTaskQuery, rebornTaskIdx)==0){
+            if (this.jdbcTemplate.update(updateRebornTaskQuery, rebornTaskIdx) == 0) {
                 throw new BaseException(UPDATE_FAIL_REBORN_TASK);
             }
 
@@ -130,14 +126,29 @@ public class RebornTaskDao {
 
 
             return PatchRebornTaskRes.builder().rebornTaskIdx(rebornTaskIdx).build();
-        }catch (BaseException e) {
+        } catch (BaseException e) {
             log.error(e.getStatus().getMessage());
             throw new BaseException(e.getStatus());
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.getStackTrace();
             throw new BaseException(DATABASE_ERROR);
         }
     }
 
+    public GetRebornExchangeCodeRes getRebornExchangeCode(Long rebornTaskIdx, Long userIdx) throws BaseException {
+        try {
+            String selectExchangeCodeQuery = "select productExchangeCode " +
+                    "from RebornTask " +
+                    "where rebornTaskIdx = ? and userIdx = ?";
+
+            return this.jdbcTemplate.queryForObject(selectExchangeCodeQuery,
+                    (rs, rowNum) ->
+                            new GetRebornExchangeCodeRes(rs.getLong("productExchangeCode")),
+                    rebornTaskIdx, userIdx);
+
+        } catch (Exception e) {
+            e.getStackTrace();
+            throw new BaseException(NO_AUTHENTIFICATION_REBORN);
+        }
+    }
 }
