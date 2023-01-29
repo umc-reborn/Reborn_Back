@@ -466,11 +466,11 @@ public class UserService {
             throw new BaseException(DATABASE_ERROR);
         }
 
-        // 아이디 암호화
+        // 아이디 세번째 자리부터 *로 치환: se*****
         String whole = getUserIdRes.getUserId();
         String first = whole.substring(0,2);
         String second = whole.substring(2);
-        second.replaceAll(second, "*");
+        second = second.replaceAll(".", "*");
         whole = first + second;
 
         getUserIdRes.setUserId(whole);
