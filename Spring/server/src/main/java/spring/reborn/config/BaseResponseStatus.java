@@ -94,6 +94,8 @@ public enum BaseResponseStatus {
     POST_USERS_EMPTY_STOREREGISTER(false, 2408, "사업자 등록번호를 입력해주세요."),
     POST_USERS_INVALID_STOREREGISTER(false, 2409, "사업자 등록번호 형식을 확인해주세요."),
 
+    // 햄 (2500~2599)
+    CAN_NOT_CHANGE_STATUS_TO_ACTIVE(false,2500,"활성화, 혹은 비활성화가 불가능한 리본상품입니다."),
 
     /**
      * 3000 : Response 오류

@@ -87,4 +87,14 @@ public class RebornService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    @Transactional
+    public PatchRebornStatusRes ativeReborn(int rebornIdx) throws BaseException {
+        try {
+            System.out.println("service start");
+            return rebornDao.ativeReborn(rebornIdx);
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }
