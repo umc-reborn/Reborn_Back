@@ -25,6 +25,7 @@ public class ReviewDao {
     private AwsS3Service awsS3Service;
     private AwsS3Controller awsS3Controller;
 
+    @Transactional
     @Autowired //readme 참고
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
@@ -233,6 +234,20 @@ public class ReviewDao {
 
         Integer count = jdbcTemplate.queryForObject(
                 getReviewCntByStoreIdxQuery, getReviewCntByStoreIdxParams, Integer.class);
+
+        return count;
+    }
+
+    @Transactional
+    public Integer getReviewCntByUserIdx(Integer userIdx) throws BaseException {
+        String getReviewCntByUserIdxQuery = "SELECT COUNT(Review.reviewIdx)\n" +
+                "FROM reborn.Review\n" +
+                "WHERE Review.userIdx = ?;"; // 실행될 동적 쿼리문
+        Object[] getReviewCntByUserIdxParams = new Object[]{
+                userIdx,}; // 동적 쿼리의 ?부분에 주입될 값
+
+        Integer count = jdbcTemplate.queryForObject(
+                getReviewCntByUserIdxQuery, getReviewCntByUserIdxParams, Integer.class);
 
         return count;
     }

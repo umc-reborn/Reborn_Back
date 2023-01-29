@@ -129,16 +129,34 @@ public class ReviewController {
     }
 
     @ResponseBody
-    @GetMapping("/review/cnt/{storeIdx}")
-    public BaseResponse<Integer> getReviewCntByStoreIdx(@PathVariable Integer storeIdx) {
+    @GetMapping("/review/cnt")
+    public BaseResponse<Integer> getReviewCntByStoreIdx(@RequestParam(value = "storeIdx",required = false) Integer storeIdx,
+                                                        @RequestParam(value = "userIdx",required = false) Integer userIdx) {
         try {
-            Integer getReviewRes = reviewProvider.getReviewCntByStoreIdx(storeIdx);
-
+            Integer getReviewRes = null;
+            if (storeIdx != null){
+                getReviewRes = reviewProvider.getReviewCntByStoreIdx(storeIdx);
+            }
+            else if (userIdx != null){
+                getReviewRes = reviewProvider.getReviewCntByUserIdx(userIdx);
+            }
             return new BaseResponse<>(getReviewRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+
+//    @ResponseBody
+//    @GetMapping("/review/cnt")
+//    public BaseResponse<Integer> getReviewCntByUserIdx(@RequestParam(value = "userIdx",required = false) Integer userIdx) {
+//        try {
+//            Integer getReviewRes = reviewProvider.getReviewCntByUserIdx(userIdx);
+//
+//            return new BaseResponse<>(getReviewRes);
+//        } catch (BaseException exception) {
+//            return new BaseResponse<>((exception.getStatus()));
+//        }
+//    }
 
 
 }

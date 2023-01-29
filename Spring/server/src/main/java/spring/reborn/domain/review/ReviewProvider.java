@@ -35,4 +35,8 @@ public class ReviewProvider {
     public Integer getReviewCntByStoreIdx(Integer storeIdx) throws BaseException {
         return reviewDao.getReviewCntByStoreIdx(storeIdx);
     }
+
+    public Integer getReviewCntByUserIdx(Integer userIdx) throws BaseException {
+        return reviewDao.getReviewCntByUserIdx(userIdx);
+    }
 }
