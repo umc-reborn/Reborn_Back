@@ -73,6 +73,16 @@ public class UserProvider {
         }
     }
 
+    // 해당 이메일을 갖는 유저 아이디 조회
+    public GetUserIdRes getUserIdInform(String email) throws BaseException {
+        try {
+            GetUserIdRes getUserIdRes = userDao.getUserIdInform(email);
+            return getUserIdRes;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
     //이웃 로그인(password 검사)
     @Transactional
     public PostLoginRes logIn(PostLoginReq postLoginReq) throws BaseException {
@@ -141,5 +151,15 @@ public class UserProvider {
         } else { // 비밀번호가 다르다면 에러메세지를 출력한다.
             throw new BaseException(FAILED_TO_LOGIN);
         }
+    }
+
+    //로그아웃
+    @Transactional
+    public PostLogoutRes logOut(int userIdx) throws BaseException {
+//  *********** 해당 부분은 7주차 - JWT 수업 후 주석해제 및 대체해주세요!  **************** //
+            String jwt = jwtService.createEmptyJwt(userIdx);
+            String userNickname = userDao.getUserNickname(userIdx);
+            return new PostLogoutRes(userIdx,userNickname,jwt);
+//  **************************************************************************
     }
 }

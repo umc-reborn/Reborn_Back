@@ -43,6 +43,8 @@ public enum BaseResponseStatus {
     POST_USERS_EXISTS_ID(false,2108,"중복된 ID입니다."),
     NO_JOINED_EMAIL(false, 2109, "가입되지 않은 이메일입니다."),
     NO_JOINED_ID(false, 2110, "가입되지 않은 ID입니다."),
+    WRONG_PWD(false, 2111, "입력된 비밀번호가 틀렸습니다."),
+    DIFFERENT_PWD(false, 2112, "비밀번호가 일치하지 않습니다.."),
 
 
     //준몰리
@@ -52,6 +54,19 @@ public enum BaseResponseStatus {
     MODIFY_FAIL_STORE(false,2203,"해당 스토어의 정보를 수정할 수 없습니다."),
     MODIFY_FAIL_STORE_EMPTY_NAME(false,2204,"해당 스토어의 이름을 입력해주세요."),
     MODIFY_FAIL_STORE_EMPTY_LOCATION(false,2205,"해당 스토어의 위치를 입력해주세요."),
+
+    CAN_NOT_CREATE_REBORN_TASK(false, 2210, "리본을 생성할 수 없습니다. 다시 시도해주세요."),
+    NOT_AVAILABLE_REBORN_TASK(false, 2211, "리본을 진행할 수 없는 상태입니다. 다시 확인해주세요."),
+    UPDATE_FAIL_REBORN_TASK(false, 2212, "리본 태스크 업데이트 실패."),
+    UPDATE_FAIL_REBORN_STATUS(false, 2213, "리본 상태 업데이트 실패."),
+    NOT_ENOUGH_REBORN(false, 2214, "리본이 모두 소진 되었습니다."),
+    INVALID_EXCHANGE_CODE(false, 2215, "유효하지 않은 교환 코드입니다."),
+    CAN_NOT_FOUND_REBORN_TASK(false, 2216, "해당 리본태스크를 찾을 수 없습니다."),
+    UPDATE_FAIL_REBORN_PRODUCT_COUNT(false,2217,"리본 개수 감소 실패"),
+    NOT_ENOUGH_REBORN_PRODUCT_COUNT(false,2217,"잔여 리본이 없습니다. 다시 확인해주세요."),
+    INVALID_TYPE_TO_GET_REBORN(false,2218,"손님만 리본 받을 수 있습니다."),
+    NO_AUTHENTIFICATION_REBORN(false,2219,"해당 리본에 권한이 없습니다."),
+
 
 
     AWS_UPLOAD_FAIL_ERROR(false,2297, "AWS에서 해당 이미지를 업로드에 실패하였습니다."),
@@ -64,6 +79,9 @@ public enum BaseResponseStatus {
     PATCH_REBORN_EMPTY_PRODUCTGUIDE(false, 2301, "상품 가이드가 없습니다."),
     PATCH_REBORN_EMPTY_PRODUCTCOMMENT(false, 2302, "상품 설명이 없습니다."),
     MODIFY_FAIL_REBORN(false, 2303, "리본 수정에 실패했습니다."),
+    DELETE_FAIL_REBORN(false, 2304, "상품 삭제에 실패했습니다."),
+    INACTIVE_FAIL_REBORNTASK(false, 2305, "나눔 취소에 실패했습니다."),
+
     //민몰리
     POST_USERS_EMPTY_PASSWORD(false, 2400, "비밀번호를 입력해주세요."),
     POST_USERS_INVALID_PASSWORD(false, 2401, "비밀번호 형식은 숫자, 특수문자 각 1회 이상, 영문은 대소문자 각 1개 이상 사용하여 8자리 이상 16자리 이하여야 합니다."),

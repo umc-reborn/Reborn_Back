@@ -411,19 +411,104 @@ public class UserController {
     }
 
     /**
+     * 아이디 찾기 - 부분 암호 API
+     * [GET] /users/IdFindPart
+     */
+    @GetMapping("/IdFindPart")
+    @ResponseBody
+    public BaseResponse<GetUserIdRes> idFindPart(@RequestParam("email") String email) throws Exception {
+        try {
+            GetUserIdRes getUserIdRes = userService.idFindPart(email);
+            return new BaseResponse<>(getUserIdRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    /**
+     * 아이디 찾기 - 메일 전송 API
+     * [POST] /users/IdFindMail
+     */
+    @PostMapping("/IdFindMail")
+    @ResponseBody
+    public BaseResponse<String> idMailSend(@RequestParam("email") String email) throws Exception {
+        try {
+            userService.sendIDMessage(email);
+            String result = "가입하신 이메일로 아이디가 발송 되었습니다.";
+            return new BaseResponse<>(result);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    /**
      * 비밀번호 초기화 API
      * [PATCH] /users/pwd-reset
      */
     @PatchMapping("pwd-reset")
     @ResponseBody
-    public BaseResponse<String> resetPwd(@RequestBody PatchUserIdResetReq patchUserIdResetReq) throws Exception {
+    public BaseResponse<String> resetPwd(@RequestBody PatchUserPwdResetReq patchUserPwdResetReq) throws Exception {
 
         try {
-            userService.sendTempPwd(patchUserIdResetReq);
+            userService.sendTempPwd(patchUserPwdResetReq);
             String code = "이메일로 임시 비밀번호가 발급되었습니다";
             return new BaseResponse<>(code);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
     }
+
+    /**
+     * 비밀번호 변경 API
+     * [PATCH]
+     */
+    @ResponseBody
+    @PatchMapping("/modifyPwd/{userIdx}")
+    @Transactional
+    public BaseResponse<String> modifyPwd(@PathVariable("userIdx") int userIdx, @RequestBody PatchUserPwdReq patchUserPwdReq) {
+        // password에 값이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
+        if (patchUserPwdReq.getUserNewPwd().length() == 0) {
+            return new BaseResponse<>(POST_USERS_EMPTY_PASSWORD);
+        }
+        //비밀번호 정규표현: 입력받은 비밀번호가 숫자, 특문 각 1회 이상, 영문은 대소문자 모두 사용하여 8~16자리 입력과 같은 형식인지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
+        if (!isRegexPassword(patchUserPwdReq.getUserNewPwd())) {
+            return new BaseResponse<>(POST_USERS_INVALID_PASSWORD);
+        }
+        try {
+
+//  *********** 해당 부분은 7주차 - JWT 수업 후 주석해체 해주세요!  ****************
+//            jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(patchUserPwdReq.getUserIdx() != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            //같다면 비밀번호 변경
+//  **************************************************************************
+            userService.modifyUserPwd(patchUserPwdReq);
+
+            String result = "비번 변경이 완료되었습니다.";
+            return new BaseResponse<>(result);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+
+    }
+
+    /**
+     * 로그아웃 API
+     * [POST] /users/log-out
+     */
+    @ResponseBody
+    @PostMapping("/log-out/{userIdx}")
+    @Transactional
+    public BaseResponse<PostLogoutRes> logOut(@PathVariable("userIdx") int userIdx) {
+        try {
+            PostLogoutRes postLogoutRes = userProvider.logOut(userIdx);
+            return new BaseResponse<>(postLogoutRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
 }
+
