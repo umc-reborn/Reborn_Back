@@ -152,4 +152,14 @@ public class UserProvider {
             throw new BaseException(FAILED_TO_LOGIN);
         }
     }
+
+    //로그아웃
+    @Transactional
+    public PostLogoutRes logOut(int userIdx) throws BaseException {
+//  *********** 해당 부분은 7주차 - JWT 수업 후 주석해제 및 대체해주세요!  **************** //
+            String jwt = jwtService.createEmptyJwt(userIdx);
+            String userNickname = userDao.getUserNickname(userIdx);
+            return new PostLogoutRes(userIdx,userNickname,jwt);
+//  **************************************************************************
+    }
 }

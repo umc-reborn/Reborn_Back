@@ -3,11 +3,8 @@ package spring.reborn.domain.user;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
 import spring.reborn.config.BaseException;
-import spring.reborn.config.BaseResponse;
 import spring.reborn.config.secret.Secret;
 import spring.reborn.domain.user.model.PostUserReq;
 import spring.reborn.domain.user.model.PostUserRes;
@@ -391,21 +388,21 @@ public class UserService {
     }
 
     // 임시 비밀번호 전송
-    public String sendTempPwd(PatchUserIdResetReq patchUserIdResetReq) throws Exception {
+    public String sendTempPwd(PatchUserPwdResetReq patchUserPwdResetReq) throws Exception {
 
         // 가입 확인: 해당 이메일을 가진 유저가 있는지 확인합니다. 없을 경우, 에러 메시지를 보냅니다.
-        if (userProvider.checkUserEmail(patchUserIdResetReq.getUserEmail()) != 1) {
+        if (userProvider.checkUserEmail(patchUserPwdResetReq.getUserEmail()) != 1) {
             throw new BaseException(NO_JOINED_EMAIL);
         }
         // 가입 확인: 해당 ID를 가진 유저가 있는지 확인합니다. 없을 경우, 에러 메시지를 보냅니다.
-        if (userProvider.checkUserId(patchUserIdResetReq.getUserId()) != 1) {
+        if (userProvider.checkUserId(patchUserPwdResetReq.getUserId()) != 1) {
             throw new BaseException(NO_JOINED_ID);
         }
 
         ePw = createPwd(); // 랜덤 인증번호 생성
 
         // TODO Auto-generated method stub
-        MimeMessage message = createPwdMessage(patchUserIdResetReq.getUserEmail()); // 메일 발송
+        MimeMessage message = createPwdMessage(patchUserPwdResetReq.getUserEmail()); // 메일 발송
         try {// 예외처리
             emailsender.send(message);
         } catch (MailException es) {
@@ -415,14 +412,15 @@ public class UserService {
         String tempPwd;
         try {
             tempPwd = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(ePw); // 암호화코드
-            patchUserIdResetReq.setUserPwd(tempPwd);
-            userDao.modifyUserPwd(patchUserIdResetReq);
+            patchUserPwdResetReq.setUserPwd(tempPwd);
+            userDao.modifyUserPwd(patchUserPwdResetReq);
         } catch (Exception ignored) { // 암호화가 실패하였을 경우 에러 발생
             throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
         }
 
         return ePw; // 메일로 보냈던 인증 코드를 서버로 반환
     }
+
 
     // ID 찾기 - 메일 발송(Post)
     public void sendIDMessage(String to) throws Exception {
@@ -475,6 +473,41 @@ public class UserService {
 
         getUserIdRes.setUserId(whole);
         return getUserIdRes;
+
+    // 비밀번호 변경(Patch)
+    @Transactional
+    public void modifyUserPwd(PatchUserPwdReq patchUserPwdReq) throws BaseException {
+        String pwd;
+        try {
+            // 암호화: postUserReq에서 제공받은 비밀번호를 보안을 위해 암호화시켜 DB에 저장합니다.
+            // ex) password123 -> dfhsjfkjdsnj4@!$!@chdsnjfwkenjfnsjfnjsd.fdsfaifsadjfjaf
+            pwd = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(patchUserPwdReq.getUserPwd()); // 암호화코드
+            patchUserPwdReq.setUserPwd(pwd);
+        } catch (Exception ignored) { // 암호화가 실패하였을 경우 에러 발생
+            throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
+        }
+        if(!pwd.equals(userDao.getPwd2(patchUserPwdReq.getUserIdx()))){
+            throw new BaseException(WRONG_PWD);
+        }
+        if(!patchUserPwdReq.getUserNewPwd().equals(patchUserPwdReq.getUserNewPwd2())){
+            throw new BaseException(DIFFERENT_PWD);
+        }
+        try {
+            // 암호화: postUserReq에서 제공받은 비밀번호를 보안을 위해 암호화시켜 DB에 저장합니다.
+            // ex) password123 -> dfhsjfkjdsnj4@!$!@chdsnjfwkenjfnsjfnjsd.fdsfaifsadjfjaf
+            pwd = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(patchUserPwdReq.getUserNewPwd()); // 암호화코드
+            patchUserPwdReq.setUserNewPwd(pwd);
+        } catch (Exception ignored) { // 암호화가 실패하였을 경우 에러 발생
+            throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
+        }
+        try {
+            int result = userDao.modifyUserPwd2(patchUserPwdReq); // 해당 과정이 무사히 수행되면 True(1), 그렇지 않으면 False(0)입니다.
+            if (result == 0) { // result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
+                throw new BaseException(MODIFY_FAIL_USERSTATUS);
+            }
+        } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
+            throw new BaseException(DATABASE_ERROR);
+        }
     }
     
 }
