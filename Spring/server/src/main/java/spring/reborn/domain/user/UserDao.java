@@ -205,6 +205,7 @@ public class UserDao {
     }
 
     // 해당 userIdx를 갖는 유저 정보 조회
+    @Transactional
     public GetUserInformRes getUserInform(int userIdx) {
         String getUserQuery = "select * from User where userIdx = ?"; // 해당 userIdx를 만족하는 유저를 조회하는 쿼리문
         int getUserParams = userIdx;
@@ -216,6 +217,18 @@ public class UserDao {
                         rs.getString("userBirthDate"),
                         rs.getString("userLikes")), // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
                 getUserParams); // 한 개의 회원정보를 얻기 위한 jdbcTemplate 함수(Query, 객체 매핑 정보, Params)의 결과 반환
+    }
+
+    // 해당 email을 갖는 유저 아이디 조회
+    @Transactional
+    public GetUserIdRes getUserIdInform(String email){
+        String getUserIdQuery = "select userId, createdAt from User where userEmail = ?"; // 해당 userEmail을 만족하는 유저를 조회하는 쿼리문
+        String checkEmailParams = email; // 해당(확인할) 이메일 값
+        return this.jdbcTemplate.queryForObject(getUserIdQuery,
+                (rs, rowNum) -> new GetUserIdRes(
+                        rs.getString("userId"),
+                        rs.getString("createdAt")),
+                checkEmailParams);
     }
 
     // 이웃 회원탈퇴

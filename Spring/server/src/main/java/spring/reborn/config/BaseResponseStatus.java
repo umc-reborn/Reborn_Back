@@ -79,9 +79,7 @@ public enum BaseResponseStatus {
     PATCH_REBORN_EMPTY_PRODUCTGUIDE(false, 2301, "상품 가이드가 없습니다."),
     PATCH_REBORN_EMPTY_PRODUCTCOMMENT(false, 2302, "상품 설명이 없습니다."),
     MODIFY_FAIL_REBORN(false, 2303, "리본 수정에 실패했습니다."),
-
     DELETE_FAIL_REBORN(false, 2304, "상품 삭제에 실패했습니다."),
-
     INACTIVE_FAIL_REBORNTASK(false, 2305, "나눔 취소에 실패했습니다."),
 
     //민몰리
