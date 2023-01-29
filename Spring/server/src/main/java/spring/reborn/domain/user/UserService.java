@@ -458,21 +458,22 @@ public class UserService {
         }
 
         // 이메일로 아이디, 가입일 찾기
-        try{
+        try {
             getUserIdRes = userProvider.getUserIdInform(to);
-        } catch (Exception ignored){
+        } catch (Exception ignored) {
             throw new BaseException(DATABASE_ERROR);
         }
 
         // 아이디 세번째 자리부터 *로 치환: se*****
         String whole = getUserIdRes.getUserId();
-        String first = whole.substring(0,2);
+        String first = whole.substring(0, 2);
         String second = whole.substring(2);
         second = second.replaceAll(".", "*");
         whole = first + second;
 
         getUserIdRes.setUserId(whole);
         return getUserIdRes;
+    }
 
     // 비밀번호 변경(Patch)
     @Transactional
