@@ -24,11 +24,19 @@ public class ReviewProvider {
         return reviewDao.getReviewByStoreIdx(storeIdx);
     }
 
+    public GetReviewRes getReviewByReviewIdx(Integer reviewIdx) throws BaseException {
+        return reviewDao.getReviewByReviewIdx(reviewIdx);
+    }
+
     public List<GetReviewRes> getBestReview() throws BaseException {
         return reviewDao.getBestReview();
     }
 
     public Integer getReviewCntByStoreIdx(Integer storeIdx) throws BaseException {
         return reviewDao.getReviewCntByStoreIdx(storeIdx);
+    }
+
+    public Integer getReviewCntByUserIdx(Integer userIdx) throws BaseException {
+        return reviewDao.getReviewCntByUserIdx(userIdx);
     }
 }
