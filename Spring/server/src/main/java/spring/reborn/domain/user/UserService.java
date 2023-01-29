@@ -466,6 +466,14 @@ public class UserService {
             throw new BaseException(DATABASE_ERROR);
         }
 
+        // 아이디 암호화
+        String whole = getUserIdRes.getUserId();
+        String first = whole.substring(0,2);
+        String second = whole.substring(2);
+        second.replaceAll(second, "*");
+        whole = first + second;
+
+        getUserIdRes.setUserId(whole);
         return getUserIdRes;
     }
     

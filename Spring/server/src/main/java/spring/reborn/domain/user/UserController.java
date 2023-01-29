@@ -414,7 +414,7 @@ public class UserController {
      * 아이디 찾기 - 부분 암호 API
      * [GET] /users/IdFindPart
      */
-    @GetMapping("IdFindPart")
+    @GetMapping("/IdFindPart")
     @ResponseBody
     public BaseResponse<GetUserIdRes> idFindPart(@RequestParam("email") String email) throws Exception {
         try {
@@ -429,7 +429,7 @@ public class UserController {
      * 아이디 찾기 - 메일 전송 API
      * [POST] /users/IdFindMail
      */
-    @PostMapping("IdFindMail")
+    @PostMapping("/IdFindMail")
     @ResponseBody
     public BaseResponse<String> idMailSend(@RequestParam("email") String email) throws Exception {
         try {
