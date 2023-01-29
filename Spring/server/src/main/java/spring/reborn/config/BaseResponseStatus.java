@@ -64,6 +64,9 @@ public enum BaseResponseStatus {
     CAN_NOT_FOUND_REBORN_TASK(false, 2216, "해당 리본태스크를 찾을 수 없습니다."),
     UPDATE_FAIL_REBORN_PRODUCT_COUNT(false,2217,"리본 개수 감소 실패"),
     NOT_ENOUGH_REBORN_PRODUCT_COUNT(false,2217,"잔여 리본이 없습니다. 다시 확인해주세요."),
+    INVALID_TYPE_TO_GET_REBORN(false,2218,"손님만 리본 받을 수 있습니다."),
+    NO_AUTHENTIFICATION_REBORN(false,2219,"해당 리본에 권한이 없습니다."),
+
 
 
     AWS_UPLOAD_FAIL_ERROR(false,2297, "AWS에서 해당 이미지를 업로드에 실패하였습니다."),
