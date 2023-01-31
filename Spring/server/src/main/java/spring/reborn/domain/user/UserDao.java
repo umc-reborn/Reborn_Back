@@ -233,9 +233,9 @@ public class UserDao {
 
     // 이웃 회원탈퇴
     @Transactional
-    public int modifyUserStatus(PatchUserStatusReq patchUserStatusReq) {
+    public int modifyUserStatus(int userIdx) {
         String modifyUserStatusQuery = "update User set status = ?, userNickname = ? where userIdx = ? "; // 해당 userIdx를 만족하는 User를 해당 status로 변경한다.
-        Object[] modifyUserStatusParams = new Object[]{patchUserStatusReq.getStatus(),"탈퇴 회원", patchUserStatusReq.getUserIdx()}; // 주입될 값들(status, userIdx) 순
+        Object[] modifyUserStatusParams = new Object[]{"DELETE", "탈퇴 회원", userIdx}; // 주입될 값들(status, userIdx) 순
 
         return this.jdbcTemplate.update(modifyUserStatusQuery, modifyUserStatusParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0)
 
@@ -243,14 +243,14 @@ public class UserDao {
 
     // 스토어 회원탈퇴
     @Transactional
-    public int modifyStoreStatus(PatchStoreStatusReq patchStoreStatusReq) {
+    public int modifyStoreStatus(int userIdx) {
         String modifyStoreStatusQuery = "update Store set status = ? where userIdx = ? "; // 해당 storeIdx를 만족하는 Store를 해당 status로 변경한다.
-        Object[] modifyStoreStatusParams = new Object[]{patchStoreStatusReq.getStatus(), patchStoreStatusReq.getUserIdx()}; // 주입될 값들(status, userIdx) 순
+        Object[] modifyStoreStatusParams = new Object[]{"DELETE", userIdx}; // 주입될 값들(status, userIdx) 순
 
         this.jdbcTemplate.update(modifyStoreStatusQuery, modifyStoreStatusParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0)
 
         modifyStoreStatusQuery = "update User set status = ? where userIdx = ? "; // 해당 storeIdx를 만족하는 User를 해당 status로 변경한다.
-        modifyStoreStatusParams = new Object[]{patchStoreStatusReq.getStatus(), patchStoreStatusReq.getUserIdx()}; // 주입될 값들(status, userIdx) 순
+        modifyStoreStatusParams = new Object[]{"DELETE", userIdx}; // 주입될 값들(status, userIdx) 순
 
         return this.jdbcTemplate.update(modifyStoreStatusQuery, modifyStoreStatusParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0)
     }

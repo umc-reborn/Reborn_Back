@@ -131,9 +131,9 @@ public class UserService {
 
     // 이웃 회원탈퇴(Patch)
     @Transactional
-    public void modifyUserStatus(PatchUserStatusReq patchUserStatusReq) throws BaseException {
+    public void modifyUserStatus(int userIdx) throws BaseException {
         try {
-            int result = userDao.modifyUserStatus(patchUserStatusReq); // 해당 과정이 무사히 수행되면 True(1), 그렇지 않으면 False(0)입니다.
+            int result = userDao.modifyUserStatus(userIdx); // 해당 과정이 무사히 수행되면 True(1), 그렇지 않으면 False(0)입니다.
             if (result == 0) { // result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
                 throw new BaseException(MODIFY_FAIL_USERSTATUS);
             }
@@ -144,9 +144,9 @@ public class UserService {
     
     // 스토어 회원탈퇴(Patch)
     @Transactional
-    public void modifyStoreStatus(PatchStoreStatusReq patchStoreStatusReq) throws BaseException {
+    public void modifyStoreStatus(int userIdx) throws BaseException {
         try {
-        int result = userDao.modifyStoreStatus(patchStoreStatusReq); // 해당 과정이 무사히 수행되면 True(1), 그렇지 않으면 False(0)입니다.
+        int result = userDao.modifyStoreStatus(userIdx); // 해당 과정이 무사히 수행되면 True(1), 그렇지 않으면 False(0)입니다.
         if (result == 0) { // result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
             throw new BaseException(MODIFY_FAIL_STORESTATUS);
         }
