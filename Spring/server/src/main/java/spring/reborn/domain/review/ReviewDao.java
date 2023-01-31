@@ -49,11 +49,14 @@ public class ReviewDao {
 
         // 가게 평점 업데이트
         String updateStoreScoreQuery = "UPDATE Store SET storeScore=(\n" +
-                "SELECT AVG(Review.reviewScore) FROM Review\n" +
-                "WHERE Review.rebornIdx = ?)\n" +
+                "SELECT ROUND(AVG(Review.reviewScore),1) FROM Review JOIN Reborn\n" +
+                "ON Review.rebornIdx = Reborn.rebornIdx\n" +
+                "WHERE storeIdx =(SELECT K.storeIdx FROM \n" +
+                "( SELECT Store.storeIdx FROM Store JOIN Reborn \n" +
+                "ON Store.storeIdx=Reborn.storeIdx WHERE Reborn.rebornIdx = ?) AS K))\n" +
                 "WHERE storeIdx =(SELECT S.storeIdx FROM \n" +
                 "( SELECT Store.storeIdx FROM Store JOIN Reborn \n" +
-                "ON Reborn.storeIdx=Reborn.storeIdx WHERE Reborn.rebornIdx = ?) AS S);";
+                "ON Store.storeIdx=Reborn.storeIdx WHERE Reborn.rebornIdx = ?) AS S);";
         Object[] updateStoreScoreParams = new Object[]{
                 postReviewReq.getRebornIdx(),
                 postReviewReq.getRebornIdx(),}; // 동적 쿼리의 ?부분에 주입될 값
