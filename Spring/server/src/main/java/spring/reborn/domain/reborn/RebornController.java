@@ -42,11 +42,11 @@ public class RebornController {
 
     /* 전체 리본 조회 (스토어) */
     @ResponseBody
-    @GetMapping("/store/{storeIdx}")
+    @GetMapping("/store/{storeIdx}/status")
     @Transactional
-    public BaseResponse<List<GetRebornRes>> getReborns(@PathVariable Integer storeIdx) {
+    public BaseResponse<List<GetRebornRes>> getReborns(@PathVariable Integer storeIdx, @RequestParam String status) {
         try {
-            List<GetRebornRes> getRebornsRes= rebornProvider.getReborns(storeIdx);
+            List<GetRebornRes> getRebornsRes= rebornProvider.getReborns(storeIdx, status);
             return new BaseResponse<>(getRebornsRes);
         } catch (BaseException baseException) {
             return new BaseResponse<>(baseException.getStatus());
@@ -70,14 +70,14 @@ public class RebornController {
     @ResponseBody
     @PatchMapping("/modify")
     @Transactional
-    public BaseResponse<String> patchReborn(PatchRebornReq patchRebornReq) {
+    public BaseResponse<String> patchReborn(@RequestBody PatchRebornReq patchRebornReq) {
         try {
-            if (patchRebornReq.getProductName() == null)
-                return new BaseResponse<>(PATCH_REBORN_EMPTY_PRODUCTNAME);
-            if (patchRebornReq.getProductGuide() == null)
-                return new BaseResponse<>(PATCH_REBORN_EMPTY_PRODUCTGUIDE);
-            if (patchRebornReq.getProductComment() == null)
-                return new BaseResponse<>(PATCH_REBORN_EMPTY_PRODUCTCOMMENT);
+//            if (patchRebornReq.getProductName() == null)
+//                return new BaseResponse<>(PATCH_REBORN_EMPTY_PRODUCTNAME);
+//            if (patchRebornReq.getProductGuide() == null)
+//                return new BaseResponse<>(PATCH_REBORN_EMPTY_PRODUCTGUIDE);
+//            if (patchRebornReq.getProductComment() == null)
+//                return new BaseResponse<>(PATCH_REBORN_EMPTY_PRODUCTCOMMENT);
             String result = rebornService.patchReborn(patchRebornReq);
             return new BaseResponse<>(result);
         } catch (BaseException baseException) {

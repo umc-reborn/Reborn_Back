@@ -327,9 +327,9 @@ public class StoreDao {
 
     }
 
-    public List<GetPopularStoreRes> getPopularStore() {
+    public List<GetPopularStoreRes> getPopularStore(String category) throws BaseException {
         System.out.println("dao 시작");
-        String getHistroiesQuery = "SELECT storeIdx, storeName, storeAddress, category, storeScore FROM Store ORDER BY storeScore DESC LIMIT 3";
+        String getHistroiesQuery = "SELECT storeIdx, storeName, storeAddress, category, storeScore FROM Store WHERE category = ? ORDER BY storeScore DESC LIMIT 3";
         List<GetPopularStoreRes> result = this.jdbcTemplate.query(
                 getHistroiesQuery,
                 (rs, rowNum) -> new GetPopularStoreRes(
@@ -337,7 +337,8 @@ public class StoreDao {
                         rs.getString("storeName"),
                         rs.getString("storeAddress"),
                         rs.getString("category"),
-                        rs.getFloat("storeScore"))
+                        rs.getFloat("storeScore")),
+                category
         );
         return result;
     }
