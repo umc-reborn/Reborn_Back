@@ -40,6 +40,10 @@ dependencies {
 
 	// EmailConfirm
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+	//google 소셜 로그인
+	implementation 'com.google.api-client:google-api-client:1.32.1'
+	//implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 }
 
 tasks.named('test') {

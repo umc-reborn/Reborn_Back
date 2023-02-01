@@ -2,14 +2,12 @@ package spring.reborn.domain.user;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
-import spring.reborn.config.BaseException;
 import spring.reborn.domain.user.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import static spring.reborn.config.BaseResponseStatus.DATABASE_ERROR;
 
 @Repository
 public class UserDao {
@@ -207,6 +205,7 @@ public class UserDao {
     }
 
     // 해당 userIdx를 갖는 유저 정보 조회
+    @Transactional
     public GetUserInformRes getUserInform(int userIdx) {
         String getUserQuery = "select * from User where userIdx = ?"; // 해당 userIdx를 만족하는 유저를 조회하는 쿼리문
         int getUserParams = userIdx;
@@ -220,11 +219,23 @@ public class UserDao {
                 getUserParams); // 한 개의 회원정보를 얻기 위한 jdbcTemplate 함수(Query, 객체 매핑 정보, Params)의 결과 반환
     }
 
+    // 해당 email을 갖는 유저 아이디 조회
+    @Transactional
+    public GetUserIdRes getUserIdInform(String email){
+        String getUserIdQuery = "select userId, createdAt from User where userEmail = ?"; // 해당 userEmail을 만족하는 유저를 조회하는 쿼리문
+        String checkEmailParams = email; // 해당(확인할) 이메일 값
+        return this.jdbcTemplate.queryForObject(getUserIdQuery,
+                (rs, rowNum) -> new GetUserIdRes(
+                        rs.getString("userId"),
+                        rs.getString("createdAt")),
+                checkEmailParams);
+    }
+
     // 이웃 회원탈퇴
     @Transactional
-    public int modifyUserStatus(PatchUserStatusReq patchUserStatusReq) {
-        String modifyUserStatusQuery = "update User set status = ? where userIdx = ? "; // 해당 userIdx를 만족하는 User를 해당 status로 변경한다.
-        Object[] modifyUserStatusParams = new Object[]{patchUserStatusReq.getStatus(), patchUserStatusReq.getUserIdx()}; // 주입될 값들(status, userIdx) 순
+    public int modifyUserStatus(int userIdx) {
+        String modifyUserStatusQuery = "update User set status = ?, userNickname = ? where userIdx = ? "; // 해당 userIdx를 만족하는 User를 해당 status로 변경한다.
+        Object[] modifyUserStatusParams = new Object[]{"DELETE", "탈퇴 회원", userIdx}; // 주입될 값들(status, userIdx) 순
 
         return this.jdbcTemplate.update(modifyUserStatusQuery, modifyUserStatusParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0)
 
@@ -232,14 +243,14 @@ public class UserDao {
 
     // 스토어 회원탈퇴
     @Transactional
-    public int modifyStoreStatus(PatchStoreStatusReq patchStoreStatusReq) {
+    public int modifyStoreStatus(int userIdx) {
         String modifyStoreStatusQuery = "update Store set status = ? where userIdx = ? "; // 해당 storeIdx를 만족하는 Store를 해당 status로 변경한다.
-        Object[] modifyStoreStatusParams = new Object[]{patchStoreStatusReq.getStatus(), patchStoreStatusReq.getUserIdx()}; // 주입될 값들(status, userIdx) 순
+        Object[] modifyStoreStatusParams = new Object[]{"DELETE", userIdx}; // 주입될 값들(status, userIdx) 순
 
         this.jdbcTemplate.update(modifyStoreStatusQuery, modifyStoreStatusParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0)
 
         modifyStoreStatusQuery = "update User set status = ? where userIdx = ? "; // 해당 storeIdx를 만족하는 User를 해당 status로 변경한다.
-        modifyStoreStatusParams = new Object[]{patchStoreStatusReq.getStatus(), patchStoreStatusReq.getUserIdx()}; // 주입될 값들(status, userIdx) 순
+        modifyStoreStatusParams = new Object[]{"DELETE", userIdx}; // 주입될 값들(status, userIdx) 순
 
         return this.jdbcTemplate.update(modifyStoreStatusQuery, modifyStoreStatusParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0)
     }
@@ -300,9 +311,29 @@ public class UserDao {
 
     // 유저 비번 임시 비번으로 변경
     @Transactional
-    public int modifyUserPwd(PatchUserIdResetReq patchUserIdResetReq) {
+    public int modifyUserPwd(PatchUserPwdResetReq patchUserPwdResetReq) {
         String modifyUserPwdQuery = "update User set userPwd = ? where userId = ? "; // 해당 userId 만족하는 User의 userPwd를 해당 userPed로 변경한다.
-        Object[] modifyUserPwdParams = new Object[]{patchUserIdResetReq.getUserPwd(), patchUserIdResetReq.getUserId()}; // 주입될 값들(status, userIdx) 순
+        Object[] modifyUserPwdParams = new Object[]{patchUserPwdResetReq.getUserPwd(), patchUserPwdResetReq.getUserId()}; // 주입될 값들(status, userIdx) 순
+
+        return this.jdbcTemplate.update(modifyUserPwdQuery, modifyUserPwdParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0)
+
+    }
+
+    // 비번 가져오기(비번 변경용): 해당 userIdx에 해당되는 user의 암호화된 비밀번호 값을 가져온다.
+    public String getPwd2(int userIdx) {
+        String getPwdQuery = "select userPwd from User where userIdx = ?"; // 해당 id를 만족하는 User의 정보들을 조회한다.
+        int getPwdParams = userIdx; // 주입될 id값을 클라이언트의 요청에서 주어진 정보를 통해 가져온다.
+
+        return this.jdbcTemplate.queryForObject(getPwdQuery,
+                String.class,
+                getPwdParams); // 한 개의 회원정보를 얻기 위한 jdbcTemplate 함수(Query, 객체 매핑 정보, Params)의 결과 반환
+    }
+
+    // 유저 비번 변경
+    @Transactional
+    public int modifyUserPwd2(PatchUserPwdReq patchUserPwdReq) {
+        String modifyUserPwdQuery = "update User set userPwd = ? where userIdx = ? "; // 해당 userIdx를 만족하는 User를 해당 status로 변경한다.
+        Object[] modifyUserPwdParams = new Object[]{patchUserPwdReq.getUserNewPwd(), patchUserPwdReq.getUserIdx()}; // 주입될 값들(status, userIdx) 순
 
         return this.jdbcTemplate.update(modifyUserPwdQuery, modifyUserPwdParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0)
 

@@ -1,5 +1,6 @@
 package spring.reborn.domain.reborn;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -11,8 +12,9 @@ import javax.sql.DataSource;
 
 import java.util.List;
 
-import static spring.reborn.config.BaseResponseStatus.DATABASE_ERROR;
+import static spring.reborn.config.BaseResponseStatus.*;
 
+@Slf4j
 @Repository
 public class RebornDao {
     private JdbcTemplate jdbcTemplate;
@@ -56,7 +58,7 @@ public class RebornDao {
                         rs.getString("productLimitTime"),
                         rs.getInt("productCnt"),
                         rs.getString("status"))
-                        ,
+                ,
                 storeIdx
         );
         return result;
@@ -128,7 +130,7 @@ public class RebornDao {
         );
         return result;
     }
-    
+
     public GetHistroyDetailRes getHistoryDetail(Integer rebornTaskIdx) {
         System.out.println("dao 시작");
         String getHistoryQeury = "SELECT R.productName, R.productGuide, R.productComment, S.storeName, S.storeScore, S.storeAddress, T.productExchangeCode, T.createdAt, T.status FROM Reborn AS R LEFT OUTER JOIN RebornTask AS T ON T.rebornIdx = R.rebornIdx LEFT OUTER JOIN Store AS S ON R.storeIdx = S.storeIdx WHERE (T.rebornTaskIdx = ? AND T.status != 'DELETE')";
@@ -158,6 +160,24 @@ public class RebornDao {
         }
     }
 
+    public GetRebornRes findByUserId(Long userId) {
+        String getRebornsQuery = "SELECT rebornIdx, productName, productGuide, productComment, productImg, productLimitTime, productCnt, status FROM Reborn WHERE (userIdx = ? AND status = ?)";
+        GetRebornRes result = this.jdbcTemplate.queryForObject(
+                getRebornsQuery,
+                (rs, rowNum) -> new GetRebornRes(
+                        rs.getInt("rebornIdx"),
+                        rs.getString("productName"),
+                        rs.getString("productGuide"),
+                        rs.getString("productComment"),
+                        rs.getString("productImg"),
+                        rs.getString("productLimitTime"),
+                        rs.getInt("productCnt"),
+                        rs.getString("status"))
+                ,
+                userId, RebornStatus.ACTIVE);
+        return result;
+    }
+
     public int deleteProduct(int rebornIdx) {
         String deleteRebornQuery = "UPDATE Reborn SET status = 'DELETE' WHERE rebornIdx = ?";
         return this.jdbcTemplate.update(deleteRebornQuery, rebornIdx);
@@ -168,5 +188,58 @@ public class RebornDao {
         return this.jdbcTemplate.update(inactiveRebornTaskQuery, rebornTaskIdx);
     }
 
+    public PatchRebornStatusRes ativeReborn(int rebornIdx) throws BaseException {
+        System.out.println("dao start");
+
+        String rebornStatus = this.jdbcTemplate.queryForObject("SELECT status FROM reborn.Reborn WHERE rebornIdx = ?;",
+                new Object[]{rebornIdx}, String.class
+        );
+
+        System.out.println("rebornStatus"+rebornStatus);
+
+
+        String activeRebornTaskQuery = "";
+        PatchRebornStatusRes result = null;
+
+        if (rebornStatus.equals("ACTIVE")){
+            System.out.println("if (rebornStatus == \"ACTIVE\")");
+            activeRebornTaskQuery = "UPDATE Reborn SET status = 'INACTIVE' WHERE rebornIdx = ?";
+            result = new PatchRebornStatusRes(rebornIdx, "리본을 '비활성화'했습니다.");
+        }
+        else if (rebornStatus.equals("INACTIVE")){
+            System.out.println("if (rebornStatus == \"INACTIVE\")");
+            activeRebornTaskQuery = "UPDATE Reborn SET status = 'ACTIVE' WHERE rebornIdx = ?";
+            result = new PatchRebornStatusRes(rebornIdx, "리본을 '활성화'했습니다.");
+        }
+        else {
+            System.out.println("else");
+            throw new BaseException(CAN_NOT_CHANGE_STATUS_TO_ACTIVE);
+        }
+
+        System.out.println("this.jdbcTemplate.update(activeRebornTaskQuery, rebornIdx); - 1");
+        this.jdbcTemplate.update(activeRebornTaskQuery, rebornIdx);
+        System.out.println("this.jdbcTemplate.update(activeRebornTaskQuery, rebornIdx); - 2");
+
+
+        return result;
+    }
+
+    public void decreaseRebornProductCnt(Long rebornIdx) throws BaseException {
+        try {
+            String updateRebornQuery = "update Reborn " +
+                    "set updatedAt = now(), productCnt = productCnt - 1, status = case when productCnt = 0 then 'INACTIVE' else 'ACTIVE' end " +
+                    "where rebornIdx = ? and status = 'ACTIVE' and productCnt >0";
+
+            if (this.jdbcTemplate.update(updateRebornQuery, rebornIdx) != 1) {
+                throw new BaseException(UPDATE_FAIL_REBORN_PRODUCT_COUNT);
+            }
+        } catch (BaseException e) {
+            log.error(e.getStatus().getMessage());
+            throw new BaseException(e.getStatus());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 
 }
