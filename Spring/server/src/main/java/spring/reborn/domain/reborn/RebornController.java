@@ -70,14 +70,14 @@ public class RebornController {
     @ResponseBody
     @PatchMapping("/modify")
     @Transactional
-    public BaseResponse<String> patchReborn(PatchRebornReq patchRebornReq) {
+    public BaseResponse<String> patchReborn(@RequestBody PatchRebornReq patchRebornReq) {
         try {
-            if (patchRebornReq.getProductName() == null)
-                return new BaseResponse<>(PATCH_REBORN_EMPTY_PRODUCTNAME);
-            if (patchRebornReq.getProductGuide() == null)
-                return new BaseResponse<>(PATCH_REBORN_EMPTY_PRODUCTGUIDE);
-            if (patchRebornReq.getProductComment() == null)
-                return new BaseResponse<>(PATCH_REBORN_EMPTY_PRODUCTCOMMENT);
+//            if (patchRebornReq.getProductName() == null)
+//                return new BaseResponse<>(PATCH_REBORN_EMPTY_PRODUCTNAME);
+//            if (patchRebornReq.getProductGuide() == null)
+//                return new BaseResponse<>(PATCH_REBORN_EMPTY_PRODUCTGUIDE);
+//            if (patchRebornReq.getProductComment() == null)
+//                return new BaseResponse<>(PATCH_REBORN_EMPTY_PRODUCTCOMMENT);
             String result = rebornService.patchReborn(patchRebornReq);
             return new BaseResponse<>(result);
         } catch (BaseException baseException) {

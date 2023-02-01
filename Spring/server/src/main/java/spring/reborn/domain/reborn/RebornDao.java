@@ -106,8 +106,8 @@ public class RebornDao {
     }
 
     public int patchReborn(PatchRebornReq patchRebornReq) {
-        String patchRebornQuery = "UPDATE Reborn SET productName = ?, productGuide = ?, productComment = ?, procutImg = ?, productLimitTime = ?, productCnt = ? WHERE rebornIdx = ?";
-        Object[] patchRebornParams = new Object[]{patchRebornReq.getProductName(), patchRebornReq.getProductGuide(), patchRebornReq.getProductComment(), patchRebornReq.getProductImg(), patchRebornReq.getProductCnt(), patchRebornReq.getRebornIdx()};
+        String patchRebornQuery = "UPDATE Reborn SET productName = ?, productGuide = ?, productComment = ?, productImg = ?, productLimitTime = ?, productCnt = ? WHERE rebornIdx = ?";
+        Object[] patchRebornParams = new Object[]{patchRebornReq.getProductName(), patchRebornReq.getProductGuide(), patchRebornReq.getProductComment(), patchRebornReq.getProductImg(), patchRebornReq.getProductLimitTime(), patchRebornReq.getProductCnt(), patchRebornReq.getRebornIdx()};
 
         return this.jdbcTemplate.update(patchRebornQuery, patchRebornParams);
     }

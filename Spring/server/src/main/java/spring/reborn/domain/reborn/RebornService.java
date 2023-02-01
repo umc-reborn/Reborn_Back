@@ -39,9 +39,11 @@ public class RebornService {
     @Transactional
     public String patchReborn(PatchRebornReq patchRebornReq) throws BaseException {
         try {
+            System.out.println("service 시작");
             int v = rebornDao.patchReborn(patchRebornReq);
-            if (v == 0)
-                throw new BaseException(MODIFY_FAIL_REBORN);
+            System.out.println("dao 끝");
+//            if (v == 1)
+//                throw new BaseException(MODIFY_FAIL_REBORN);
             String result = "상품 수정 성공!";
             return result;
         } catch (Exception exception) {
