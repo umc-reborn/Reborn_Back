@@ -19,9 +19,9 @@ public interface SocialOauth {
     default SocialLoginType type() {
         if (this instanceof GoogleOauth) {
             return SocialLoginType.GOOGLE;
-        } /*else if (this instanceof KakaoOauth) {
+        } else if (this instanceof KakaoOauth) {
             return SocialLoginType.KAKAO;
-        }*/ else {
+        } else {
             return null;
         }
     }

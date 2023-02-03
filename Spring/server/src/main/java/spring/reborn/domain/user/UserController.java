@@ -1,5 +1,7 @@
 package spring.reborn.domain.user;
 
+import org.json.JSONObject;
+import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -12,6 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import spring.reborn.domain.awsS3.AwsS3Service;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 
 import static spring.reborn.config.BaseResponseStatus.*;
@@ -510,5 +517,34 @@ public class UserController {
             return new BaseResponse<>(exception.getStatus());
         }
     }
+
+//    /**
+//     * 사업자 등록 상태조회 API
+//     */
+//    @GetMapping("/storeConfirm")
+//    public String callStoreApiWithJson() {
+//        StringBuffer result = new StringBuffer();
+//        String jsonPrintString = null;
+//        try {
+//            String apiUrl = "https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=eXVANVFN1Vq7ll1sSwTSkiinLph3JfWR26scJ1E1Bce7YKVBTWypJjJWFiPhWnzHrUHQerFSRlso3PnOU1LziA%3D%3D";
+//            URL url = new URL(apiUrl);
+//            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+//            urlConnection.connect();
+//            BufferedInputStream bufferedInputStream = new BufferedInputStream(urlConnection.getInputStream());
+//            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(bufferedInputStream, "UTF-8"));
+//            String returnLine;
+//            while((returnLine = bufferedReader.readLine()) != null) {
+//                result.append(returnLine);
+//            }
+//
+//            JSONObject jsonObject = XML.toJSONObject(result.toString());
+//            jsonPrintString = jsonObject.toString();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        return jsonPrintString;
+//    }
+
 }
 
