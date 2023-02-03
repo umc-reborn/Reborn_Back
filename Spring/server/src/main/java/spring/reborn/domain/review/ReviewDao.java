@@ -51,9 +51,9 @@ public class ReviewDao {
         String updateStoreScoreQuery = "UPDATE Store SET storeScore=(\n" +
                 "SELECT AVG(Review.reviewScore) FROM Review\n" +
                 "WHERE Review.rebornIdx = ?)\n" +
-                "WHERE storeIdx =(SELECT S.storeIdx FROM \n" +
-                "( SELECT Store.storeIdx FROM Store JOIN Reborn \n" +
-                "ON Reborn.storeIdx=Reborn.storeIdx WHERE Reborn.rebornIdx = ?) AS S);";
+                "WHERE storeIdx =" +
+                "(SELECT storeIdx FROM Reborn where rebornIdx = ? )";
+
         Object[] updateStoreScoreParams = new Object[]{
                 postReviewReq.getRebornIdx(),
                 postReviewReq.getRebornIdx(),}; // 동적 쿼리의 ?부분에 주입될 값
