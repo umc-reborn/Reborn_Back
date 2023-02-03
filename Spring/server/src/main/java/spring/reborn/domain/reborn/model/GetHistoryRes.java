@@ -9,6 +9,7 @@ public class GetHistoryRes {
     private int rebornTaskIdx;
     private String storeName;
     private float storeScore;
-    private String storeAddress;
+    private String category;
+    private String status;
     private String createdAt;
 }
