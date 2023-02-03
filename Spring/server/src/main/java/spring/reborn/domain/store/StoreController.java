@@ -153,9 +153,9 @@ public class StoreController {
     @ResponseBody
     @GetMapping("/popular")
     @Transactional
-    public BaseResponse<List<GetPopularStoreRes>> getPopularStore() {
+    public BaseResponse<List<GetPopularStoreRes>> getPopularStore(@RequestParam String category) {
         try {
-            List<GetPopularStoreRes> getPopularStores = storeProvider.getPopularStore();
+            List<GetPopularStoreRes> getPopularStores = storeProvider.getPopularStore(category);
             return new BaseResponse<>(getPopularStores);
         } catch (BaseException baseException) {
             return new BaseResponse<>(baseException.getStatus());

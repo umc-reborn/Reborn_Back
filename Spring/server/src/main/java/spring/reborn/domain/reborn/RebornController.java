@@ -42,11 +42,11 @@ public class RebornController {
 
     /* 전체 리본 조회 (스토어) */
     @ResponseBody
-    @GetMapping("/store/{storeIdx}")
+    @GetMapping("/store/{storeIdx}/status")
     @Transactional
-    public BaseResponse<List<GetRebornRes>> getReborns(@PathVariable Integer storeIdx) {
+    public BaseResponse<List<GetRebornRes>> getReborns(@PathVariable Integer storeIdx, @RequestParam String status) {
         try {
-            List<GetRebornRes> getRebornsRes= rebornProvider.getReborns(storeIdx);
+            List<GetRebornRes> getRebornsRes= rebornProvider.getReborns(storeIdx, status);
             return new BaseResponse<>(getRebornsRes);
         } catch (BaseException baseException) {
             return new BaseResponse<>(baseException.getStatus());
@@ -70,14 +70,14 @@ public class RebornController {
     @ResponseBody
     @PatchMapping("/modify")
     @Transactional
-    public BaseResponse<String> patchReborn(PatchRebornReq patchRebornReq) {
+    public BaseResponse<String> patchReborn(@RequestBody PatchRebornReq patchRebornReq) {
         try {
-            if (patchRebornReq.getProductName() == null)
-                return new BaseResponse<>(PATCH_REBORN_EMPTY_PRODUCTNAME);
-            if (patchRebornReq.getProductGuide() == null)
-                return new BaseResponse<>(PATCH_REBORN_EMPTY_PRODUCTGUIDE);
-            if (patchRebornReq.getProductComment() == null)
-                return new BaseResponse<>(PATCH_REBORN_EMPTY_PRODUCTCOMMENT);
+//            if (patchRebornReq.getProductName() == null)
+//                return new BaseResponse<>(PATCH_REBORN_EMPTY_PRODUCTNAME);
+//            if (patchRebornReq.getProductGuide() == null)
+//                return new BaseResponse<>(PATCH_REBORN_EMPTY_PRODUCTGUIDE);
+//            if (patchRebornReq.getProductComment() == null)
+//                return new BaseResponse<>(PATCH_REBORN_EMPTY_PRODUCTCOMMENT);
             String result = rebornService.patchReborn(patchRebornReq);
             return new BaseResponse<>(result);
         } catch (BaseException baseException) {
@@ -147,6 +147,20 @@ public class RebornController {
     public BaseResponse<String> inactiveRebornTask(@PathVariable int rebornTaskIdx) {
         try {
             String result = rebornService.inactiveRebornTask(rebornTaskIdx);
+            return new BaseResponse<>(result);
+        } catch (BaseException baseException) {
+            return new BaseResponse<>(baseException.getStatus());
+        }
+    }
+
+    /* 리본상품 활성화, 비활성화 */
+    @ResponseBody
+    @PatchMapping("/active/{rebornIdx}")
+    @Transactional
+    public BaseResponse<PatchRebornStatusRes> ativeReborn(@PathVariable int rebornIdx) {
+        try {
+            System.out.println("controller start");
+            PatchRebornStatusRes result = rebornService.ativeReborn(rebornIdx);
             return new BaseResponse<>(result);
         } catch (BaseException baseException) {
             return new BaseResponse<>(baseException.getStatus());

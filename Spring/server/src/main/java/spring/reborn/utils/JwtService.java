@@ -81,5 +81,33 @@ public class JwtService {
         return claims.getBody().get("userIdx",Integer.class);  // jwt 에서 userIdx를 추출합니다.
     }
 
+    public int compareUserIdx(int userIdx) throws BaseException{
+        //1. JWT 추출
+        String accessToken = getJwt();
+        if(accessToken == null || accessToken.length() == 0){
+            throw new BaseException(EMPTY_JWT);
+        }
+
+        // 2. JWT parsing
+        Jws<Claims> claims;
+        try{
+            claims = Jwts.parser()
+                    .setSigningKey(Secret.JWT_SECRET_KEY)
+                    .parseClaimsJws(accessToken);
+        } catch (Exception ignored) {
+            System.out.println(ignored);
+            throw new BaseException(INVALID_JWT);
+        }
+
+        // 3. userIdx 추출
+        int jwtIdx = claims.getBody().get("userIdx",Integer.class);  // jwt 에서 userIdx를 추출합니다.
+        if(jwtIdx != userIdx){
+            return 0;
+        }
+        else{
+            return 1;
+        }
+    }
+
 }
 

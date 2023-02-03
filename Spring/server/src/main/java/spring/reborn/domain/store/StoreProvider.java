@@ -13,6 +13,7 @@ import spring.reborn.domain.store.model.GetStoreRes;
 import java.util.List;
 
 import static spring.reborn.config.BaseResponseStatus.DATABASE_ERROR;
+import static spring.reborn.config.BaseResponseStatus.WRONG_CATEGORY_INPUT_ERROR;
 
 @Service
 public class StoreProvider {
@@ -26,16 +27,18 @@ public class StoreProvider {
     }
 
 
-    public List<GetPopularStoreRes> getPopularStore() throws BaseException {
+    public List<GetPopularStoreRes> getPopularStore(String category) throws BaseException {
+        if (!(category.equals("CAFE") || category.equals("FASHION") || category.equals("SIDEDISH") || category.equals("LIFE") || category.equals("ETC"))) {
+            throw new BaseException(WRONG_CATEGORY_INPUT_ERROR);
+        }
         try {
             System.out.println("provider 시작");
-            List<GetPopularStoreRes> getHistories = storeDao.getPopularStore();
+            List<GetPopularStoreRes> getHistories = storeDao.getPopularStore(category);
             System.out.println("provider 끝");
             return getHistories;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-
 }
 

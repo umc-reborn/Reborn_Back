@@ -190,13 +190,14 @@ public class UserController {
      */
     // Path-variable
     @ResponseBody
-    @GetMapping("/point/{userIdx}") // (GET) 127.0.0.1:9000/app/users/:userIdx
-    public BaseResponse<GetUserPointRes> getUser(@PathVariable("userIdx") int userIdx) {
+    @GetMapping("/point") // (GET) 127.0.0.1:9000/app/users/:userIdx
+    public BaseResponse<GetUserPointRes> getUser() {
         // @PathVariable RESTful(URL)에서 명시된 파라미터({})를 받는 어노테이션, 이 경우 userId값을 받아옴.
         //  null값 or 공백값이 들어가는 경우는 적용하지 말 것
         //  .(dot)이 포함된 경우, .을 포함한 그 뒤가 잘려서 들어감
         // Get Users
         try {
+            int userIdx = jwtService.getUserIdx();
             GetUserPointRes getUserPointRes = userProvider.getUserPoint(userIdx);
             return new BaseResponse<>(getUserPointRes);
         } catch (BaseException exception) {
@@ -240,22 +241,12 @@ public class UserController {
      * [PATCH]
      */
     @ResponseBody
-    @PatchMapping("/userDelete/{userIdx}")
+    @PatchMapping("/userDelete")
     @Transactional
-    public BaseResponse<String> modifyUserStatus(@PathVariable("userIdx") int userIdx, @RequestBody User user) {
+    public BaseResponse<String> modifyUserStatus() {
         try {
-
-//  *********** 해당 부분은 7주차 - JWT 수업 후 주석해체 해주세요!  ****************
-//            jwt에서 idx 추출.
-            int userIdxByJwt = jwtService.getUserIdx();
-            //userIdx와 접근한 유저가 같은지 확인
-            if(user.getUserIdx() != userIdxByJwt){
-                return new BaseResponse<>(INVALID_USER_JWT);
-            }
-            //같다면 유저상태 변경
-//  **************************************************************************
-            PatchUserStatusReq patchUserStatusReq = new PatchUserStatusReq(userIdx, user.getStatus());
-            userService.modifyUserStatus(patchUserStatusReq);
+            int userIdx = jwtService.getUserIdx();
+            userService.modifyUserStatus(userIdx);
 
             String result = "회원탈퇴가 완료되었습니다.";
             return new BaseResponse<>(result);
@@ -269,22 +260,12 @@ public class UserController {
      * [PATCH]
      */
     @ResponseBody
-    @PatchMapping("/storeDelete/{userIdx}")
+    @PatchMapping("/storeDelete")
     @Transactional
-    public BaseResponse<String> modifyStoreStatus(@PathVariable("userIdx") int userIdx, @RequestBody UserStore userStore) {
+    public BaseResponse<String> modifyStoreStatus() {
         try {
-
-//  *********** 해당 부분은 7주차 - JWT 수업 후 주석해체 해주세요!  ****************
-//            jwt에서 idx 추출.
-            int userIdxByJwt = jwtService.getUserIdx();
-            //userIdx와 접근한 유저가 같은지 확인
-            if(userStore.getUserIdx() != userIdxByJwt){
-                return new BaseResponse<>(INVALID_USER_JWT);
-            }
-            //같다면 유저상태 변경
-//  **************************************************************************
-            PatchStoreStatusReq patchStoreStatusReq = new PatchStoreStatusReq(userIdx, userStore.getStatus());
-            userService.modifyStoreStatus(patchStoreStatusReq);
+            int userIdx = jwtService.getUserIdx();
+            userService.modifyStoreStatus(userIdx);
 
             String result = "회원탈퇴가 완료되었습니다.";
             return new BaseResponse<>(result);
@@ -470,9 +451,9 @@ public class UserController {
      * [PATCH]
      */
     @ResponseBody
-    @PatchMapping("/modifyPwd/{userIdx}")
+    @PatchMapping("/modifyPwd")
     @Transactional
-    public BaseResponse<String> modifyPwd(@PathVariable("userIdx") int userIdx, @RequestBody PatchUserPwdReq patchUserPwdReq) {
+    public BaseResponse<String> modifyPwd(@RequestBody PatchUserPwdReq patchUserPwdReq) {
         // password에 값이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
         if (patchUserPwdReq.getUserNewPwd().length() == 0) {
             return new BaseResponse<>(POST_USERS_EMPTY_PASSWORD);
@@ -482,16 +463,9 @@ public class UserController {
             return new BaseResponse<>(POST_USERS_INVALID_PASSWORD);
         }
         try {
-
-//  *********** 해당 부분은 7주차 - JWT 수업 후 주석해체 해주세요!  ****************
-//            jwt에서 idx 추출.
-            int userIdxByJwt = jwtService.getUserIdx();
-            //userIdx와 접근한 유저가 같은지 확인
-            if(patchUserPwdReq.getUserIdx() != userIdxByJwt){
+            if(jwtService.compareUserIdx(patchUserPwdReq.getUserIdx()) == 0){
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
-            //같다면 비밀번호 변경
-//  **************************************************************************
             userService.modifyUserPwd(patchUserPwdReq);
 
             String result = "비번 변경이 완료되었습니다.";
@@ -507,10 +481,11 @@ public class UserController {
      * [POST] /users/log-out
      */
     @ResponseBody
-    @PostMapping("/log-out/{userIdx}")
+    @PostMapping("/log-out")
     @Transactional
-    public BaseResponse<PostLogoutRes> logOut(@PathVariable("userIdx") int userIdx) {
+    public BaseResponse<PostLogoutRes> logOut() {
         try {
+            int userIdx = jwtService.getUserIdx();
             PostLogoutRes postLogoutRes = userProvider.logOut(userIdx);
             return new BaseResponse<>(postLogoutRes);
         } catch (BaseException exception) {
