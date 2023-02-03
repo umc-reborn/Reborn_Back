@@ -220,20 +220,15 @@ public class UserController {
      */
     // Path-variable
     @ResponseBody
-    @GetMapping("/inform/{userIdx}") // (GET) 127.0.0.1:9000/app/users/inform/:userIdx
-    public BaseResponse<GetUserInformRes> getUserInform(@PathVariable("userIdx") int userIdx) {
-        // @PathVariable RESTful(URL)에서 명시된 파라미터({})를 받는 어노테이션, 이 경우 userId값을 받아옴.
-        //  null값 or 공백값이 들어가는 경우는 적용하지 말 것
-        //  .(dot)이 포함된 경우, .을 포함한 그 뒤가 잘려서 들어감
-        // Get Users
+    @GetMapping("/inform") // (GET) 127.0.0.1:9000/app/users/inform/:userIdx
+    public BaseResponse<GetUserInformRes> getUserInform() {
         try {
+            int userIdx = jwtService.getUserIdx();
             GetUserInformRes getUserInformRes = userProvider.getUserInform(userIdx);
             return new BaseResponse<>(getUserInformRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
-
-
     }
     
     /**
@@ -280,17 +275,18 @@ public class UserController {
      * [PATCH]
      */
     @ResponseBody
-    @PatchMapping(value="/userModify/{userIdx}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public BaseResponse<String> modifyUserInform(@PathVariable("userIdx") int userIdx, @RequestPart User user,  @RequestParam(name = "userImg") List<MultipartFile> multipartFile) {
+    @PatchMapping(value="/userModify", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public BaseResponse<String> modifyUserInform(@RequestPart User user,  @RequestParam(name = "userImg") List<MultipartFile> multipartFile) {
         try {
-            //jwt에서 idx 추출.
-            int userIdxByJwt = jwtService.getUserIdx();
-            //userIdx와 접근한 유저가 같은지 확인
-            if(userIdx != userIdxByJwt){
-                return new BaseResponse<>(INVALID_USER_JWT);
-            }
-            //같다면 유저정보 변경
+//            //jwt에서 idx 추출.
+//            int userIdxByJwt = jwtService.getUserIdx();
+//            //userIdx와 접근한 유저가 같은지 확인
+//            if(userIdx != userIdxByJwt){
+//                return new BaseResponse<>(INVALID_USER_JWT);
+//            }
+//            //같다면 유저정보 변경
 
+            int userIdx = jwtService.getUserIdx();
             //사진 넣기
             List<String> fileUrl = awsS3Service.uploadImage(multipartFile);
             // 이미지 파일 객체에 추가
