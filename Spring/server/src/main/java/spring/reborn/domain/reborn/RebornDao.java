@@ -116,14 +116,15 @@ public class RebornDao {
 
     public List<GetHistoryRes> getHistory(Integer userIdx) {
         System.out.println("dao 시작");
-        String getHistroiesQuery = "SELECT T.rebornTaskIdx, S.storeName, S.storeScore, S.storeAddress, T.createdAt FROM Reborn AS R LEFT OUTER JOIN RebornTask AS T ON T.rebornIdx = R.rebornIdx LEFT OUTER JOIN Store AS S ON R.storeIdx = S.storeIdx WHERE (T.userIdx = ? AND T.status != 'INACTIVE')";
+        String getHistoriesQuery = "SELECT T.rebornTaskIdx, S.storeName, S.storeScore, S.category, T.status, T.createdAt FROM Reborn AS R LEFT OUTER JOIN RebornTask AS T ON T.rebornIdx = R.rebornIdx LEFT OUTER JOIN Store AS S ON R.storeIdx = S.storeIdx WHERE (T.userIdx = ? AND T.status != 'INACTIVE')";
         List<GetHistoryRes> result = this.jdbcTemplate.query(
-                getHistroiesQuery,
+                getHistoriesQuery,
                 (rs, rowNum) -> new GetHistoryRes(
                         rs.getInt("rebornTaskIdx"),
                         rs.getString("storeName"),
                         rs.getFloat("storeScore"),
-                        rs.getString("storeAddress"),
+                        rs.getString("category"),
+                        rs.getString("status"),
                         rs.getString("createdAt"))
                 ,
                 userIdx
