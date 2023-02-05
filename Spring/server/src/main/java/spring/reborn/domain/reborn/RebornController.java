@@ -53,6 +53,19 @@ public class RebornController {
         }
     }
 
+    /* 리본 조회 페이지 with 상태별 (스토어) */
+    @ResponseBody
+    @GetMapping("/store/page/{storeIdx}/status")
+    @Transactional
+    public BaseResponse<List<GetRebornPageRes>> getRebornsPage(@PathVariable Integer storeIdx, @RequestParam String status) {
+        try {
+            List<GetRebornPageRes> getRebornsPageRes= rebornProvider.getRebornsPage(storeIdx, status);
+            return new BaseResponse<>(getRebornsPageRes);
+        } catch (BaseException baseException) {
+            return new BaseResponse<>(baseException.getStatus());
+        }
+    }
+
     /* 진행 중인 리본 조회 (유저) */
     @ResponseBody
     @GetMapping("/inprogress/user/{userIdx}")
