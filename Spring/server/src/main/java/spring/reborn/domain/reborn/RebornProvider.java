@@ -44,6 +44,26 @@ public class RebornProvider {
         }
     }
 
+    public List<GetRebornPageRes> getRebornsPage(Integer rebornIdx, String status) throws BaseException {
+        try {
+            System.out.println("provider 시작");
+            if (status.equals("")) {
+                List<GetRebornPageRes> getRebornsPageRes = rebornDao.getRebornsPage(rebornIdx);
+                System.out.println("provider 끝");
+                return getRebornsPageRes;
+            } else if (status.equals("ACTIVE") || status.equals("INACTIVE") || status.equals("COMPLETE")) {
+                List<GetRebornPageRes> getRebornsPageByStatusRes = rebornDao.getRebornsPageByStatus(rebornIdx, status);
+                System.out.println("provider 끝");
+                return getRebornsPageByStatusRes;
+            } else {
+                System.out.println("provider 끝");
+                throw new BaseException(GET_FAIL_REBORN);
+            }
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
     public List<GetInProgressRes> getInProgressReborns(Integer userIdx) throws BaseException {
         try {
             System.out.println("provider 시작");
