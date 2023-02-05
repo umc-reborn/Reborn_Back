@@ -1,7 +1,10 @@
 package spring.reborn.domain.user;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
+import spring.reborn.config.BaseException;
+import spring.reborn.config.BaseResponseStatus;
 import spring.reborn.domain.user.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -337,5 +340,17 @@ public class UserDao {
 
         return this.jdbcTemplate.update(modifyUserPwdQuery, modifyUserPwdParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0)
 
+    }
+
+
+    public String getUserLikes(int userIdx) throws BaseException {
+        try{
+            String selectUserLikesQuery = "select category from User where userIdx = ? ";
+            return jdbcTemplate.queryForObject(selectUserLikesQuery, String.class ,userIdx);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+        }
     }
 }

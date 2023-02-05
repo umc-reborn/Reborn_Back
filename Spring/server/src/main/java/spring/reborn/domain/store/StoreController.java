@@ -11,6 +11,7 @@ import spring.reborn.config.BaseResponse;
 import spring.reborn.config.BaseResponseStatus;
 import spring.reborn.domain.awsS3.AwsS3Service;
 import spring.reborn.domain.store.model.*;
+import spring.reborn.utils.JwtService;
 
 import java.util.List;
 
@@ -23,6 +24,9 @@ public class StoreController {
     private final StoreService storeService;
 
     private final StoreProvider storeProvider;
+
+    private final JwtService jwtService;
+
     /*
     가게 리스트 조회(업데이트 순)
      */
@@ -161,4 +165,25 @@ public class StoreController {
             return new BaseResponse<>(baseException.getStatus());
         }
     }
+
+    /**
+     * 유저의 좋아할만한 가게 API
+     * [GET]
+     */
+    @GetMapping("/likeable-stores")
+    public BaseResponse<List<GetLikeableStoreRes>> getLikeableStores(){
+        try {
+            int userIdx = jwtService.getUserIdx();
+            List<GetLikeableStoreRes> likeableStoreRes = storeService.getLikeableStores(userIdx);
+            return new BaseResponse<>(likeableStoreRes);
+
+        }
+        catch (BaseException e){
+            e.printStackTrace();
+            log.error(e.getStatus().getMessage());
+            return new BaseResponse<>(e.getStatus());
+        }
+
+    }
+
 }
