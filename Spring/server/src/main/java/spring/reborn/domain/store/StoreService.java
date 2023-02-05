@@ -10,6 +10,8 @@ import spring.reborn.config.BaseException;
 import spring.reborn.config.BaseResponseStatus;
 import spring.reborn.domain.awsS3.AwsS3Service;
 import spring.reborn.domain.store.model.*;
+import spring.reborn.domain.user.UserDao;
+import spring.reborn.domain.user.UserService;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +23,8 @@ public class StoreService {
 
     private final StoreDao storeDao;
     private final AwsS3Service awsS3Service;
+
+    private final UserDao userDao;
 
     public List<GetStoreRes> getStoreList() throws BaseException {
         try {
@@ -124,5 +128,10 @@ public class StoreService {
     }
 
 
+    public List<GetLikeableStoreRes> getLikeableStores(int userIdx) throws BaseException {
+        // todo 유저 도메인에서 category를 받아와야하나?? -> 유저와 스토어 구분 필요할듯한거 같기두,,?
+//        String userLikes = userDao.getUserLikes(userIdx);
+        return storeDao.getLikeableStore(userIdx);
+    }
 }
 

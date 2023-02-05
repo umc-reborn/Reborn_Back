@@ -343,4 +343,46 @@ public class StoreDao {
         return result;
     }
 
+    public String getUserLikes(int userIdx) throws BaseException {
+        try{
+            String selectUserLikesQuery = "select category from User where userIdx = ? ";
+            return jdbcTemplate.queryForObject(selectUserLikesQuery, String.class ,userIdx);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+        }
+    }
+
+    public List<GetLikeableStoreRes> getLikeableStore(int userIdx) throws BaseException {
+        try {
+            // 유저의 관심사가 없는 경우 ETC 대체
+            // todo 유저가 스토어인 경우는 ??
+            String selectLikeableStoreQuery = "select s.storeIdx, storeName, category, storeScore, " +
+                    "if((select j.jjimIdx from Jjim j where j.userIdx = ? and s.storeIdx = j.storeIdx) is null, false, true) hasJjim\n" +
+                    "from  Store s\n" +
+                    "where s.category = (select ifnull(userLikes,'ETC') from User where userIdx = ?) " +
+                    "order by storeScore desc " +
+                    "limit 10 ";
+            List<GetLikeableStoreRes> likeableStoreRes = jdbcTemplate.query(selectLikeableStoreQuery,
+                    ((rs, rowNum) ->
+                    GetLikeableStoreRes.builder()
+                            .storeIdx(rs.getLong("storeIdx"))
+                            .storeScore(rs.getFloat("storeScore"))
+                            .storeName(rs.getString("storeName"))
+                            .category(rs.getString("category"))
+                            .hasJjim(rs.getBoolean("hasJjim"))
+                            .build()
+                    ),
+                    userIdx,userIdx);
+
+            return likeableStoreRes;
+
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            log.error(e.getMessage());
+            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+        }
+    }
 }
