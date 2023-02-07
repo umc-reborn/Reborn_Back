@@ -52,7 +52,6 @@ public class UserController {
     // Body
     @ResponseBody
     @PostMapping(value = "/sign-up", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})    // POST 방식의 요청을 매핑하기 위한 어노테이션
-    @Transactional
     public BaseResponse<PostUserRes> createUser(@RequestPart PostUserReq postUserReq, @RequestParam(name = "images") List<MultipartFile> multipartFile) {
         //  @RequestBody란, 클라이언트가 전송하는 HTTP Request Body(우리는 JSON으로 통신하니, 이 경우 body는 JSON)를 자바 객체로 매핑시켜주는 어노테이션
         // email에 값이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
@@ -237,7 +236,6 @@ public class UserController {
      */
     @ResponseBody
     @PatchMapping("/userDelete")
-    @Transactional
     public BaseResponse<String> modifyUserStatus() {
         try {
             int userIdx = jwtService.getUserIdx();
@@ -256,7 +254,6 @@ public class UserController {
      */
     @ResponseBody
     @PatchMapping("/storeDelete")
-    @Transactional
     public BaseResponse<String> modifyStoreStatus() {
         try {
             int userIdx = jwtService.getUserIdx();
@@ -309,7 +306,6 @@ public class UserController {
      */
     @ResponseBody
     @PostMapping("/log-in")
-    @Transactional
     public BaseResponse<PostLoginRes> logIn(@RequestBody PostLoginReq postLoginReq) {
         if (postLoginReq.getUserId().length() == 0) {
             return new BaseResponse<>(POST_USERS_EMPTY_ID);
@@ -339,7 +335,6 @@ public class UserController {
      */
     @ResponseBody
     @PostMapping("/log-in-store")
-    @Transactional
     public BaseResponse<PostStoreLoginRes> storeLogIn(@RequestBody PostLoginReq postLoginReq) {
         if (postLoginReq.getUserId().length() == 0) {
             return new BaseResponse<>(POST_USERS_EMPTY_ID);
@@ -448,7 +443,6 @@ public class UserController {
      */
     @ResponseBody
     @PatchMapping("/modifyPwd")
-    @Transactional
     public BaseResponse<String> modifyPwd(@RequestBody PatchUserPwdReq patchUserPwdReq) {
         // password에 값이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
         if (patchUserPwdReq.getUserNewPwd().length() == 0) {
@@ -478,7 +472,6 @@ public class UserController {
      */
     @ResponseBody
     @PostMapping("/log-out")
-    @Transactional
     public BaseResponse<PostLogoutRes> logOut() {
         try {
             int userIdx = jwtService.getUserIdx();

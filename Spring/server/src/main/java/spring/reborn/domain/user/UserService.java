@@ -395,6 +395,7 @@ public class UserService {
     }
 
     // 임시 비밀번호 전송
+    @Transactional
     public String sendTempPwd(PatchUserPwdResetReq patchUserPwdResetReq) throws Exception {
 
         // 가입 확인: 해당 이메일을 가진 유저가 있는지 확인합니다. 없을 경우, 에러 메시지를 보냅니다.
