@@ -60,7 +60,6 @@ public class UserDao {
     }
 
     // 해당 userIdx를 갖는 유저의 닉네임조회
-    @Transactional
     public String getUserNickname(int userIdx) {
         String getUserQuery = "select userNickname from User where userIdx = ?"; // 해당 userIdx를 만족하는 유저를 조회하는 쿼리문
         int getUserParams = userIdx;
@@ -71,7 +70,6 @@ public class UserDao {
     }
 
     // 해당 userIdx를 갖는 유저의 status조회
-    @Transactional
     public String getUserStatus(int userIdx) {
         String getUserStatusQuery = "select status from User where userIdx = ?"; // 해당 userIdx를 만족하는 유저를 조회하는 쿼리문
         int getUserParams = userIdx;
@@ -82,7 +80,6 @@ public class UserDao {
     }
 
     // 해당 userIdx를 갖는 유저의 userType조회
-    @Transactional
     public String getUserType(int userIdx) {
         String getUserStatusQuery = "select userType from User where userIdx = ?"; // 해당 userIdx를 만족하는 유저를 조회하는 쿼리문
         int getUserParams = userIdx;
@@ -139,7 +136,6 @@ public class UserDao {
     }
 
     // 해당 storeIdx를 갖는 스토어의 이름조회
-    @Transactional
     public String getStoreName(int storeIdx) {
         String getStoreNameQuery = "select storeName from Store where storeIdx = ?"; // 해당 userIdx를 만족하는 유저를 조회하는 쿼리문
         return this.jdbcTemplate.queryForObject(getStoreNameQuery,
@@ -259,6 +255,7 @@ public class UserDao {
     }
 
     // 회원정보 수정
+    @Transactional
     public int modifyUserInform(PatchUserReq patchUserReq) {
         String modifyUserNameQuery = "update User set userImg = ?, userNickname = ?, userAddress = ?, userBirthDate = ?, userLikes = ? where userIdx = ? "; // 해당 userIdx를 만족하는 User를 해당 nickname으로 변경한다.
         Object[] modifyUserNameParams = new Object[]{patchUserReq.getUserImg(), patchUserReq.getUserNickname(), patchUserReq.getUserAddress(), patchUserReq.getUserBirthDate(), patchUserReq.getUserLikes(), patchUserReq.getUserIdx()}; // 주입될 값들(nickname, userIdx) 순
