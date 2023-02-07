@@ -87,19 +87,18 @@ public class RebornDao {
 
     public List<GetRebornPageRes> getRebornsPage(Integer storeIdx) {
         System.out.println("dao 시작");
-        String getRebornsPageQuery = "SELECT T.rebornTaskIdx, U.userNickname, R.productName, R.productGuide, R.productComment, R.productImg, R.productLimitTime, R.productCnt, T.status FROM RebornTask AS T LEFT OUTER JOIN Reborn AS R ON (T.rebornIdx = R.rebornIdx) LEFT OUTER JOIN User AS U ON (U.userIdx = T.userIdx) WHERE (storeIdx = ? AND T.status != 'DELETE')";
+        String getRebornsPageQuery = "SELECT T.rebornTaskIdx, U.userNickname, R.productName, R.productImg, R.productLimitTime, R.productCnt, T.status, T.createdAt FROM RebornTask AS T LEFT OUTER JOIN Reborn AS R ON (T.rebornIdx = R.rebornIdx) LEFT OUTER JOIN User AS U ON (U.userIdx = T.userIdx) WHERE (storeIdx = ? AND T.status != 'DELETE' AND T.status != 'INACTIVE')";
         List<GetRebornPageRes> result = this.jdbcTemplate.query(
                 getRebornsPageQuery,
                 (rs, rowNum) -> new GetRebornPageRes(
                         rs.getInt("rebornTaskIdx"),
                         rs.getString("userNickname"),
                         rs.getString("productName"),
-                        rs.getString("productGuide"),
-                        rs.getString("productComment"),
                         rs.getString("productImg"),
                         rs.getString("productLimitTime"),
                         rs.getInt("productCnt"),
-                        rs.getString("status"))
+                        rs.getString("status"),
+                        rs.getString("createdAt"))
                 ,
                 storeIdx
         );
@@ -108,19 +107,18 @@ public class RebornDao {
 
     public List<GetRebornPageRes> getRebornsPageByStatus(Integer storeIdx, String status) {
         System.out.println("dao 시작");
-        String getRebornsPageQuery = "SELECT T.rebornTaskIdx, U.userNickname, R.productName, R.productGuide, R.productComment, R.productImg, R.productLimitTime, R.productCnt, T.status FROM RebornTask AS T LEFT OUTER JOIN Reborn AS R ON (T.rebornIdx = R.rebornIdx) LEFT OUTER JOIN User AS U ON (U.userIdx = T.userIdx) WHERE (storeIdx = ? AND T.status = ?)";
+        String getRebornsPageQuery = "SELECT T.rebornTaskIdx, U.userNickname, R.productName, R.productImg, R.productLimitTime, R.productCnt, T.status, T.createdAt FROM RebornTask AS T LEFT OUTER JOIN Reborn AS R ON (T.rebornIdx = R.rebornIdx) LEFT OUTER JOIN User AS U ON (U.userIdx = T.userIdx) WHERE (storeIdx = ? AND T.status = ?)";
         List<GetRebornPageRes> result = this.jdbcTemplate.query(
                 getRebornsPageQuery,
                 (rs, rowNum) -> new GetRebornPageRes(
                         rs.getInt("rebornTaskIdx"),
                         rs.getString("userNickname"),
                         rs.getString("productName"),
-                        rs.getString("productGuide"),
-                        rs.getString("productComment"),
                         rs.getString("productImg"),
                         rs.getString("productLimitTime"),
                         rs.getInt("productCnt"),
-                        rs.getString("status"))
+                        rs.getString("status"),
+                        rs.getString("createdAt"))
                 ,
                 storeIdx,
                 status

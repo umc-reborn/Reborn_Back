@@ -8,10 +8,9 @@ public class GetRebornPageRes {
     private int rebornTaskIdx;
     private String userNickname;
     private String productName;
-    private String productGuide;
-    private String productComment;
     private String productImg;
     private String productLimitTime;
     private int productCnt;
     private String status;
+    private String createdAt;
 }
