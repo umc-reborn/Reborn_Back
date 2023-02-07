@@ -178,20 +178,23 @@ public class UserService {
         message.setSubject("Reborn 회원가입 이메일 인증");// 제목
 
         String msgg = "";
-        msgg += "<div style='margin:100px;'>";
-        msgg += "<h1> 안녕하세요</h1>";
-        msgg += "<h1> 폐기 대신 무료나눔을 실천하는 Reborn 입니다</h1>";
-        msgg += "<br>";
-        msgg += "<p>아래 코드를 회원가입 창으로 돌아가 입력해주세요<p>";
-        msgg += "<br>";
-        msgg += "<p>감사합니다!<p>";
-        msgg += "<br>";
-        msgg += "<div align='center' style='border:1px solid black; font-family:verdana';>";
-        msgg += "<h3 style='color:blue;'>회원가입 인증 코드입니다.</h3>";
-        msgg += "<div style='font-size:130%'>";
-        msgg += "CODE : <strong>";
-        msgg += ePw + "</strong><div><br/> "; // 메일에 인증번호 넣기
-        msgg += "</div>";
+        msgg += "<div style=\"font-family: 'Apple SD Gothic Neo', 'sans-serif' !important; width: 540px; height: 600px; border-top: 4px solid #FF4D15; margin: 100px auto; padding: 30px 0; box-sizing: border-box;\">\n" +
+                "\t<h1 style=\"margin: 0; padding: 0 5px; font-size: 28px; font-weight: 400;\">\n" +
+                "\t\t<span style=\"font-size: 15px; margin: 0 0 10px 3px;\">RE:born</span><br />\n" +
+                "\t\t<span style=\"color: #FF4D15;\">이메일 인증</span> 안내입니다.\n" +
+                "\t</h1>\n" +
+                "\t<p style=\"font-size: 16px; line-height: 26px; margin-top: 50px; padding: 0 5px;\">\n" +
+                "\t\t안녕하세요.<br />\n" +
+                "\t\t리본을 이용해 주셔서 진심으로 감사드립니다.<br />\n" +
+                "\t\t아래 <b style=\"color: #FF4D15;\">'인증 코드'</b>를 회원가입 창으로 돌아가 입력해주세요.<br />\n" +
+                "\t\t감사합니다.\n" +
+                "\t</p>\n" +
+                "\n" +
+                "\t<p style=\"font-size: 16px; margin: 40px 5px 20px; line-height: 28px;\">\n" +
+                "\t\t회원가입 인증 코드: <br />\n" +
+                "\t\t<span style=\"font-size: 24px;\">"+ePw+"</span>\n" +
+                "\t</p>\n" +
+                "</div>";
         message.setText(msgg, "utf-8", "html");// 내용, charset 타입, subtype
         // 보내는 사람의 이메일 주소, 보내는 사람 이름
         message.setFrom(new InternetAddress("reborn_umc@naver.com", "Reborn_Admin"));// 보내는 사람
@@ -206,25 +209,26 @@ public class UserService {
         MimeMessage message = emailsender.createMimeMessage();
 
         message.addRecipients(MimeMessage.RecipientType.TO, to);// 보내는 대상
-        message.setSubject("Reborn 아이디 확인 메일");// 제목
+        message.setSubject("Reborn 아이디 확인");// 제목
 
         String msgg = "";
-        msgg += "<div style='margin:100px;'>";
-        msgg += "<h1> 안녕하세요</h1>";
-        msgg += "<h1> 폐기 대신 무료나눔을 실천하는 Reborn 입니다</h1>";
-        msgg += "<br>";
-        msgg += "<p>회원님께서 조회하신 아이디는 다음과 같습니다<p>";
-        msgg += "<br>";
-        msgg += "<p>아이디 확인 요청을 한 사람이 본인이 아닌 경우, 보안을 위해 Reborn으로 연락해 주시기 바랍니다.<p>";
-        msgg += "<br>";
-        msgg += "<p>감사합니다!<p>";
-        msgg += "<br>";
-        msgg += "<div align='center' style='border:1px solid black; font-family:verdana';>";
-        msgg += "<h3 style='color:blue;'>조회하신 아이디입니다.</h3>";
-        msgg += "<div style='font-size:130%'>";
-        msgg += "아이디 : <strong>";
-        msgg += ePw + "</strong><div><br/> "; // 메일에 인증번호 넣기
-        msgg += "</div>";
+        msgg += "<div style=\"font-family: 'Apple SD Gothic Neo', 'sans-serif' !important; width: 540px; height: 600px; border-top: 4px solid #FF4D15; margin: 100px auto; padding: 30px 0; box-sizing: border-box;\">\n" +
+                "\t<h1 style=\"margin: 0; padding: 0 5px; font-size: 28px; font-weight: 400;\">\n" +
+                "\t\t<span style=\"font-size: 15px; margin: 0 0 10px 3px;\">RE:born</span><br />\n" +
+                "\t\t<span style=\"color: #FF4D15;\">아이디 확인</span> 안내입니다.\n" +
+                "\t</h1>\n" +
+                "\t<p style=\"font-size: 16px; line-height: 26px; margin-top: 50px; padding: 0 5px;\">\n" +
+                "\t\t안녕하세요.<br />\n" +
+                "\t\t회원님께서 조회하신 아이디는 다음과 같습니다.<br />\n" +
+                "\t\t아이디 확인 요청을 한 사람이 본인이 아닌 경우, 보안을 위해 <b style=\"color: #FF4D15;\">Reborn</b>으로 연락해 주시기 바랍니다.<br />\n" +
+                "\t\t감사합니다.\n" +
+                "\t</p>\n" +
+                "\n" +
+                "\t<p style=\"font-size: 16px; margin: 40px 5px 20px; line-height: 28px;\">\n" +
+                "\t\t아이디: <br />\n" +
+                "\t\t<span style=\"font-size: 24px;\">"+ePw+"</span>\n" +
+                "\t</p>\n" +
+                "</div>";
         message.setText(msgg, "utf-8", "html");// 내용, charset 타입, subtype
         // 보내는 사람의 이메일 주소, 보내는 사람 이름
         message.setFrom(new InternetAddress("reborn_umc@naver.com", "Reborn_Admin"));// 보내는 사람
@@ -241,23 +245,26 @@ public class UserService {
         MimeMessage message = emailsender.createMimeMessage();
 
         message.addRecipients(MimeMessage.RecipientType.TO, to);// 보내는 대상
-        message.setSubject("Reborn 회원가입 이메일 인증");// 제목
+        message.setSubject("Reborn 임시 비밀번호 발급");// 제목
 
         String msgg = "";
-        msgg += "<div style='margin:100px;'>";
-        msgg += "<h1> 안녕하세요</h1>";
-        msgg += "<h1> 폐기 대신 무료나눔을 실천하는 Reborn 입니다</h1>";
-        msgg += "<br>";
-        msgg += "<p>아래 임시 비밀번호가 발급되었으니 이를 이용하여 로그인 후 비밀번호를 변경해 주세요.<p>";
-        msgg += "<br>";
-        msgg += "<p>감사합니다!<p>";
-        msgg += "<br>";
-        msgg += "<div align='center' style='border:1px solid black; font-family:verdana';>";
-        msgg += "<h3 style='color:blue;'>임시 비밀번호입니다.</h3>";
-        msgg += "<div style='font-size:130%'>";
-        msgg += "CODE : <strong>";
-        msgg += ePw + "</strong><div><br/> "; // 메일에 인증번호 넣기
-        msgg += "</div>";
+        msgg += "<div style=\"font-family: 'Apple SD Gothic Neo', 'sans-serif' !important; width: 540px; height: 600px; border-top: 4px solid #FF4D15; margin: 100px auto; padding: 30px 0; box-sizing: border-box;\">\n" +
+                "\t<h1 style=\"margin: 0; padding: 0 5px; font-size: 28px; font-weight: 400;\">\n" +
+                "\t\t<span style=\"font-size: 15px; margin: 0 0 10px 3px;\">RE:born</span><br />\n" +
+                "\t\t<span style=\"color: #FF4D15;\">임시 비밀번호 발급</span> 안내입니다.\n" +
+                "\t</h1>\n" +
+                "\t<p style=\"font-size: 16px; line-height: 26px; margin-top: 50px; padding: 0 5px;\">\n" +
+                "\t\t안녕하세요.<br />\n" +
+                "\t\t요청하신 임시 비밀번호가 발급되었습니다.<br />\n" +
+                "\t\t아래 <b style=\"color: #FF4D15;\">'임시 비밀번호'</b>를 이용하여 로그인 후 비밀번호를 변경해 주세요.<br />\n" +
+                "\t\t감사합니다.\n" +
+                "\t</p>\n" +
+                "\n" +
+                "\t<p style=\"font-size: 16px; margin: 40px 5px 20px; line-height: 28px;\">\n" +
+                "\t\t임시 비밀번호: <br />\n" +
+                "\t\t<span style=\"font-size: 24px;\">"+ePw+"</span>\n" +
+                "\t</p>\n" +
+                "</div>";
         message.setText(msgg, "utf-8", "html");// 내용, charset 타입, subtype
         // 보내는 사람의 이메일 주소, 보내는 사람 이름
         message.setFrom(new InternetAddress("reborn_umc@naver.com", "Reborn_Admin"));// 보내는 사람
