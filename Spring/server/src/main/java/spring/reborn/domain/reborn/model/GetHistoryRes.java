@@ -8,6 +8,7 @@ import lombok.*;
 public class GetHistoryRes {
     private int rebornTaskIdx;
     private String storeName;
+    private String storeImage;
     private float storeScore;
     private String category;
     private String status;
