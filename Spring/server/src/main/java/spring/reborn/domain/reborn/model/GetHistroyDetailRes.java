@@ -10,6 +10,7 @@ public class GetHistroyDetailRes {
     private String productGuide;
     private String productComment;
     private String storeName;
+    private String storeImage;
     private String storeAddress;
     private String category;
     private int productExchangeCode;

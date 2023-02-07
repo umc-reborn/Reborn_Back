@@ -157,12 +157,13 @@ public class RebornDao {
 
     public List<GetHistoryRes> getHistory(Integer userIdx) {
         System.out.println("dao 시작");
-        String getHistoriesQuery = "SELECT T.rebornTaskIdx, S.storeName, S.storeScore, S.category, T.status, T.createdAt FROM Reborn AS R LEFT OUTER JOIN RebornTask AS T ON T.rebornIdx = R.rebornIdx LEFT OUTER JOIN Store AS S ON R.storeIdx = S.storeIdx WHERE (T.userIdx = ? AND T.status != 'INACTIVE')";
+        String getHistoriesQuery = "SELECT T.rebornTaskIdx, S.storeName, S.storeImage, S.storeScore, S.category, T.status, T.createdAt FROM Reborn AS R LEFT OUTER JOIN RebornTask AS T ON T.rebornIdx = R.rebornIdx LEFT OUTER JOIN Store AS S ON R.storeIdx = S.storeIdx WHERE (T.userIdx = ? AND T.status != 'INACTIVE')";
         List<GetHistoryRes> result = this.jdbcTemplate.query(
                 getHistoriesQuery,
                 (rs, rowNum) -> new GetHistoryRes(
                         rs.getInt("rebornTaskIdx"),
                         rs.getString("storeName"),
+                        rs.getString("storeImage"),
                         rs.getFloat("storeScore"),
                         rs.getString("category"),
                         rs.getString("status"),
@@ -175,13 +176,14 @@ public class RebornDao {
 
     public GetHistroyDetailRes getHistoryDetail(Integer rebornTaskIdx) {
         System.out.println("dao 시작");
-        String getHistoryQeury = "SELECT R.productName, R.productGuide, R.productComment, S.storeName, S.storeAddress, S.category, T.productExchangeCode, T.createdAt, T.status FROM Reborn AS R LEFT OUTER JOIN RebornTask AS T ON T.rebornIdx = R.rebornIdx LEFT OUTER JOIN Store AS S ON R.storeIdx = S.storeIdx WHERE (T.rebornTaskIdx = ? AND T.status != 'DELETE')";
+        String getHistoryQeury = "SELECT R.productName, R.productGuide, R.productComment, S.storeName, S.storeImage, S.storeAddress, S.category, T.productExchangeCode, T.createdAt, T.status FROM Reborn AS R LEFT OUTER JOIN RebornTask AS T ON T.rebornIdx = R.rebornIdx LEFT OUTER JOIN Store AS S ON R.storeIdx = S.storeIdx WHERE (T.rebornTaskIdx = ? AND T.status != 'DELETE')";
         return this.jdbcTemplate.queryForObject(getHistoryQeury,
                 (rs, rowNum) -> new GetHistroyDetailRes(
                         rs.getString("productName"),
                         rs.getString("productGuide"),
                         rs.getString("productComment"),
                         rs.getString("storeName"),
+                        rs.getString("storeImage"),
                         rs.getString("storeAddress"),
                         rs.getString("category"),
                         rs.getInt("productExchangeCode"),
