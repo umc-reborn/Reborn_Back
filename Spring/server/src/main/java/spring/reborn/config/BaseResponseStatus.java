@@ -66,6 +66,8 @@ public enum BaseResponseStatus {
     NOT_ENOUGH_REBORN_PRODUCT_COUNT(false,2217,"잔여 리본이 없습니다. 다시 확인해주세요."),
     INVALID_TYPE_TO_GET_REBORN(false,2218,"손님만 리본 받을 수 있습니다."),
     NO_AUTHENTIFICATION_REBORN(false,2219,"해당 리본에 권한이 없습니다."),
+    CAN_NOT_CHECK_EXPIRING_REBORN_TASK(false,2220, "만료여부를 확인할 수 없습니다."),
+    FAIL_EXPIRING_REBORN_TASK(false,2221, "만료에 실패하였습니다."),
 
 
 

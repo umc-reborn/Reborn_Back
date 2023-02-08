@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import spring.reborn.config.BaseException;
@@ -12,6 +13,7 @@ import spring.reborn.domain.rebornTask.model.*;
 import spring.reborn.domain.user.UserDao;
 
 import javax.sql.DataSource;
+import java.sql.Time;
 
 import static spring.reborn.config.BaseResponseStatus.*;
 
@@ -53,7 +55,7 @@ public class RebornTaskDao {
             // 가능하다면 리본 태스크 생성
             String createRebornTaskQuery = "insert into RebornTask (userIdx, rebornIdx, productExchangeCode) values (?,?,?)";
 
-            // 리본 생성 6자리 랜덤 값
+            // 리본 생성 6자리 랜`덤 값
             Object[] createRebornTaskParams = new Object[]{
                     postRebornTaskReq.getUserIdx(),
                     postRebornTaskReq.getRebornIdx(),
@@ -149,6 +151,66 @@ public class RebornTaskDao {
         } catch (Exception e) {
             e.getStackTrace();
             throw new BaseException(NO_AUTHENTIFICATION_REBORN);
+        }
+    }
+
+
+
+    @Transactional
+    public void expiredRebornTask(Long rebornTaskIdx, Time productLimitTime) throws BaseException {
+        log.info("check Expired");
+        log.info(productLimitTime.toString());
+        try {
+            String selectRebornTaskQuery = "select now() >= addtime(createdAt,?) " +
+                    "from RebornTask " +
+                    "where rebornTaskIdx = ?";
+            Boolean isExpired = this.jdbcTemplate.queryForObject(selectRebornTaskQuery,
+                    Boolean.class,
+                    productLimitTime.toString(), rebornTaskIdx);
+
+            if (isExpired == null) {
+                throw new BaseException(CAN_NOT_CHECK_EXPIRING_REBORN_TASK);
+            }
+
+            log.info("isExpired : " + isExpired.toString());
+            if (isExpired) {
+                String updateRebornTaskQuery =
+                        "update RebornTask set status = 'EXPIRED', updatedAt = now() where rebornTaskIdx = ? ";
+
+                if (this.jdbcTemplate.update(updateRebornTaskQuery, rebornTaskIdx) == 0) {
+                    throw new BaseException(FAIL_EXPIRING_REBORN_TASK);
+                }
+
+            }
+
+        } catch (BaseException e) {
+            e.printStackTrace();
+            log.error(e.getStatus().getMessage());
+            throw new BaseException(e.getStatus());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            e.printStackTrace();
+            throw new BaseException(DATABASE_ERROR);
+        }
+
+
+    }
+
+    public Time getRebornProductLimitTime(Long rebornTaskIdx) throws BaseException {
+        try {
+            String selectProductLimitTime = "select productLimitTime " +
+                    "from RebornTask rt join Reborn r on rt.rebornIdx = r.rebornIdx " +
+                    "where rt.rebornTaskIdx = ?";
+
+            Time productLimitTime = this.jdbcTemplate.queryForObject(selectProductLimitTime,
+                    Time.class,
+                    rebornTaskIdx);
+
+            return productLimitTime;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BaseException(CAN_NOT_FOUND_REBORN_TASK);
         }
     }
 }
