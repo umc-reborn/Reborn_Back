@@ -20,6 +20,10 @@ public class ReviewProvider {
 //        this.jwtService = jwtService; // JWT부분은 7주차에 다루므로 모르셔도 됩니다!
     }
 
+    public List<GetReviewRes> getReviewByUserIdx(Integer userIdx) throws BaseException {
+        return reviewDao.getReviewByUserIdx(userIdx);
+    }
+
     public List<GetReviewRes> getReviewByStoreIdx(Integer storeIdx) throws BaseException {
         return reviewDao.getReviewByStoreIdx(storeIdx);
     }

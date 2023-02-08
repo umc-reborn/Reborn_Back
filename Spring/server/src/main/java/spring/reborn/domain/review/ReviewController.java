@@ -8,6 +8,7 @@ import spring.reborn.config.BaseException;
 import spring.reborn.config.BaseResponse;
 import spring.reborn.domain.awsS3.AwsS3Service;
 import spring.reborn.domain.review.model.*;
+import spring.reborn.utils.JwtService;
 
 import java.util.List;
 
@@ -22,15 +23,16 @@ public class ReviewController {
     @Autowired
     private final ReviewDao reviewDao;
 
-//    @Autowired
-//    private final JwtService jwtService;
+    @Autowired
+    private final JwtService jwtService;
 
-    public ReviewController(ReviewProvider reviewProvider, ReviewService reviewService, AwsS3Service awsS3Service, ReviewDao reviewDao) {
+    public ReviewController(ReviewProvider reviewProvider, ReviewService reviewService,
+                            AwsS3Service awsS3Service, ReviewDao reviewDao, JwtService jwtService) {
         this.reviewProvider = reviewProvider;
         this.reviewService = reviewService;
         this.awsS3Service = awsS3Service;
         this.reviewDao = reviewDao;
-//        this.jwtService = jwtService; // JWT부분은 7주차에 다루므로 모르셔도 됩니다!
+        this.jwtService = jwtService; // JWT부분은 7주차에 다루므로 모르셔도 됩니다!
     }
 
     @ResponseBody
@@ -96,6 +98,18 @@ public class ReviewController {
     }
 
     @ResponseBody
+    @GetMapping("/review")
+    public BaseResponse<List<GetReviewRes>> getReviewByUserIdx() {
+        try {
+            int userIdxByJwt = jwtService.getUserIdx();
+            List<GetReviewRes> getReviewRes = reviewProvider.getReviewByUserIdx(userIdxByJwt);
+            return new BaseResponse<>(getReviewRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    @ResponseBody
     @GetMapping("/review/store/{storeIdx}")
     public BaseResponse<List<GetReviewRes>> getReviewByStoreIdx(@PathVariable Integer storeIdx) {
         try {
@@ -145,18 +159,6 @@ public class ReviewController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
-
-//    @ResponseBody
-//    @GetMapping("/review/cnt")
-//    public BaseResponse<Integer> getReviewCntByUserIdx(@RequestParam(value = "userIdx",required = false) Integer userIdx) {
-//        try {
-//            Integer getReviewRes = reviewProvider.getReviewCntByUserIdx(userIdx);
-//
-//            return new BaseResponse<>(getReviewRes);
-//        } catch (BaseException exception) {
-//            return new BaseResponse<>((exception.getStatus()));
-//        }
-//    }
 
 
 }
