@@ -133,9 +133,9 @@ public class ReviewController {
 
     @ResponseBody
     @GetMapping("/review/best")
-    public BaseResponse<List<GetReviewRes>> getBestReview() {
+    public BaseResponse<List<GetBestReviewRes>> getBestReview() {
         try {
-            List<GetReviewRes> getReviewRes = reviewProvider.getBestReview();
+            List<GetBestReviewRes> getReviewRes = reviewProvider.getBestReview();
             return new BaseResponse<>(getReviewRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));

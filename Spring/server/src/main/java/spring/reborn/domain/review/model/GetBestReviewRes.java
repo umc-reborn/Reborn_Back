@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 @AllArgsConstructor
-public class GetReviewRes {
+public class GetBestReviewRes {
     private int reviewIdx;
     private int userIdx;
     private String userImg;
@@ -21,5 +21,5 @@ public class GetReviewRes {
     private int reviewScore;
     private String reviewComment;
     private Timestamp reviewCreatedAt;
-    private ReviewImgRes reviewImgRes;
+    private String reviewImage1;
 }
