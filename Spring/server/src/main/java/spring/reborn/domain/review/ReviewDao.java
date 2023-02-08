@@ -7,14 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 import spring.reborn.config.BaseException;
 import spring.reborn.domain.awsS3.AwsS3Controller;
 import spring.reborn.domain.awsS3.AwsS3Service;
-import spring.reborn.domain.jjim.model.JjimRes;
 import spring.reborn.domain.review.model.*;
 import spring.reborn.domain.store.model.StoreCategory;
 
 import javax.sql.DataSource;
 
 import java.util.List;
-import java.util.Objects;
 
 import static spring.reborn.config.BaseResponseStatus.DATABASE_ERROR;
 
@@ -57,6 +55,39 @@ public class ReviewDao {
         Object[] updateStoreScoreParams = new Object[]{
                 postReviewReq.getRebornIdx(),
                 postReviewReq.getRebornIdx(),}; // 동적 쿼리의 ?부분에 주입될 값
+        this.jdbcTemplate.update(updateStoreScoreQuery, updateStoreScoreParams);
+
+
+        String lastInsertIdQuery = "select last_insert_id()"; // 가장 마지막에 삽입된(생성된) id값은 가져온다.
+        return this.jdbcTemplate.queryForObject(lastInsertIdQuery, int.class); // 해당 쿼리문의 결과 마지막으로 삽인된 유저의 userIdx번호를 반환한다.
+    }
+
+    public int createReview2(PostReviewReq2 postReviewReq2) {
+        String createReviewQuery = "insert into Review (userIdx, rebornIdx, reviewScore, reviewComment, " +
+                "reviewImage1, reviewImage2, reviewImage3, reviewImage4, reviewImage5) " +
+                "VALUES (?,?,?,?,?,?,?,?,?)"; // 실행될 동적 쿼리문
+        Object[] createReviewParams = new Object[]{
+                postReviewReq2.getUserIdx(),
+                postReviewReq2.getRebornIdx(),
+                postReviewReq2.getReviewScore(),
+                postReviewReq2.getReviewComment(),
+                postReviewReq2.getReviewImg().getReviewImage1(),
+                postReviewReq2.getReviewImg().getReviewImage2(),
+                postReviewReq2.getReviewImg().getReviewImage3(),
+                postReviewReq2.getReviewImg().getReviewImage4(),
+                postReviewReq2.getReviewImg().getReviewImage5(),}; // 동적 쿼리의 ?부분에 주입될 값
+        this.jdbcTemplate.update(createReviewQuery, createReviewParams);
+
+        // 가게 평점 업데이트
+        String updateStoreScoreQuery = "UPDATE Store SET storeScore=(\n" +
+                "SELECT AVG(Review.reviewScore) FROM Review\n" +
+                "WHERE Review.rebornIdx = ?)\n" +
+                "WHERE storeIdx =" +
+                "(SELECT storeIdx FROM Reborn where rebornIdx = ? )";
+
+        Object[] updateStoreScoreParams = new Object[]{
+                postReviewReq2.getRebornIdx(),
+                postReviewReq2.getRebornIdx(),}; // 동적 쿼리의 ?부분에 주입될 값
         this.jdbcTemplate.update(updateStoreScoreQuery, updateStoreScoreParams);
 
 
@@ -127,7 +158,7 @@ public class ReviewDao {
                         rs.getInt("reviewScore"),
                         rs.getString("reviewComment"),
                         rs.getTimestamp("createdAt"),
-                        new ReviewImgRes(
+                        new ReviewImg(
                                 rs.getString("reviewImage1"),
                                 rs.getString("reviewImage2"),
                                 rs.getString("reviewImage3"),
@@ -166,7 +197,7 @@ public class ReviewDao {
                         rs.getInt("reviewScore"),
                         rs.getString("reviewComment"),
                         rs.getTimestamp("createdAt"),
-                        new ReviewImgRes(
+                        new ReviewImg(
                                 rs.getString("reviewImage1"),
                                 rs.getString("reviewImage2"),
                                 rs.getString("reviewImage3"),
@@ -205,7 +236,7 @@ public class ReviewDao {
                         rs.getInt("reviewScore"),
                         rs.getString("reviewComment"),
                         rs.getTimestamp("createdAt"),
-                        new ReviewImgRes(
+                        new ReviewImg(
                                 rs.getString("reviewImage1"),
                                 rs.getString("reviewImage2"),
                                 rs.getString("reviewImage3"),
