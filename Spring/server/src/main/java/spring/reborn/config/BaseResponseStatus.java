@@ -66,6 +66,8 @@ public enum BaseResponseStatus {
     NOT_ENOUGH_REBORN_PRODUCT_COUNT(false,2217,"잔여 리본이 없습니다. 다시 확인해주세요."),
     INVALID_TYPE_TO_GET_REBORN(false,2218,"손님만 리본 받을 수 있습니다."),
     NO_AUTHENTIFICATION_REBORN(false,2219,"해당 리본에 권한이 없습니다."),
+    CAN_NOT_CHECK_EXPIRING_REBORN_TASK(false,2220, "만료여부를 확인할 수 없습니다."),
+    FAIL_EXPIRING_REBORN_TASK(false,2221, "만료에 실패하였습니다."),
 
 
 
@@ -81,6 +83,11 @@ public enum BaseResponseStatus {
     MODIFY_FAIL_REBORN(false, 2303, "리본 수정에 실패했습니다."),
     DELETE_FAIL_REBORN(false, 2304, "상품 삭제에 실패했습니다."),
     INACTIVE_FAIL_REBORNTASK(false, 2305, "나눔 취소에 실패했습니다."),
+
+    GET_FAIL_REBORN(false, 2306, "리본 조회를 실패하였습니다."),
+
+    WRONG_CATEGORY_INPUT_ERROR(false, 2307, "잘못된 카테고리를 입력했습니다."),
+
 
     //민몰리
     POST_USERS_EMPTY_PASSWORD(false, 2400, "비밀번호를 입력해주세요."),

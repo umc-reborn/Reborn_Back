@@ -11,6 +11,7 @@ import spring.reborn.domain.reborn.model.*;
 import java.util.List;
 
 import static spring.reborn.config.BaseResponseStatus.DATABASE_ERROR;
+import static spring.reborn.config.BaseResponseStatus.GET_FAIL_REBORN;
 
 @Service
 public class RebornProvider {
@@ -23,12 +24,41 @@ public class RebornProvider {
         this.rebornDao = rebornDao;
     }
 
-    public List<GetRebornRes> getReborns(Integer rebornIdx) throws BaseException {
+    public List<GetRebornRes> getReborns(Integer rebornIdx, String status) throws BaseException {
         try {
             System.out.println("provider 시작");
-            List<GetRebornRes> getRebornsRes = rebornDao.getReborns(rebornIdx);
-            System.out.println("provider 끝");
-            return getRebornsRes;
+            if (status.equals("")) {
+                List<GetRebornRes> getRebornsRes = rebornDao.getReborns(rebornIdx);
+                System.out.println("provider 끝");
+                return getRebornsRes;
+            } else if (status.equals("ACTIVE") || status.equals("INACTIVE") || status.equals("COMPLETE")) {
+                List<GetRebornRes> getRebornsByStatusRes = rebornDao.getRebornsByStatus(rebornIdx, status);
+                System.out.println("provider 끝");
+                return getRebornsByStatusRes;
+            } else {
+                System.out.println("provider 끝");
+                throw new BaseException(GET_FAIL_REBORN);
+            }
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public List<GetRebornPageRes> getRebornsPage(Integer rebornIdx, String status) throws BaseException {
+        try {
+            System.out.println("provider 시작");
+            if (status.equals("")) {
+                List<GetRebornPageRes> getRebornsPageRes = rebornDao.getRebornsPage(rebornIdx);
+                System.out.println("provider 끝");
+                return getRebornsPageRes;
+            } else if (status.equals("ACTIVE") || status.equals("INACTIVE") || status.equals("COMPLETE")) {
+                List<GetRebornPageRes> getRebornsPageByStatusRes = rebornDao.getRebornsPageByStatus(rebornIdx, status);
+                System.out.println("provider 끝");
+                return getRebornsPageByStatusRes;
+            } else {
+                System.out.println("provider 끝");
+                throw new BaseException(GET_FAIL_REBORN);
+            }
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }

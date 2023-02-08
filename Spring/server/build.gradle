@@ -44,6 +44,12 @@ dependencies {
 	//google 소셜 로그인
 	implementation 'com.google.api-client:google-api-client:1.32.1'
 	//implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+	// json
+	implementation 'org.json:json:20200518'
+
+	// Gson
+	implementation 'com.google.code.gson:gson:2.8.7'
 }
 
 tasks.named('test') {

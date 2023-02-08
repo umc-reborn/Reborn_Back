@@ -7,6 +7,7 @@ import lombok.*;
 public class GetPopularStoreRes {
     private int storeIdx;
     private String storeName;
+    private String storeImage;
     private String storeAddress;
     private String category;
     private float storeScore;

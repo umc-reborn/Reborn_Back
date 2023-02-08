@@ -1,7 +1,10 @@
 package spring.reborn.domain.user;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
+import spring.reborn.config.BaseException;
+import spring.reborn.config.BaseResponseStatus;
 import spring.reborn.domain.user.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -57,7 +60,6 @@ public class UserDao {
     }
 
     // 해당 userIdx를 갖는 유저의 닉네임조회
-    @Transactional
     public String getUserNickname(int userIdx) {
         String getUserQuery = "select userNickname from User where userIdx = ?"; // 해당 userIdx를 만족하는 유저를 조회하는 쿼리문
         int getUserParams = userIdx;
@@ -68,7 +70,6 @@ public class UserDao {
     }
 
     // 해당 userIdx를 갖는 유저의 status조회
-    @Transactional
     public String getUserStatus(int userIdx) {
         String getUserStatusQuery = "select status from User where userIdx = ?"; // 해당 userIdx를 만족하는 유저를 조회하는 쿼리문
         int getUserParams = userIdx;
@@ -79,7 +80,6 @@ public class UserDao {
     }
 
     // 해당 userIdx를 갖는 유저의 userType조회
-    @Transactional
     public String getUserType(int userIdx) {
         String getUserStatusQuery = "select userType from User where userIdx = ?"; // 해당 userIdx를 만족하는 유저를 조회하는 쿼리문
         int getUserParams = userIdx;
@@ -136,7 +136,6 @@ public class UserDao {
     }
 
     // 해당 storeIdx를 갖는 스토어의 이름조회
-    @Transactional
     public String getStoreName(int storeIdx) {
         String getStoreNameQuery = "select storeName from Store where storeIdx = ?"; // 해당 userIdx를 만족하는 유저를 조회하는 쿼리문
         return this.jdbcTemplate.queryForObject(getStoreNameQuery,
@@ -233,9 +232,9 @@ public class UserDao {
 
     // 이웃 회원탈퇴
     @Transactional
-    public int modifyUserStatus(PatchUserStatusReq patchUserStatusReq) {
+    public int modifyUserStatus(int userIdx) {
         String modifyUserStatusQuery = "update User set status = ?, userNickname = ? where userIdx = ? "; // 해당 userIdx를 만족하는 User를 해당 status로 변경한다.
-        Object[] modifyUserStatusParams = new Object[]{patchUserStatusReq.getStatus(),"탈퇴 회원", patchUserStatusReq.getUserIdx()}; // 주입될 값들(status, userIdx) 순
+        Object[] modifyUserStatusParams = new Object[]{"DELETE", "탈퇴 회원", userIdx}; // 주입될 값들(status, userIdx) 순
 
         return this.jdbcTemplate.update(modifyUserStatusQuery, modifyUserStatusParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0)
 
@@ -243,19 +242,20 @@ public class UserDao {
 
     // 스토어 회원탈퇴
     @Transactional
-    public int modifyStoreStatus(PatchStoreStatusReq patchStoreStatusReq) {
+    public int modifyStoreStatus(int userIdx) {
         String modifyStoreStatusQuery = "update Store set status = ? where userIdx = ? "; // 해당 storeIdx를 만족하는 Store를 해당 status로 변경한다.
-        Object[] modifyStoreStatusParams = new Object[]{patchStoreStatusReq.getStatus(), patchStoreStatusReq.getUserIdx()}; // 주입될 값들(status, userIdx) 순
+        Object[] modifyStoreStatusParams = new Object[]{"DELETE", userIdx}; // 주입될 값들(status, userIdx) 순
 
         this.jdbcTemplate.update(modifyStoreStatusQuery, modifyStoreStatusParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0)
 
         modifyStoreStatusQuery = "update User set status = ? where userIdx = ? "; // 해당 storeIdx를 만족하는 User를 해당 status로 변경한다.
-        modifyStoreStatusParams = new Object[]{patchStoreStatusReq.getStatus(), patchStoreStatusReq.getUserIdx()}; // 주입될 값들(status, userIdx) 순
+        modifyStoreStatusParams = new Object[]{"DELETE", userIdx}; // 주입될 값들(status, userIdx) 순
 
         return this.jdbcTemplate.update(modifyStoreStatusQuery, modifyStoreStatusParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0)
     }
 
     // 회원정보 수정
+    @Transactional
     public int modifyUserInform(PatchUserReq patchUserReq) {
         String modifyUserNameQuery = "update User set userImg = ?, userNickname = ?, userAddress = ?, userBirthDate = ?, userLikes = ? where userIdx = ? "; // 해당 userIdx를 만족하는 User를 해당 nickname으로 변경한다.
         Object[] modifyUserNameParams = new Object[]{patchUserReq.getUserImg(), patchUserReq.getUserNickname(), patchUserReq.getUserAddress(), patchUserReq.getUserBirthDate(), patchUserReq.getUserLikes(), patchUserReq.getUserIdx()}; // 주입될 값들(nickname, userIdx) 순
@@ -337,5 +337,17 @@ public class UserDao {
 
         return this.jdbcTemplate.update(modifyUserPwdQuery, modifyUserPwdParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0)
 
+    }
+
+
+    public String getUserLikes(int userIdx) throws BaseException {
+        try{
+            String selectUserLikesQuery = "select category from User where userIdx = ? ";
+            return jdbcTemplate.queryForObject(selectUserLikesQuery, String.class ,userIdx);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+        }
     }
 }
