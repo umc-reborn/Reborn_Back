@@ -103,6 +103,16 @@ public class ReviewDao {
         Object[] getReviewByStoreIdxParams = new Object[]{
                 userIdx,}; // 동적 쿼리의 ?부분에 주입될 값
 
+
+//        ReviewImgRes reviewImgRes = this.jdbcTemplate.query(GetReviewResQuery,
+//                (rs, rowNum) -> new ReviewImgRes(
+//                        rs.getString("reviewImage1"),
+//                        rs.getString("reviewImage2"),
+//                        rs.getString("reviewImage3"),
+//                        rs.getString("reviewImage4"),
+//                        rs.getString("reviewImage5"))
+//        );
+
         //queryForObject : DTO 여러개 값 반환
         List<GetReviewRes> getReviewRes = this.jdbcTemplate.query(getReviewByUserIdxQuery,
                 (rs, rowNum) -> new GetReviewRes(
@@ -116,12 +126,13 @@ public class ReviewDao {
                         rs.getString("productName"),
                         rs.getInt("reviewScore"),
                         rs.getString("reviewComment"),
-                        rs.getString("reviewImage1"),
-                        rs.getString("reviewImage2"),
-                        rs.getString("reviewImage3"),
-                        rs.getString("reviewImage4"),
-                        rs.getString("reviewImage5"),
-                        rs.getTimestamp("createdAt")),
+                        rs.getTimestamp("createdAt"),
+                        new ReviewImgRes(
+                                rs.getString("reviewImage1"),
+                                rs.getString("reviewImage2"),
+                                rs.getString("reviewImage3"),
+                                rs.getString("reviewImage4"),
+                                rs.getString("reviewImage5"))),
                 getReviewByStoreIdxParams
         );
         return getReviewRes;
@@ -154,12 +165,13 @@ public class ReviewDao {
                         rs.getString("productName"),
                         rs.getInt("reviewScore"),
                         rs.getString("reviewComment"),
-                        rs.getString("reviewImage1"),
-                        rs.getString("reviewImage2"),
-                        rs.getString("reviewImage3"),
-                        rs.getString("reviewImage4"),
-                        rs.getString("reviewImage5"),
-                        rs.getTimestamp("createdAt")),
+                        rs.getTimestamp("createdAt"),
+                        new ReviewImgRes(
+                                rs.getString("reviewImage1"),
+                                rs.getString("reviewImage2"),
+                                rs.getString("reviewImage3"),
+                                rs.getString("reviewImage4"),
+                                rs.getString("reviewImage5"))),
                 getReviewByStoreIdxParams
         );
         return getReviewRes;
@@ -192,19 +204,20 @@ public class ReviewDao {
                         rs.getString("productName"),
                         rs.getInt("reviewScore"),
                         rs.getString("reviewComment"),
-                        rs.getString("reviewImage1"),
-                        rs.getString("reviewImage2"),
-                        rs.getString("reviewImage3"),
-                        rs.getString("reviewImage4"),
-                        rs.getString("reviewImage5"),
-                        rs.getTimestamp("createdAt")),
+                        rs.getTimestamp("createdAt"),
+                        new ReviewImgRes(
+                                rs.getString("reviewImage1"),
+                                rs.getString("reviewImage2"),
+                                rs.getString("reviewImage3"),
+                                rs.getString("reviewImage4"),
+                                rs.getString("reviewImage5"))),
                 getReviewByReviewIdxParams
         );
         return getReviewRes;
     }
 
     @Transactional
-    public List<GetReviewRes> getBestReview() throws BaseException {
+    public List<GetBestReviewRes> getBestReview() throws BaseException {
         String GetReviewResQuery = "SELECT Review.reviewIdx, Review.userIdx, User.userImg, User.userNickname, \n" +
                 "Store.storeName, Store.category, Review.rebornIdx, Reborn.productName, Review.reviewScore,\n" +
                 "Review.reviewComment, Review.reviewImage1, Review.reviewImage2, Review.reviewImage3,\n" +
@@ -216,8 +229,8 @@ public class ReviewDao {
                 "ORDER BY Review.reviewScore DESC LIMIT 5;"; // 실행될 동적 쿼리문
 
         //queryForObject : DTO 여러개 값 반환
-        List<GetReviewRes> getReviewRes = this.jdbcTemplate.query(GetReviewResQuery,
-                (rs, rowNum) -> new GetReviewRes(
+        List<GetBestReviewRes> getBestReviewRes = this.jdbcTemplate.query(GetReviewResQuery,
+                (rs, rowNum) -> new GetBestReviewRes(
                         rs.getInt("reviewIdx"),
                         rs.getInt("userIdx"),
                         rs.getString("userImg"),
@@ -228,14 +241,10 @@ public class ReviewDao {
                         rs.getString("productName"),
                         rs.getInt("reviewScore"),
                         rs.getString("reviewComment"),
-                        rs.getString("reviewImage1"),
-                        rs.getString("reviewImage2"),
-                        rs.getString("reviewImage3"),
-                        rs.getString("reviewImage4"),
-                        rs.getString("reviewImage5"),
-                        rs.getTimestamp("createdAt"))
+                        rs.getTimestamp("createdAt"),
+                        rs.getString("reviewImage1"))
         );
-        return getReviewRes;
+        return getBestReviewRes;
     }
 
     @Transactional

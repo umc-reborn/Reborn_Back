@@ -3,6 +3,7 @@ package spring.reborn.domain.review;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import spring.reborn.config.BaseException;
+import spring.reborn.domain.review.model.GetBestReviewRes;
 import spring.reborn.domain.review.model.GetReviewReq;
 import spring.reborn.domain.review.model.GetReviewRes;
 
@@ -32,7 +33,7 @@ public class ReviewProvider {
         return reviewDao.getReviewByReviewIdx(reviewIdx);
     }
 
-    public List<GetReviewRes> getBestReview() throws BaseException {
+    public List<GetBestReviewRes> getBestReview() throws BaseException {
         return reviewDao.getBestReview();
     }
 
