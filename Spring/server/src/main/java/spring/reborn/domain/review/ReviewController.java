@@ -79,6 +79,18 @@ public class ReviewController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+    @ResponseBody
+    @PostMapping(value = "/reviewboni2")
+    public BaseResponse<PostReviewRes> createReview3(@RequestBody PostReviewReq2 postReviewReq2) {
+        try {
+            // 리뷰 생성
+            PostReviewRes postReviewRes = reviewService.createReview2(postReviewReq2);
+
+            return new BaseResponse<>(postReviewRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
 
 
 

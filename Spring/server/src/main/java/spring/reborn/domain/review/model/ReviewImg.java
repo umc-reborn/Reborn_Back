@@ -4,12 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Timestamp;
-
 @Getter
 @Setter
 @AllArgsConstructor
-public class ReviewImgRes {
+public class ReviewImg {
     private String reviewImage1;
     private String reviewImage2;
     private String reviewImage3;

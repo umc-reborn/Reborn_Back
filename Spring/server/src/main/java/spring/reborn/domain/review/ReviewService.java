@@ -24,6 +24,11 @@ public class ReviewService {
         return new PostReviewRes(reviewIdx);
     }
 
+    public PostReviewRes createReview2(PostReviewReq2 postReviewReq2) throws BaseException {
+        int reviewIdx = reviewDao.createReview2(postReviewReq2);
+        return new PostReviewRes(reviewIdx);
+    }
+
     public void deleteReview(ReviewReq reviewReq) throws BaseException {
         reviewDao.deleteReview(reviewReq);
     }
