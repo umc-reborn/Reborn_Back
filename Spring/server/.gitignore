@@ -41,3 +41,4 @@ secret/
 application.properties
 !/.idea/misc.xml
 *.ppk
+firebase/
