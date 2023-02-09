@@ -34,6 +34,10 @@ public class ReviewProvider {
         return reviewDao.getReviewByStoreIdx(storeIdx);
     }
 
+    public List<GetReviewRes2> getReviewByStoreIdx2(Integer storeIdx) throws BaseException {
+        return reviewDao.getReviewByStoreIdx2(storeIdx);
+    }
+
     public GetReviewRes getReviewByReviewIdx(Integer reviewIdx) throws BaseException {
         return reviewDao.getReviewByReviewIdx(reviewIdx);
     }

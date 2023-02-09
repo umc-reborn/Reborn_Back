@@ -239,6 +239,46 @@ public class ReviewDao {
     }
 
     @Transactional
+    public List<GetReviewRes2> getReviewByStoreIdx2(Integer storeIdx) throws BaseException {
+        String getReviewByStoreIdxQuery = "SELECT Review.reviewIdx, Review.userIdx, User.userImg, User.userNickname, \n" +
+                "Store.storeName, Store.category, Review.rebornIdx, Reborn.productName, Review.reviewScore,\n" +
+                "Review.reviewComment, Review.reviewImage1, Review.reviewImage2, Review.reviewImage3,\n" +
+                "Review.reviewImage4, Review.reviewImage5, Review.createdAt\n" +
+                "FROM reborn.Review JOIN reborn.Reborn\n" +
+                "ON Review.rebornIdx = Reborn.rebornIdx\n" +
+                "JOIN reborn.User ON Review.userIdx=User.userIdx\n" +
+                "JOIN reborn.Store ON Reborn.storeIdx=Store.storeIdx\n" +
+                "WHERE Reborn.storeIdx = ?;"; // 실행될 동적 쿼리문
+        Object[] getReviewByStoreIdxParams = new Object[]{
+                storeIdx,}; // 동적 쿼리의 ?부분에 주입될 값
+
+        //queryForObject : DTO 여러개 값 반환
+        List<GetReviewRes2> getReviewRes = this.jdbcTemplate.query(getReviewByStoreIdxQuery,
+                (rs, rowNum) -> new GetReviewRes2(
+                        rs.getInt("reviewIdx"),
+                        rs.getInt("userIdx"),
+                        rs.getString("userImg"),
+                        rs.getString("userNickname"),
+                        rs.getString("storeName"),
+                        StoreCategory.valueOf(rs.getString("category")).label(),
+                        rs.getInt("rebornIdx"),
+                        rs.getString("productName"),
+                        rs.getInt("reviewScore"),
+                        rs.getString("reviewComment"),
+                        rs.getTimestamp("createdAt"),
+                        new ArrayList<>() {{
+                            add(rs.getString("reviewImage1"));
+                            add(rs.getString("reviewImage2"));
+                            add(rs.getString("reviewImage3"));
+                            add(rs.getString("reviewImage4"));
+                            add(rs.getString("reviewImage5"));
+                        }}),
+                getReviewByStoreIdxParams
+        );
+        return getReviewRes;
+    }
+
+    @Transactional
     public GetReviewRes getReviewByReviewIdx(Integer reviewIdx) throws BaseException {
         String getReviewByReviewIdxQuery = "SELECT Review.reviewIdx, Review.userIdx, User.userImg, User.userNickname, \n" +
                 "Store.storeName, Store.category, Review.rebornIdx, Reborn.productName, Review.reviewScore,\n" +
