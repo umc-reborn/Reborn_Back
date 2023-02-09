@@ -82,6 +82,7 @@ public class UserService {
         }
     }
     // 스토어 회원가입(POST)
+    @Transactional
     public PostUserStoreRes createUserStore(PostUserStoreReq postUserStoreReq) throws BaseException {
         // 중복 확인: 해당 이메일을 가진 유저가 있는지 확인합니다. 중복될 경우, 에러 메시지를 보냅니다.
         if (userProvider.checkUserEmail(postUserStoreReq.getUserEmail()) == 1) {
@@ -156,6 +157,7 @@ public class UserService {
     }
 
     // 회원정보 수정(Patch)
+    @Transactional
     public void modifyUserInform(PatchUserReq patchUserReq) throws BaseException {
         try {
             int result = userDao.modifyUserInform(patchUserReq); // 해당 과정이 무사히 수행되면 True(1), 그렇지 않으면 False(0)입니다.
@@ -431,6 +433,7 @@ public class UserService {
 
 
     // ID 찾기 - 메일 발송(Post)
+    @Transactional
     public void sendIDMessage(String to) throws Exception {
 
         // 가입 확인: 해당 이메일을 가진 유저가 있는지 확인합니다. 없을 경우, 에러 메시지를 보냅니다.
@@ -456,6 +459,7 @@ public class UserService {
     }
 
     // ID 찾기 - 부분(Get)
+    @Transactional
     public GetUserIdRes idFindPart(String to) throws Exception {
 
         GetUserIdRes getUserIdRes;

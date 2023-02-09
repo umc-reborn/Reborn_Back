@@ -121,7 +121,6 @@ public class UserController {
     // Body
     @ResponseBody
     @PostMapping(value ="/sign-up-store", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})    // POST 방식의 요청을 매핑하기 위한 어노테이션
-    @Transactional
     public BaseResponse<PostUserStoreRes> createUserStore(@RequestPart PostUserStoreReq postUserStoreReq, @RequestParam(name = "storeImage") List<MultipartFile> multipartFile) {
         // email에 값이 존재하는지 검사
         if (postUserStoreReq.getUserEmail().length() == 0) {
