@@ -136,6 +136,18 @@ public class ReviewController {
     }
 
     @ResponseBody
+    @GetMapping("/reviewbuz")
+    public BaseResponse<List<GetReviewRes2>> getReviewByUserIdx2() {
+        try {
+            int userIdxByJwt = jwtService.getUserIdx();
+            List<GetReviewRes2> getReviewRes = reviewProvider.getReviewByUserIdx2(userIdxByJwt);
+            return new BaseResponse<>(getReviewRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    @ResponseBody
     @GetMapping("/review/store/{storeIdx}")
     public BaseResponse<List<GetReviewRes>> getReviewByStoreIdx(@PathVariable Integer storeIdx) {
         try {

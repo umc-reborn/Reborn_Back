@@ -6,6 +6,7 @@ import spring.reborn.config.BaseException;
 import spring.reborn.domain.review.model.GetBestReviewRes;
 import spring.reborn.domain.review.model.GetReviewReq;
 import spring.reborn.domain.review.model.GetReviewRes;
+import spring.reborn.domain.review.model.GetReviewRes2;
 
 import java.util.List;
 
@@ -23,6 +24,10 @@ public class ReviewProvider {
 
     public List<GetReviewRes> getReviewByUserIdx(Integer userIdx) throws BaseException {
         return reviewDao.getReviewByUserIdx(userIdx);
+    }
+
+    public List<GetReviewRes2> getReviewByUserIdx2(Integer userIdx) throws BaseException {
+        return reviewDao.getReviewByUserIdx2(userIdx);
     }
 
     public List<GetReviewRes> getReviewByStoreIdx(Integer storeIdx) throws BaseException {
