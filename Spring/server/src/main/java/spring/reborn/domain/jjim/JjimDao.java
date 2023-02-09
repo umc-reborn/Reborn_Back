@@ -1,6 +1,7 @@
 package spring.reborn.domain.jjim;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +17,7 @@ import java.util.List;
 
 import static javax.swing.UIManager.getInt;
 import static javax.swing.UIManager.getString;
-import static spring.reborn.config.BaseResponseStatus.DATABASE_ERROR;
+import static spring.reborn.config.BaseResponseStatus.*;
 
 @Repository
 public class JjimDao {
@@ -26,6 +27,66 @@ public class JjimDao {
     @Autowired
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
+    }
+
+
+    @Transactional
+    public JjimRes changeJjim(JjimReq jjimReq) throws BaseException {
+        try {
+            String selectStoreQuery = "select storeIdx from Store where userIdx = ?";
+            try {
+                Long storeIdx = this.jdbcTemplate.queryForObject(selectStoreQuery,Long.class,jjimReq.getUserIdx());
+            }
+            catch (DataAccessException e){
+                throw new BaseException(CAN_NOT_JJIM_STORE_TO_STORE);
+
+            }
+
+            String selectJjimQuery = "select jjimIdx from Jjim where storeIdx = ? and userIdx = ?";
+
+            Long jjimIdx =null;
+            // 찜이 존재하는 경우
+            try {
+                jjimIdx = this.jdbcTemplate.queryForObject(selectJjimQuery, Long.class);
+                String deleteJjimQuery = "delete from Jjim  where jjimIdx = ?";
+                if(this.jdbcTemplate.update(deleteJjimQuery,jjimIdx)==0){
+                    throw new BaseException(FAIL_DELETE_JJIM);
+
+                }
+            }catch (DataAccessException e) {
+                String createJjimQuery = "insert into Jjim (storeIdx, userIdx) values (?,?)";
+                if(this.jdbcTemplate.update(createJjimQuery,
+                        jjimReq.getStoreIdx(),jjimReq.getUserIdx())==0){
+                    throw new BaseException(FAIL_DELETE_JJIM);
+
+                }
+            }
+            String postJjimResponseQuery =
+                    "select Jjim.jjimIdx,User.userEmail,Store.storeName\n" +
+                            "from Jjim, User, Store " +
+                            "where Jjim.jjimIdx=last_insert_id() and Jjim.userIdx = User.userIdx and Jjim.storeIdx = Store.storeIdx;";
+
+            Object[] postJjimParams = new Object[]{};
+
+            //queryForObject : DTO 하나 값 반환
+            JjimRes jjimRes = this.jdbcTemplate.queryForObject(postJjimResponseQuery,
+                    postJjimParams,
+                    (rs, rowNum) -> new JjimRes(
+                            rs.getInt("jjimIdx"),
+                            rs.getString("userEmail"),
+                            rs.getString("storeName"))
+            );
+
+            return jjimRes;
+
+        }
+        catch (BaseException e){
+            e.printStackTrace();
+            throw new BaseException(e.getStatus());
+        }
+        catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
     }
 
     @Transactional
