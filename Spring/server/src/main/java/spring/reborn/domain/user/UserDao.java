@@ -123,6 +123,7 @@ public class UserDao {
     }
 
     // 해당 storeIdx를 갖는 스토어 정보 조회
+    @Transactional
     public PostUserStoreRes getStoreInform(int storeIdx){
         String getStoreQuery = "select storeIdx, userIdx, storeName from Store where storeIdx = ?";
 
@@ -145,6 +146,7 @@ public class UserDao {
     }
 
     // 이메일 확인
+    @Transactional
     public int checkUserEmail(String userEmail) {
         String checkEmailQuery = "select exists(select userEmail from User where userEmail = ?)"; // User Table에 해당 email 값을 갖는 유저 정보가 존재하는가?
         String checkEmailParams = userEmail; // 해당(확인할) 이메일 값
@@ -154,6 +156,7 @@ public class UserDao {
     }
 
     // ID 확인
+    @Transactional
     public int checkUserId(String userId) {
         String checkIdQuery = "select exists(select userId from User where userId = ?)"; // User Table에 해당 email 값을 갖는 유저 정보가 존재하는가?
         String checkIdParams = userId; // 해당(확인할) 이메일 값
@@ -163,6 +166,7 @@ public class UserDao {
     }
 
     // 해당 userIdx를 갖는 유저의 포인트조회
+    @Transactional
     public GetUserPointRes getUserPoint(int userIdx) {
         String getUserPointQuery = "select userPoint from User where userIdx = ?"; // 해당 userIdx를 만족하는 유저를 조회하는 쿼리문
         int getUserPointParams = userIdx;
