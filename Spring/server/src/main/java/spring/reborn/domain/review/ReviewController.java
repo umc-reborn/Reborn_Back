@@ -159,6 +159,17 @@ public class ReviewController {
     }
 
     @ResponseBody
+    @GetMapping("/review/store/{storeIdx}/buz")
+    public BaseResponse<List<GetReviewRes2>> getReviewByStoreIdx2(@PathVariable Integer storeIdx) {
+        try {
+            List<GetReviewRes2> getReviewRes = reviewProvider.getReviewByStoreIdx2(storeIdx);
+            return new BaseResponse<>(getReviewRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    @ResponseBody
     @GetMapping("/review/{reviewIdx}")
     public BaseResponse<GetReviewRes> getReviewByReviewIdx(@PathVariable Integer reviewIdx) {
         try {

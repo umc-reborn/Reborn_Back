@@ -27,9 +27,9 @@ public class AwsS3Controller {
 
     @ResponseBody
     @PostMapping("/s3")
-    public BaseResponse<List<String>> uploadImage(@RequestParam(name = "file") List<MultipartFile> multipartFile) {
-        List<String> fileUrlList = awsS3Service.uploadImage(multipartFile);
-        return new BaseResponse<>(fileUrlList);
+    public BaseResponse<String> uploadImage(@RequestParam(name = "file") MultipartFile multipartFile) throws BaseException {
+        String fileUrl = awsS3Service.uploadImage(multipartFile);
+        return new BaseResponse<>(fileUrl);
     }
 
     @ResponseBody
