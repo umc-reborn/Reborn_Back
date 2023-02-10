@@ -102,8 +102,8 @@ public class UserDao {
 
         try {
             // DB의 User 테이블에 스토어 데이터 삽입.
-            String createUserStoreQuery = "INSERT INTO User (userId, userEmail, userPwd, userAdAgreement, userType) VALUES (?,?,?,?,'STORE');";
-            Object[] createUserParams = new Object[]{postUserStoreReq.getUserId(), postUserStoreReq.getUserEmail(), postUserStoreReq.getUserPwd(), postUserStoreReq.getUserAdAgreement()};
+            String createUserStoreQuery = "INSERT INTO User (userId, userEmail, userPwd, userImg, userAdAgreement, userType) VALUES (?,?,?,?,?,'STORE');";
+            Object[] createUserParams = new Object[]{postUserStoreReq.getUserId(), postUserStoreReq.getUserEmail(), postUserStoreReq.getUserPwd(), postUserStoreReq.getUserImg(), postUserStoreReq.getUserAdAgreement()};
             this.jdbcTemplate.update(createUserStoreQuery, createUserParams);
         } catch (Exception exception) {
             System.out.println(exception);

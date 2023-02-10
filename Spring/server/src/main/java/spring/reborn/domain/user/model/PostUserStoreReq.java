@@ -16,7 +16,8 @@ public class PostUserStoreReq {
     private String userAdAgreement;     // 광고성 정보 동의
     private String storeName;           // 상호명
     private String storeRegister;       // 사업자 등록번호
-    private String storeImage;          // 대표 사진
+    private String userImg;             // 스토어 프로필 사진
+    private String storeImage;          // 스토어 홈 배경사진
     private String storeAddress;        // 가게 주소
     private String storeDescription;    // 가게 한 줄 소개
 
