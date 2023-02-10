@@ -121,7 +121,7 @@ public class UserController {
     // Body
     @ResponseBody
     @PostMapping(value ="/sign-up-store", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})    // POST 방식의 요청을 매핑하기 위한 어노테이션
-    public BaseResponse<PostUserStoreRes> createUserStore(@RequestPart PostUserStoreReq postUserStoreReq, @RequestParam(name = "storeImage") List<MultipartFile> multipartFile) {
+    public BaseResponse<PostUserStoreRes> createUserStore(@RequestPart PostUserStoreReq postUserStoreReq, @RequestParam(name = "storeImage") List<MultipartFile> storeImageFile, @RequestParam(name = "userImage") List<MultipartFile> userImgFile) {
         // email에 값이 존재하는지 검사
         if (postUserStoreReq.getUserEmail().length() == 0) {
             return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
@@ -142,7 +142,7 @@ public class UserController {
         if (postUserStoreReq.getUserPwd().length() == 0) {
             return new BaseResponse<>(POST_USERS_EMPTY_PASSWORD);
         }
-        //비밀번호 정규표현: 입력받은 비밀번호가 숫자, 특문, 영문 대소문자를 모두 사용하여 8~16자리 형식인지 검사
+        // 비밀번호 정규표현: 입력받은 비밀번호가 숫자, 특문, 영문 대소문자를 모두 사용하여 8~16자리 형식인지 검사
         if (!isRegexPassword(postUserStoreReq.getUserPwd())) {
             return new BaseResponse<>(POST_USERS_INVALID_PASSWORD);
         }
@@ -170,10 +170,12 @@ public class UserController {
         if (postUserStoreReq.getCategory() == null) {
             return new BaseResponse<>(POST_USERS_EMPTY_STORECATEGORY);
         }
-        //사진 넣기
-        List<String> fileUrl = awsS3Service.uploadImage(multipartFile);
-        // 이미지 파일 객체에 추가
-        postUserStoreReq.setStoreImage(fileUrl.get(0));
+        // 스토어 홈 배경 사진 넣기
+        List<String> fileUrl = awsS3Service.uploadImage(storeImageFile);
+        postUserStoreReq.setStoreImage(fileUrl.get(0));             // 이미지 파일 객체에 추가
+        // 스토어 프로필 사진 넣기
+        fileUrl = awsS3Service.uploadImage(userImgFile);
+        postUserStoreReq.setUserImg(fileUrl.get(0));                // 이미지 파일 객체에 추가
         try {
             PostUserStoreRes postUserStoreRes = userService.createUserStore(postUserStoreReq);
             return new BaseResponse<>(postUserStoreRes);
