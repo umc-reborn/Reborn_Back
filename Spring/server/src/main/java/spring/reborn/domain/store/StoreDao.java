@@ -28,7 +28,7 @@ public class StoreDao {
     public List<GetStoreRes> getStoreList() throws BaseException {
         try {
 
-            String getStoreListQuery = "SELECT storeIdx, storeName, userImg,storeAddress, storeDescription, category, storeScore FROM Store S join User U on U.userIdx = S.userIdx WHERE S.status = 'ACTIVE' ORDER BY S.updatedAt desc";
+            String getStoreListQuery = "SELECT storeIdx, storeName, userImg `userImage`,storeAddress, storeDescription, category, storeScore FROM Store S join User U on U.userIdx = S.userIdx WHERE S.status = 'ACTIVE' ORDER BY S.updatedAt desc";
             List<GetStoreRes> res = this.jdbcTemplate.query(
                     getStoreListQuery,
                     (rs, rowNum) -> GetStoreRes.builder()
@@ -36,7 +36,7 @@ public class StoreDao {
                             .storeName(rs.getString("storeName"))
                             .category(StoreCategory.valueOf(rs.getString("category")))
                             .storeAddress(rs.getString("storeAddress"))
-                            .userImage(rs.getString("userImg"))
+                            .userImage(rs.getString("userImage"))
                             .storeDescription(rs.getString("storeDescription"))
                             .storeScore(rs.getFloat("storeScore"))
 
@@ -56,9 +56,9 @@ public class StoreDao {
     public List<GetNewStoreRes> getNewStoreList() throws BaseException {
         try {
 
-            String getStoreListQuery = "SELECT storeIdx, storeName,userImg, category, storeScore " +
+            String getStoreListQuery = "SELECT storeIdx, storeName,userImg `userImage`, category, storeScore " +
                     "FROM Store S join User U on S.userIdx = U.userIdx " +
-                    "WHERE status = 'ACTIVE' " +
+                    "WHERE S.status = 'ACTIVE' " +
                     "ORDER BY createdAt DESC " +
                     "LIMIT 3";
             List<GetNewStoreRes> res = this.jdbcTemplate.query(
@@ -67,7 +67,7 @@ public class StoreDao {
                             .storeIdx(rs.getLong("storeIdx"))
                             .storeName(rs.getString("storeName"))
                             .category(StoreCategory.valueOf(rs.getString("category")))
-                            .userImage(rs.getString("userImg"))
+                            .userImage(rs.getString("userImage"))
                             .storeScore(rs.getFloat("storeScore"))
 
                             .build()
@@ -113,7 +113,7 @@ public class StoreDao {
     public GetStoreInfoRes getStoreInfo(Long storeIdx) throws BaseException {
         try {
             String getStoreInfoQuery =
-                    "select storeIdx, storeName, storeImage, userImg, storeAddress, storeDescription, category, storeScore,\n" +
+                    "select storeIdx, storeName, storeImage, userImg `userImage`, storeAddress, storeDescription, category, storeScore,\n" +
                     "       (select count(rebornTaskIdx) from RebornTask Rt join Reborn R on Rt.rebornIdx = R.rebornIdx where R.storeIdx = S.storeIdx  and Rt.status = 'COMPLETE')`numOfReborn`,\n" +
                     "       (select count(reviewIdx) from Review Rv join Reborn R on Rv.rebornIdx = R.rebornIdx where R.storeIdx = S.storeIdx)`numOfReview`,\n" +
                     "       (select count(jjimIdx) from Jjim J where J.storeIdx = S.storeIdx) `numOfJjim`\n" +
@@ -131,7 +131,7 @@ public class StoreDao {
                             .category(StoreCategory.valueOf(rs.getString("category")))
                             .storeAddress(rs.getString("storeAddress"))
                             .storeImage(rs.getString("storeImage"))
-                            .userImage(rs.getString("userImg"))
+                            .userImage(rs.getString("userImage"))
                             .storeDescription(rs.getString("storeDescription"))
                             .storeScore(rs.getFloat("storeScore"))
                             .numOfReborn(rs.getLong("numOfReborn"))
@@ -155,7 +155,7 @@ public class StoreDao {
     public List<GetStoreRes> searchStoreUsingTitle(String keyword) throws BaseException {
         try {
 
-            String getStoreInfoQuery = "SELECT storeIdx, storeName ,userImg,storeAddress, storeDescription, category, storeScore " +
+            String getStoreInfoQuery = "SELECT storeIdx, storeName ,userImg `userImage`,storeAddress, storeDescription, category, storeScore " +
                     "FROM Store S join User U on U.userIdx = S.userIdx " +
                     "WHERE INSTR(UPPER(storeName), UPPER(?))>0 and S.status = 'ACTIVE'";
 
@@ -167,7 +167,7 @@ public class StoreDao {
                             .storeName(rs.getString("storeName"))
                             .category(StoreCategory.valueOf(rs.getString("category")))
                             .storeAddress(rs.getString("storeAddress"))
-                            .userImage(rs.getString("userImg"))
+                            .userImage(rs.getString("userImage"))
                             .storeDescription(rs.getString("storeDescription"))
                             .storeScore(rs.getFloat("storeScore"))
 
@@ -187,7 +187,7 @@ public class StoreDao {
     public List<GetStoreRes> searchStoreUsingTitleSortByName(String keyword) throws BaseException{
         try {
 
-            String getStoreInfoQuery = "SELECT storeIdx, storeName ,userImg,storeAddress, storeDescription, category, storeScore " +
+            String getStoreInfoQuery = "SELECT storeIdx, storeName ,userImg `userImage`,storeAddress, storeDescription, category, storeScore " +
                     "FROM Store S join User U on U.userIdx = S.userIdx " +
                     "WHERE INSTR(UPPER(storeName), UPPER(?))>0 and S.status = 'ACTIVE' " +
                     "ORDER BY storeName ASC ";
@@ -199,7 +199,7 @@ public class StoreDao {
                             .storeName(rs.getString("storeName"))
                             .category(StoreCategory.valueOf(rs.getString("category")))
                             .storeAddress(rs.getString("storeAddress"))
-                            .userImage(rs.getString("userImg"))
+                            .userImage(rs.getString("userImage"))
                             .storeDescription(rs.getString("storeDescription"))
                             .storeScore(rs.getFloat("storeScore"))
 
@@ -217,7 +217,7 @@ public class StoreDao {
     public List<GetStoreRes> searchStoreUsingTitleSortByScore(String keyword) throws BaseException{
         try {
 
-            String getStoreInfoQuery = "SELECT storeIdx, storeName ,userImg,storeAddress, storeDescription, category, storeScore " +
+            String getStoreInfoQuery = "SELECT storeIdx, storeName ,userImg `userImage`,storeAddress, storeDescription, category, storeScore " +
                     "FROM Store S join User U on U.userIdx = S.userIdx " +
                     "WHERE INSTR(UPPER(storeName), UPPER(?))>0 and S.status = 'ACTIVE' " +
                     "ORDER BY storeScore Desc ";
@@ -229,7 +229,7 @@ public class StoreDao {
                             .storeName(rs.getString("storeName"))
                             .category(StoreCategory.valueOf(rs.getString("category")))
                             .storeAddress(rs.getString("storeAddress"))
-                            .userImage(rs.getString("userImg"))
+                            .userImage(rs.getString("userImage"))
                             .storeDescription(rs.getString("storeDescription"))
                             .storeScore(rs.getFloat("storeScore"))
 
@@ -247,7 +247,7 @@ public class StoreDao {
     public List<GetStoreRes> searchStoreUsingTitleSortByJjim(String keyword) throws BaseException{
         try {
 
-            String getStoreInfoQuery = "SELECT s.storeIdx, storeName , (select userImg FROM User U WHERE U.userIdx = s.userIdx) `userImg` , storeAddress, storeDescription, category, storeScore " +
+            String getStoreInfoQuery = "SELECT s.storeIdx, storeName , (select userImg FROM User U WHERE U.userIdx = s.userIdx) `userImage` , storeAddress, storeDescription, category, storeScore " +
             "FROM Store s LEFT JOIN Jjim j ON s.storeIdx = j.storeIdx " +
             "WHERE INSTR(UPPER(storeName), UPPER(?))>0  and s.status = 'ACTIVE' " +
             "GROUP BY s.storeIdx " +
@@ -260,7 +260,7 @@ public class StoreDao {
                             .storeName(rs.getString("storeName"))
                             .category(StoreCategory.valueOf(rs.getString("category")))
                             .storeAddress(rs.getString("storeAddress"))
-                            .userImage(rs.getString("userImg"))
+                            .userImage(rs.getString("userImage"))
                             .storeDescription(rs.getString("storeDescription"))
                             .storeScore(rs.getFloat("storeScore"))
 
