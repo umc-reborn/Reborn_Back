@@ -59,7 +59,7 @@ public class StoreDao {
             String getStoreListQuery = "SELECT storeIdx, storeName,userImg `userImage`, category, storeScore " +
                     "FROM Store S join User U on S.userIdx = U.userIdx " +
                     "WHERE S.status = 'ACTIVE' " +
-                    "ORDER BY createdAt DESC " +
+                    "ORDER BY S.createdAt DESC " +
                     "LIMIT 3";
             List<GetNewStoreRes> res = this.jdbcTemplate.query(
                     getStoreListQuery,
