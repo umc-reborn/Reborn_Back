@@ -55,7 +55,7 @@ public class StoreService {
         }
     }
 
-    public GetStoreRes getStoreInfo(Long storeIdx) throws BaseException{
+    public GetStoreInfoRes getStoreInfo(Long storeIdx) throws BaseException{
         try {
             return storeDao.getStoreInfo(storeIdx);
 

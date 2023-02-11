@@ -13,5 +13,6 @@ public class GetLikeableStoreRes {
     private String storeName;
     private Float storeScore;
     private String category;
+    private String userImage;
     private Boolean hasJjim;
 }

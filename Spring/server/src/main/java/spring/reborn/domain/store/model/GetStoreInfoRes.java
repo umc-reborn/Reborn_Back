@@ -5,18 +5,16 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @Builder
-public class GetStoreRes {
+public class GetStoreInfoRes {
     private Long storeIdx;
 
     private String storeName;
 
+    private String storeImage;
     private String userImage;
 
     private String storeAddress;
@@ -24,6 +22,10 @@ public class GetStoreRes {
     private String storeDescription;
 
     private Float storeScore;
+
+    private Long numOfReborn;
+    private Long numOfJjim;
+    private Long numOfReview;
 
     private Enum<StoreCategory> category;
 }
