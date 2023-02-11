@@ -350,7 +350,7 @@ public class StoreDao {
         try {
             // 유저의 관심사가 없는 경우 ETC 대체
             // todo 유저가 스토어인 경우는 ??
-            String selectLikeableStoreQuery = "select s.storeIdx, storeName, category, storeScore, (select userImg FROM User U WHERE U.userIdx = s.userIdx) `userImg`(select userImg FROM User U WHERE U.userIdx = s.userIdx) `userImg`" +
+            String selectLikeableStoreQuery = "select s.storeIdx, storeName, category, storeScore, (select userImg FROM User U WHERE U.userIdx = s.userIdx) `userImage`, " +
                     "if((select j.jjimIdx from Jjim j where j.userIdx = ? and s.storeIdx = j.storeIdx) is null, false, true) hasJjim\n" +
                     "from  Store s\n" +
                     "where s.category = (select ifnull(userLikes,'ETC') from User where userIdx = ?) " +
@@ -362,7 +362,7 @@ public class StoreDao {
                             .storeIdx(rs.getLong("storeIdx"))
                             .storeScore(rs.getFloat("storeScore"))
                             .storeName(rs.getString("storeName"))
-                            .userImage(rs.getString("userImg"))
+                            .userImage(rs.getString("userImage"))
                             .category(rs.getString("category"))
                             .hasJjim(rs.getBoolean("hasJjim"))
                             .build()
