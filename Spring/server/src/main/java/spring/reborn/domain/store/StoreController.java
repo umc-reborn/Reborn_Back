@@ -74,9 +74,9 @@ public class StoreController {
     가게 정보 조회
      */
     @GetMapping("/{storeIdx}")
-    public BaseResponse<GetStoreRes> getStoreInfo(@PathVariable Long storeIdx) {
+    public BaseResponse<GetStoreInfoRes> getStoreInfo(@PathVariable Long storeIdx) {
         try {
-            GetStoreRes getStoreRes = storeService.getStoreInfo(storeIdx);
+            GetStoreInfoRes getStoreRes = storeService.getStoreInfo(storeIdx);
             return new BaseResponse<>(getStoreRes);
         } catch (BaseException e) {
             log.error(e.getStatus().getMessage());

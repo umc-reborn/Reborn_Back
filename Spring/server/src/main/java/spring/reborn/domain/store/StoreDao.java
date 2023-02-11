@@ -28,7 +28,7 @@ public class StoreDao {
     public List<GetStoreRes> getStoreList() throws BaseException {
         try {
 
-            String getStoreListQuery = "SELECT storeIdx, storeName,storeImage, storeAddress, storeDescription, category, storeScore FROM Store WHERE status = 'ACTIVE' ORDER BY updatedAt desc";
+            String getStoreListQuery = "SELECT storeIdx, storeName, userImg,storeAddress, storeDescription, category, storeScore FROM Store S join User U on U.userIdx = S.userIdx WHERE S.status = 'ACTIVE' ORDER BY S.updatedAt desc";
             List<GetStoreRes> res = this.jdbcTemplate.query(
                     getStoreListQuery,
                     (rs, rowNum) -> GetStoreRes.builder()
@@ -36,7 +36,7 @@ public class StoreDao {
                             .storeName(rs.getString("storeName"))
                             .category(StoreCategory.valueOf(rs.getString("category")))
                             .storeAddress(rs.getString("storeAddress"))
-                            .storeImage(rs.getString("storeImage"))
+                            .userImage(rs.getString("userImg"))
                             .storeDescription(rs.getString("storeDescription"))
                             .storeScore(rs.getFloat("storeScore"))
 
@@ -56,8 +56,8 @@ public class StoreDao {
     public List<GetNewStoreRes> getNewStoreList() throws BaseException {
         try {
 
-            String getStoreListQuery = "SELECT storeIdx, storeName,storeImage, category, storeScore " +
-                    "FROM Store " +
+            String getStoreListQuery = "SELECT storeIdx, storeName,userImg, category, storeScore " +
+                    "FROM Store S join User U on S.userIdx = U.userIdx " +
                     "WHERE status = 'ACTIVE' " +
                     "ORDER BY createdAt DESC " +
                     "LIMIT 3";
@@ -67,7 +67,7 @@ public class StoreDao {
                             .storeIdx(rs.getLong("storeIdx"))
                             .storeName(rs.getString("storeName"))
                             .category(StoreCategory.valueOf(rs.getString("category")))
-                            .storeImage(rs.getString("storeImage"))
+                            .userImage(rs.getString("userImg"))
                             .storeScore(rs.getFloat("storeScore"))
 
                             .build()
@@ -110,23 +110,33 @@ public class StoreDao {
         }
     }
 
-    public GetStoreRes getStoreInfo(Long storeIdx) throws BaseException {
+    public GetStoreInfoRes getStoreInfo(Long storeIdx) throws BaseException {
         try {
-            String getStoreInfoQuery = "SELECT storeIdx, storeName ,storeImage, storeAddress, storeDescription, category, storeScore FROM Store WHERE storeIdx = ? and status = 'ACTIVE'";
+            String getStoreInfoQuery =
+                    "select storeIdx, storeName, storeImage, userImg, storeAddress, storeDescription, category, storeScore,\n" +
+                    "       (select count(rebornTaskIdx) from RebornTask Rt join Reborn R on Rt.rebornIdx = R.rebornIdx where R.storeIdx = S.storeIdx  and Rt.status = 'COMPLETE')`numOfReborn`,\n" +
+                    "       (select count(reviewIdx) from Review Rv join Reborn R on Rv.rebornIdx = R.rebornIdx where R.storeIdx = S.storeIdx)`numOfReview`,\n" +
+                    "       (select count(jjimIdx) from Jjim J where J.storeIdx = S.storeIdx) `numOfJjim`\n" +
+                    "FROM Store S join User U on U.userIdx = S.userIdx\n" +
+                    "WHERE S.storeIdx = ? and S.status = 'ACTIVE';";
 
             Object[] selectStoreParams = new Object[]{storeIdx};
 
-            GetStoreRes res = this.jdbcTemplate.queryForObject(
+            GetStoreInfoRes res = this.jdbcTemplate.queryForObject(
                     getStoreInfoQuery,
                     selectStoreParams,
-                    (rs, rowNum) -> GetStoreRes.builder()
+                    (rs, rowNum) -> GetStoreInfoRes.builder()
                             .storeIdx(rs.getLong("storeIdx"))
                             .storeName(rs.getString("storeName"))
                             .category(StoreCategory.valueOf(rs.getString("category")))
                             .storeAddress(rs.getString("storeAddress"))
                             .storeImage(rs.getString("storeImage"))
+                            .userImage(rs.getString("userImg"))
                             .storeDescription(rs.getString("storeDescription"))
                             .storeScore(rs.getFloat("storeScore"))
+                            .numOfReborn(rs.getLong("numOfReborn"))
+                            .numOfReview(rs.getLong("numOfReview"))
+                            .numOfJjim(rs.getLong("numOfJjim"))
 
                             .build()
 
@@ -145,24 +155,24 @@ public class StoreDao {
     public List<GetStoreRes> searchStoreUsingTitle(String keyword) throws BaseException {
         try {
 
-            String getStoreInfoQuery = "SELECT storeIdx, storeName ,storeImage, storeAddress, storeDescription, category, storeScore FROM Store WHERE UPPER(storeName) LIKE UPPER(?) and status = 'ACTIVE'";
+            String getStoreInfoQuery = "SELECT storeIdx, storeName ,userImg,storeAddress, storeDescription, category, storeScore " +
+                    "FROM Store S join User U on U.userIdx = S.userIdx " +
+                    "WHERE INSTR(UPPER(storeName), UPPER(?))>0 and S.status = 'ACTIVE'";
 
-            String paramString = "%" + keyword + "%";
-            Object[] selectStoreParams = new Object[]{paramString};
 
             List<GetStoreRes> res = this.jdbcTemplate.query(
                     getStoreInfoQuery,
-                    selectStoreParams,
                     (rs, rowNum) -> GetStoreRes.builder()
                             .storeIdx(rs.getLong("storeIdx"))
                             .storeName(rs.getString("storeName"))
                             .category(StoreCategory.valueOf(rs.getString("category")))
                             .storeAddress(rs.getString("storeAddress"))
-                            .storeImage(rs.getString("storeImage"))
+                            .userImage(rs.getString("userImg"))
                             .storeDescription(rs.getString("storeDescription"))
                             .storeScore(rs.getFloat("storeScore"))
 
-                            .build()
+                            .build(),
+                    keyword
 
             );
             return res;
@@ -177,27 +187,24 @@ public class StoreDao {
     public List<GetStoreRes> searchStoreUsingTitleSortByName(String keyword) throws BaseException{
         try {
 
-            String getStoreInfoQuery = "SELECT storeIdx, storeName ,storeImage, storeAddress, storeDescription, category, storeScore " +
-                    "FROM Store " +
-                    "WHERE UPPER(storeName) LIKE UPPER(?) and status = 'ACTIVE' " +
+            String getStoreInfoQuery = "SELECT storeIdx, storeName ,userImg,storeAddress, storeDescription, category, storeScore " +
+                    "FROM Store S join User U on U.userIdx = S.userIdx " +
+                    "WHERE INSTR(UPPER(storeName), UPPER(?))>0 and S.status = 'ACTIVE' " +
                     "ORDER BY storeName ASC ";
-
-            String paramString = "%" + keyword + "%";
-            Object[] selectStoreParams = new Object[]{paramString};
 
             List<GetStoreRes> res = this.jdbcTemplate.query(
                     getStoreInfoQuery,
-                    selectStoreParams,
                     (rs, rowNum) -> GetStoreRes.builder()
                             .storeIdx(rs.getLong("storeIdx"))
                             .storeName(rs.getString("storeName"))
                             .category(StoreCategory.valueOf(rs.getString("category")))
                             .storeAddress(rs.getString("storeAddress"))
-                            .storeImage(rs.getString("storeImage"))
+                            .userImage(rs.getString("userImg"))
                             .storeDescription(rs.getString("storeDescription"))
                             .storeScore(rs.getFloat("storeScore"))
 
-                            .build()
+                            .build(),
+                    keyword
 
             );
             return res;
@@ -210,27 +217,24 @@ public class StoreDao {
     public List<GetStoreRes> searchStoreUsingTitleSortByScore(String keyword) throws BaseException{
         try {
 
-            String getStoreInfoQuery = "SELECT storeIdx, storeName ,storeImage, storeAddress, storeDescription, category, storeScore " +
-                    "FROM Store " +
-                    "WHERE UPPER(storeName) LIKE UPPER(?) and status = 'ACTIVE' " +
+            String getStoreInfoQuery = "SELECT storeIdx, storeName ,userImg,storeAddress, storeDescription, category, storeScore " +
+                    "FROM Store S join User U on U.userIdx = S.userIdx " +
+                    "WHERE INSTR(UPPER(storeName), UPPER(?))>0 and S.status = 'ACTIVE' " +
                     "ORDER BY storeScore Desc ";
-
-            String paramString = "%" + keyword + "%";
-            Object[] selectStoreParams = new Object[]{paramString};
 
             List<GetStoreRes> res = this.jdbcTemplate.query(
                     getStoreInfoQuery,
-                    selectStoreParams,
                     (rs, rowNum) -> GetStoreRes.builder()
                             .storeIdx(rs.getLong("storeIdx"))
                             .storeName(rs.getString("storeName"))
                             .category(StoreCategory.valueOf(rs.getString("category")))
                             .storeAddress(rs.getString("storeAddress"))
-                            .storeImage(rs.getString("storeImage"))
+                            .userImage(rs.getString("userImg"))
                             .storeDescription(rs.getString("storeDescription"))
                             .storeScore(rs.getFloat("storeScore"))
 
-                            .build()
+                            .build(),
+                    keyword
 
             );
             return res;
@@ -243,28 +247,25 @@ public class StoreDao {
     public List<GetStoreRes> searchStoreUsingTitleSortByJjim(String keyword) throws BaseException{
         try {
 
-            String getStoreInfoQuery = "SELECT s.storeIdx, storeName ,storeImage, storeAddress, storeDescription, category, storeScore " +
+            String getStoreInfoQuery = "SELECT s.storeIdx, storeName , (select userImg FROM User U WHERE U.userIdx = s.userIdx) `userImg` , storeAddress, storeDescription, category, storeScore " +
             "FROM Store s LEFT JOIN Jjim j ON s.storeIdx = j.storeIdx " +
-            "WHERE UPPER(storeName) LIKE UPPER(?) and s.status = 'ACTIVE' " +
+            "WHERE INSTR(UPPER(storeName), UPPER(?))>0  and s.status = 'ACTIVE' " +
             "GROUP BY s.storeIdx " +
             "ORDER BY COUNT(j.storeIdx) DESC ";
 
-            String paramString = "%" + keyword + "%";
-            Object[] selectStoreParams = new Object[]{paramString};
-
             List<GetStoreRes> res = this.jdbcTemplate.query(
                     getStoreInfoQuery,
-                    selectStoreParams,
                     (rs, rowNum) -> GetStoreRes.builder()
                             .storeIdx(rs.getLong("storeIdx"))
                             .storeName(rs.getString("storeName"))
                             .category(StoreCategory.valueOf(rs.getString("category")))
                             .storeAddress(rs.getString("storeAddress"))
-                            .storeImage(rs.getString("storeImage"))
+                            .userImage(rs.getString("userImg"))
                             .storeDescription(rs.getString("storeDescription"))
                             .storeScore(rs.getFloat("storeScore"))
 
-                            .build()
+                            .build(),
+                    keyword
 
             );
             return res;
@@ -344,22 +345,12 @@ public class StoreDao {
         return result;
     }
 
-    public String getUserLikes(int userIdx) throws BaseException {
-        try{
-            String selectUserLikesQuery = "select category from User where userIdx = ? ";
-            return jdbcTemplate.queryForObject(selectUserLikesQuery, String.class ,userIdx);
-        }
-        catch (Exception e){
-            e.printStackTrace();
-            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
-        }
-    }
 
     public List<GetLikeableStoreRes> getLikeableStore(int userIdx) throws BaseException {
         try {
             // 유저의 관심사가 없는 경우 ETC 대체
             // todo 유저가 스토어인 경우는 ??
-            String selectLikeableStoreQuery = "select s.storeIdx, storeName, category, storeScore, " +
+            String selectLikeableStoreQuery = "select s.storeIdx, storeName, category, storeScore, (select userImg FROM User U WHERE U.userIdx = s.userIdx) `userImg`(select userImg FROM User U WHERE U.userIdx = s.userIdx) `userImg`" +
                     "if((select j.jjimIdx from Jjim j where j.userIdx = ? and s.storeIdx = j.storeIdx) is null, false, true) hasJjim\n" +
                     "from  Store s\n" +
                     "where s.category = (select ifnull(userLikes,'ETC') from User where userIdx = ?) " +
@@ -371,6 +362,7 @@ public class StoreDao {
                             .storeIdx(rs.getLong("storeIdx"))
                             .storeScore(rs.getFloat("storeScore"))
                             .storeName(rs.getString("storeName"))
+                            .userImage(rs.getString("userImg"))
                             .category(rs.getString("category"))
                             .hasJjim(rs.getBoolean("hasJjim"))
                             .build()

@@ -9,7 +9,7 @@ import lombok.Setter;
 @Builder
 public class GetNewStoreRes {
     private Long storeIdx;
-    private String storeImage;
+    private String userImage;
     private String storeName;
     private Enum<StoreCategory> category;
     private Float storeScore;
