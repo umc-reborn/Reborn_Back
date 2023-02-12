@@ -115,9 +115,10 @@ public class StoreService {
             if(!multipartFile.isEmpty()){
                 String imageUrl = awsS3Service.uploadImage(multipartFile);
                 // 이미지가 비어있지 않은 경우 삭제
-                if(patchStoreReq.getStoreImage() != null) {
-                    awsS3Service.deleteImage(patchStoreReq.getStoreImage());
-                }
+                // todo 더미데이터 중복 url에 관해 이미지 삭제시 문제 발생 이후 주석해제
+//                if(patchStoreReq.getStoreImage() != null) {
+//                    awsS3Service.deleteImage(patchStoreReq.getStoreImage());
+//                }
                 patchStoreReq.setStoreImage(imageUrl);
             }
             storeDao.updateStoreInfo(storeIdx ,patchStoreReq);

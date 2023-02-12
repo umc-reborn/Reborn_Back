@@ -175,7 +175,7 @@ public class RebornTaskDao {
             log.info("isExpired : " + isExpired.toString());
             if (isExpired) {
                 String updateRebornTaskQuery =
-                        "update RebornTask set status = 'EXPIRED', updatedAt = now() where rebornTaskIdx = ? ";
+                        "update RebornTask set status = 'EXPIRED', updatedAt = now() where rebornTaskIdx = ? and status = 'ACTIVE'";
 
                 if (this.jdbcTemplate.update(updateRebornTaskQuery, rebornTaskIdx) == 0) {
                     throw new BaseException(FAIL_EXPIRING_REBORN_TASK);
