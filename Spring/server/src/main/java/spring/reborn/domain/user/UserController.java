@@ -366,9 +366,9 @@ public class UserController {
      */
     @PostMapping("login/mailConfirm")
     @ResponseBody
-    public BaseResponse<String> mailConfirm(@RequestParam("email") String email) throws Exception {
+    public BaseResponse<String> mailConfirm(@RequestBody PostMailReq postMailReq) throws Exception {
         try {
-            String code = userService.sendSimpleMessage(email);
+            String code = userService.sendSimpleMessage(postMailReq.getUserEmail());
             return new BaseResponse<>(code);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
