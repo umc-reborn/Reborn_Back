@@ -233,10 +233,10 @@ public class UserController {
     
     /**
      * 이웃 회원탈퇴 API
-     * [PATCH]
+     * [POST]
      */
     @ResponseBody
-    @PatchMapping("/userDelete")
+    @PostMapping("/userDelete")
     public BaseResponse<String> modifyUserStatus() {
         try {
             int userIdx = jwtService.getUserIdx();
@@ -251,10 +251,10 @@ public class UserController {
     }
     /**
      * 스토어 회원탈퇴 API
-     * [PATCH]
+     * [POST]
      */
     @ResponseBody
-    @PatchMapping("/storeDelete")
+    @PostMapping("/storeDelete")
     public BaseResponse<String> modifyStoreStatus() {
         try {
             int userIdx = jwtService.getUserIdx();
@@ -423,9 +423,9 @@ public class UserController {
 
     /**
      * 비밀번호 초기화 API
-     * [PATCH] /users/pwd-reset
+     * [POST] /users/pwd-reset
      */
-    @PatchMapping("pwd-reset")
+    @PostMapping("pwd-reset")
     @ResponseBody
     public BaseResponse<String> resetPwd(@RequestBody PatchUserPwdResetReq patchUserPwdResetReq) throws Exception {
 
@@ -440,10 +440,10 @@ public class UserController {
 
     /**
      * 비밀번호 변경 API
-     * [PATCH]
+     * [POST]
      */
     @ResponseBody
-    @PatchMapping("/modifyPwd")
+    @PostMapping("/modifyPwd")
     public BaseResponse<String> modifyPwd(@RequestBody PatchUserPwdReq patchUserPwdReq) {
         // password에 값이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
         if (patchUserPwdReq.getUserNewPwd().length() == 0) {
