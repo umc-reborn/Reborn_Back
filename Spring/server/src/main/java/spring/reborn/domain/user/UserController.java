@@ -273,7 +273,7 @@ public class UserController {
      * [PATCH]
      */
     @ResponseBody
-    @PatchMapping(value="/userModify", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value="/userModify", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public BaseResponse<String> modifyUserInform(@RequestPart User user,  @RequestParam(name = "userImg") List<MultipartFile> multipartFile) {
         try {
 //            //jwt에서 idx 추출.
