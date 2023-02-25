@@ -411,9 +411,9 @@ public class UserController {
      */
     @PostMapping("/IdFindMail")
     @ResponseBody
-    public BaseResponse<String> idMailSend(@RequestParam("email") String email) throws Exception {
+    public BaseResponse<String> idMailSend(@RequestBody PostMailReq postMailReq) throws Exception {
         try {
-            userService.sendIDMessage(email);
+            userService.sendIDMessage(postMailReq.getUserEmail());
             String result = "가입하신 이메일로 아이디가 발송 되었습니다.";
             return new BaseResponse<>(result);
         } catch (BaseException exception) {
