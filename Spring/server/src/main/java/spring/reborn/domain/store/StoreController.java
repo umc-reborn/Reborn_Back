@@ -127,8 +127,9 @@ public class StoreController {
 
     /*
     가게 정보 수정
+    patch -> post
      */
-    @PatchMapping(value = "/{storeIdx}",
+    @PostMapping(value = "/update/{storeIdx}",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE}
     )
     public BaseResponse<Object> updateStoreInfo(@PathVariable Long storeIdx,

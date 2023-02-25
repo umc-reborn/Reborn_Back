@@ -31,7 +31,7 @@ public class RebornTaskController {
         }
     }
 
-    @PatchMapping("")
+    @PostMapping("/update")
     public BaseResponse<PatchRebornTaskRes> updateRebornTask(@RequestBody PatchRebornTaskReq patchRebornTaskReq) {
         try {
             // todo 유저는 나중에
