@@ -57,7 +57,8 @@ public class RebornService {
             System.out.println("service 시작");
             if (rebornDao.postHistory(rebornTaskIdx) == 1) {
                 System.out.println("dao 끝");
-            };
+            }
+            ;
             return 1;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
@@ -94,7 +95,9 @@ public class RebornService {
     public PatchRebornStatusRes ativeReborn(int rebornIdx) throws BaseException {
         try {
             System.out.println("service start");
-            return rebornDao.ativeReborn(rebornIdx);
+            return rebornDao.activeReborn(rebornIdx);
+        } catch (BaseException exception) {
+            throw new BaseException(exception.getStatus());
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }

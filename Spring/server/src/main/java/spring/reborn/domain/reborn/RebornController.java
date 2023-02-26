@@ -196,15 +196,16 @@ public class RebornController {
 
     /* 리본상품 활성화, 비활성화 */
     @ResponseBody
-    @PatchMapping("/active/{rebornIdx}")
+    @PostMapping("/active/{rebornIdx}")
     @Transactional
-    public BaseResponse<PatchRebornStatusRes> ativeReborn(@PathVariable int rebornIdx) {
+    public BaseResponse<PatchRebornStatusRes> activeReborn(@PathVariable int rebornIdx) throws BaseException {
         try {
-            System.out.println("controller start");
             PatchRebornStatusRes result = rebornService.ativeReborn(rebornIdx);
             return new BaseResponse<>(result);
-        } catch (BaseException baseException) {
-            return new BaseResponse<>(baseException.getStatus());
+        } catch (BaseException exception) {
+            throw new BaseException(exception.getStatus());
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
         }
     }
 }

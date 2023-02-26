@@ -232,15 +232,11 @@ public class RebornDao {
         return this.jdbcTemplate.update(inactiveRebornTaskQuery, rebornTaskIdx);
     }
 
-    public PatchRebornStatusRes ativeReborn(int rebornIdx) throws BaseException {
-        System.out.println("dao start");
+    public PatchRebornStatusRes activeReborn(int rebornIdx) throws BaseException {
 
         String rebornStatus = this.jdbcTemplate.queryForObject("SELECT status FROM reborn.Reborn WHERE rebornIdx = ?;",
                 new Object[]{rebornIdx}, String.class
         );
-
-        System.out.println("rebornStatus"+rebornStatus);
-
 
         String activeRebornTaskQuery = "";
         PatchRebornStatusRes result = null;
@@ -259,11 +255,7 @@ public class RebornDao {
             System.out.println("else");
             throw new BaseException(CAN_NOT_CHANGE_STATUS_TO_ACTIVE);
         }
-
-        System.out.println("this.jdbcTemplate.update(activeRebornTaskQuery, rebornIdx); - 1");
         this.jdbcTemplate.update(activeRebornTaskQuery, rebornIdx);
-        System.out.println("this.jdbcTemplate.update(activeRebornTaskQuery, rebornIdx); - 2");
-
 
         return result;
     }
