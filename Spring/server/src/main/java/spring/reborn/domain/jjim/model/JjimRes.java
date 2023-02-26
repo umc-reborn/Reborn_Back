@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class JjimRes {
+    private String jjimStatus;
     private int jjimIdx;
     private String userEmail;
     private String storeName;

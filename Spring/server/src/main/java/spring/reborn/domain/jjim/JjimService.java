@@ -21,26 +21,16 @@ public class JjimService {
     }
 
     @Transactional
-    public JjimRes createJjim(JjimReq jjimReq) throws BaseException {
+    public JjimRes changeJjim(JjimReq jjimReq) throws BaseException {
         try {
-            JjimRes jjimRes = jjimDao.createJjim(jjimReq);
-
+            JjimRes jjimRes = jjimDao.changeJjim(jjimReq);
             return jjimRes;
-        } catch (Exception exception) {
+        } catch (BaseException e) {
+            throw new BaseException(e.getStatus());
+        }
+        catch (Exception e){
             throw new BaseException(DATABASE_ERROR);
         }
     }
 
-    @Transactional
-    public JjimRes deleteJjim(JjimReq jjimReq) throws BaseException {
-        try {
-            System.out.println("Service 시작");
-            JjimRes jjimRes = jjimDao.deleteJjim(jjimReq);
-            System.out.println("Service 끝");
-
-            return jjimRes;
-        } catch (Exception exception) {
-            throw new BaseException(DATABASE_ERROR);
-        }
-    }
 }

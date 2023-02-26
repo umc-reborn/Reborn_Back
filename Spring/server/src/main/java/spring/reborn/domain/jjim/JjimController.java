@@ -10,6 +10,8 @@ import spring.reborn.domain.jjim.model.JjimStoreRes;
 
 import java.util.List;
 
+import static spring.reborn.config.BaseResponseStatus.DATABASE_ERROR;
+
 
 @RestController
 public class JjimController {
@@ -25,23 +27,12 @@ public class JjimController {
 
     @ResponseBody
     @PostMapping("/jjim")
-    public BaseResponse<JjimRes> createJjim(@RequestBody JjimReq jjimReq) {
+    public BaseResponse<JjimRes> changeJjim(@RequestBody JjimReq jjimReq)throws BaseException  {
         try {
-            JjimRes jjimRes = jjimService.createJjim(jjimReq);
+            JjimRes jjimRes = jjimService.changeJjim(jjimReq);
             return new BaseResponse<>(jjimRes);
-        } catch (BaseException exception) {
-            return new BaseResponse<>((exception.getStatus()));
-        }
-    }
-
-    @ResponseBody
-    @DeleteMapping("/jjim")
-    public BaseResponse<JjimRes> deleteJjim(@RequestBody JjimReq jjimReq) {
-        try {
-            JjimRes jjimRes = jjimService.deleteJjim(jjimReq);
-            return new BaseResponse<>(jjimRes);
-        } catch (BaseException exception) {
-            return new BaseResponse<>((exception.getStatus()));
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
         }
     }
 
