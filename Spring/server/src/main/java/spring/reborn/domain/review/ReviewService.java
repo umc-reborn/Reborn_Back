@@ -5,8 +5,6 @@ import org.springframework.stereotype.Service;
 import spring.reborn.config.BaseException;
 import spring.reborn.domain.review.model.*;
 
-import java.util.List;
-
 @Service
 public class ReviewService {
 

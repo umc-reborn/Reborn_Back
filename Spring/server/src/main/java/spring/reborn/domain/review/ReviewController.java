@@ -35,38 +35,38 @@ public class ReviewController {
         this.jwtService = jwtService; // JWT부분은 7주차에 다루므로 모르셔도 됩니다!
     }
 
-    @ResponseBody
-    @PostMapping(value = "/review", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public BaseResponse<PostReviewRes> createReview(@RequestPart PostReviewReq postReviewReq,
-                                                    @RequestParam(name = "images") List<MultipartFile> multipartFile) {
-        try {
-            List<String> fileUrlList = awsS3Service.uploadImage(multipartFile);
-
-            // 이미지 파일 객체에 추가
-            if (fileUrlList.size() >= 1) {
-                postReviewReq.setReviewImage1(fileUrlList.get(0));
-            }
-            if (fileUrlList.size() >= 2) {
-                postReviewReq.setReviewImage2(fileUrlList.get(1));
-            }
-            if (fileUrlList.size() >= 3) {
-                postReviewReq.setReviewImage3(fileUrlList.get(2));
-            }
-            if (fileUrlList.size() >= 4) {
-                postReviewReq.setReviewImage4(fileUrlList.get(3));
-            }
-            if (fileUrlList.size() >= 5) {
-                postReviewReq.setReviewImage5(fileUrlList.get(4));
-            }
-
-            // 리뷰 생성
-            PostReviewRes postReviewRes = reviewService.createReview(postReviewReq);
-
-            return new BaseResponse<>(postReviewRes);
-        } catch (BaseException exception) {
-            return new BaseResponse<>((exception.getStatus()));
-        }
-    }
+//    @ResponseBody
+//    @PostMapping(value = "/review", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+//    public BaseResponse<PostReviewRes> createReview(@RequestPart PostReviewReq3 postReviewReq3,
+//                                                    @RequestParam(name = "images") List<MultipartFile> multipartFile) {
+//        try {
+//            List<String> fileUrlList = awsS3Service.uploadImage(multipartFile);
+//
+//            // 이미지 파일 객체에 추가
+//            if (fileUrlList.size() >= 1) {
+//                postReviewReq3.setReviewImage1(fileUrlList.get(0));
+//            }
+//            if (fileUrlList.size() >= 2) {
+//                postReviewReq3.setReviewImage2(fileUrlList.get(1));
+//            }
+//            if (fileUrlList.size() >= 3) {
+//                postReviewReq3.setReviewImage3(fileUrlList.get(2));
+//            }
+//            if (fileUrlList.size() >= 4) {
+//                postReviewReq3.setReviewImage4(fileUrlList.get(3));
+//            }
+//            if (fileUrlList.size() >= 5) {
+//                postReviewReq3.setReviewImage5(fileUrlList.get(4));
+//            }
+//
+//            // 리뷰 생성
+//            PostReviewRes postReviewRes = reviewService.createReview(postReviewReq3);
+//
+//            return new BaseResponse<>(postReviewRes);
+//        } catch (BaseException exception) {
+//            return new BaseResponse<>((exception.getStatus()));
+//        }
+//    }
     @ResponseBody
     @PostMapping(value = "/reviewboni")
     public BaseResponse<PostReviewRes> createReview2(@RequestBody PostReviewReq postReviewReq) {
@@ -79,18 +79,18 @@ public class ReviewController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
-    @ResponseBody
-    @PostMapping(value = "/reviewboni2")
-    public BaseResponse<PostReviewRes> createReview3(@RequestBody PostReviewReq2 postReviewReq2) {
-        try {
-            // 리뷰 생성
-            PostReviewRes postReviewRes = reviewService.createReview2(postReviewReq2);
-
-            return new BaseResponse<>(postReviewRes);
-        } catch (BaseException exception) {
-            return new BaseResponse<>((exception.getStatus()));
-        }
-    }
+//    @ResponseBody
+//    @PostMapping(value = "/reviewboni2")
+//    public BaseResponse<PostReviewRes> createReview3(@RequestBody PostReviewReq2 postReviewReq2) {
+//        try {
+//            // 리뷰 생성
+//            PostReviewRes postReviewRes = reviewService.createReview2(postReviewReq2);
+//
+//            return new BaseResponse<>(postReviewRes);
+//        } catch (BaseException exception) {
+//            return new BaseResponse<>((exception.getStatus()));
+//        }
+//    }
 
 
 
