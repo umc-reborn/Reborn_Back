@@ -70,7 +70,7 @@ public enum BaseResponseStatus {
     FAIL_EXPIRING_REBORN_TASK(false,2221, "만료에 실패하였습니다."),
     FAIL_DELETE_JJIM(false,2222, "찜 삭제를 실패하였습니다."),
     FAIL_INSERT_JJIM(false,2223, "찜 추가를 실패하였습니다."),
-    CAN_NOT_JJIM_STORE_TO_STORE(false,2223, "스토어는 찜을 할 수 없습니다."),
+    CAN_NOT_JJIM_STORE_TO_STORE(false,2224, "스토어는 찜을 할 수 없습니다."),
 
 
 
