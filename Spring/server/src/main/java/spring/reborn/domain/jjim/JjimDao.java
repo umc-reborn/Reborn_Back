@@ -47,7 +47,6 @@ public class JjimDao {
 
             System.out.println("[검증완료] 찜 주체 스토어 아님");
 
-            String jjimResult = "";
             JjimRes jjimRes = new JjimRes();
 
             // 찜이 존재하는 경우
