@@ -32,18 +32,14 @@ public class ReviewDao {
 
     public int createReview(PostReviewReq postReviewReq) throws BaseException {
         String createReviewQuery = "insert into Review (userIdx, rebornIdx, reviewScore, reviewComment, " +
-                "reviewImage1, reviewImage2, reviewImage3, reviewImage4, reviewImage5) " +
-                "VALUES (?,?,?,?,?,?,?,?,?)"; // 실행될 동적 쿼리문
+                "reviewImage1)" +
+                "VALUES (?,?,?,?,?)"; // 실행될 동적 쿼리문
         Object[] createReviewParams = new Object[]{
                 postReviewReq.getUserIdx(),
                 postReviewReq.getRebornIdx(),
                 postReviewReq.getReviewScore(),
                 postReviewReq.getReviewComment(),
-                postReviewReq.getReviewImage1(),
-                postReviewReq.getReviewImage2(),
-                postReviewReq.getReviewImage3(),
-                postReviewReq.getReviewImage4(),
-                postReviewReq.getReviewImage5(),}; // 동적 쿼리의 ?부분에 주입될 값
+                postReviewReq.getReviewImage()}; // 동적 쿼리의 ?부분에 주입될 값
         this.jdbcTemplate.update(createReviewQuery, createReviewParams);
 
         // 가게 평점 업데이트
@@ -378,19 +374,16 @@ public class ReviewDao {
     public void calculateStoreAvgScore(int rebornIdx) throws BaseException {
         // 가게 평점 업데이트
         String getStoreScoreQuery =
-                "SELECT AVG(Review.reviewScore) FROM Review\n" +
-                "WHERE Review.rebornIdx = ?)\n" +
-                "WHERE storeIdx =" +
-                "(SELECT storeIdx FROM Reborn where rebornIdx = ? )";
-
-        Object[] getStoreScoreParams = new Object[]{
-                rebornIdx,
-                rebornIdx,}; // 동적 쿼리의 ?부분에 주입될 값
+                "SELECT AVG(Review.reviewScore) FROM Review JOIN Reborn\n" +
+                        "WHERE storeIdx =\n" +
+                        "(SELECT storeIdx FROM Reborn where rebornIdx = ? );";
 
         Float avgScore = jdbcTemplate.queryForObject(
-                getStoreScoreQuery, getStoreScoreParams, Float.class);
+                getStoreScoreQuery, Float.class,rebornIdx);
 
         Double avgScore2 = ((double) Math.round(avgScore*10)/10);
+
+        System.out.println("새로운 스토어 평균 점수 (반올림처리) : "+avgScore2);
 
         String updateStoreScoreQuery = "UPDATE Store SET storeScore=?";
         Object[] updateStoreScoreParams = new Object[]{
