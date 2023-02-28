@@ -109,7 +109,7 @@ public class RebornController {
 
     /* 상품 수정 */
     @ResponseBody
-    @PatchMapping("/modify")
+    @PostMapping("/modify")
     @Transactional
     public BaseResponse<String> patchReborn(@RequestBody PatchRebornReq patchRebornReq) {
         try {
@@ -154,7 +154,7 @@ public class RebornController {
 
     /* 리본 히스토리 생성 */
     @ResponseBody
-    @PatchMapping("/create/history/{rebornTaskIdx}")
+    @PostMapping("/create/history/{rebornTaskIdx}")
     @Transactional
     public BaseResponse<String> postHistory(@PathVariable int rebornTaskIdx) {
         try {
@@ -170,7 +170,7 @@ public class RebornController {
 
     /* 상품 삭제 */
     @ResponseBody
-    @PatchMapping("/delete/{rebornIdx}")
+    @PostMapping("/delete/{rebornIdx}")
     @Transactional
     public BaseResponse<String> deleteProduct(@PathVariable int rebornIdx) {
         try {
@@ -183,7 +183,7 @@ public class RebornController {
 
     /* 나눔 취소 */
     @ResponseBody
-    @PatchMapping("/task/inactive/{rebornTaskIdx}")
+    @PostMapping("/task/inactive/{rebornTaskIdx}")
     @Transactional
     public BaseResponse<String> inactiveRebornTask(@PathVariable int rebornTaskIdx) {
         try {
