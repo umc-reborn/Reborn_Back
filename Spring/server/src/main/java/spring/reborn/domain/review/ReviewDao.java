@@ -170,6 +170,7 @@ public class ReviewDao {
 
     @Transactional
     public List<GetReviewRes> getReviewByStoreIdx(Integer storeIdx) throws BaseException {
+        System.out.println("dao");
         String getReviewByStoreIdxQuery = "SELECT Review.reviewIdx, Review.userIdx, User.userImg, User.userNickname, \n" +
                 "Store.storeName, Store.category, Review.rebornIdx, Reborn.productName, Review.reviewScore,\n" +
                 "Review.reviewComment, Review.reviewImage1, Review.reviewImage2, Review.reviewImage3,\n" +
@@ -204,6 +205,12 @@ public class ReviewDao {
                                 rs.getString("reviewImage5"))),
                 getReviewByStoreIdxParams
         );
+
+        System.out.println("dao-2");
+        System.out.println("getReviewRes");
+        System.out.println(getReviewRes);
+
+
         return getReviewRes;
     }
 
@@ -242,6 +249,39 @@ public class ReviewDao {
                             add(rs.getString("reviewImage4"));
                             add(rs.getString("reviewImage5"));
                         }}),
+                getReviewByStoreIdxParams
+        );
+        return getReviewRes;
+    }
+
+    @Transactional
+    public List<GetReviewRes3> getReviewByStoreIdx3(Integer storeIdx) throws BaseException {
+        String getReviewByStoreIdxQuery = "SELECT Review.reviewIdx, Review.userIdx, User.userImg, User.userNickname, \n" +
+                "Store.storeName, Store.category, Review.rebornIdx, Reborn.productName, Review.reviewScore,\n" +
+                "Review.reviewComment, Review.reviewImage1, Review.createdAt\n" +
+                "FROM reborn.Review JOIN reborn.Reborn\n" +
+                "ON Review.rebornIdx = Reborn.rebornIdx\n" +
+                "JOIN reborn.User ON Review.userIdx=User.userIdx\n" +
+                "JOIN reborn.Store ON Reborn.storeIdx=Store.storeIdx\n" +
+                "WHERE Reborn.storeIdx = ?;"; // 실행될 동적 쿼리문
+        Object[] getReviewByStoreIdxParams = new Object[]{
+                storeIdx,}; // 동적 쿼리의 ?부분에 주입될 값
+
+        //queryForObject : DTO 여러개 값 반환
+        List<GetReviewRes3> getReviewRes = this.jdbcTemplate.query(getReviewByStoreIdxQuery,
+                (rs, rowNum) -> new GetReviewRes3(
+                        rs.getInt("reviewIdx"),
+                        rs.getInt("userIdx"),
+                        rs.getString("userImg"),
+                        rs.getString("userNickname"),
+                        rs.getString("storeName"),
+                        StoreCategory.valueOf(rs.getString("category")).label(),
+                        rs.getInt("rebornIdx"),
+                        rs.getString("productName"),
+                        rs.getInt("reviewScore"),
+                        rs.getString("reviewComment"),
+                        rs.getTimestamp("createdAt"),
+                        rs.getString("reviewImage1")),
                 getReviewByStoreIdxParams
         );
         return getReviewRes;
