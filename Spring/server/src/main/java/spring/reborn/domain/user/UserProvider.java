@@ -53,6 +53,21 @@ public class UserProvider {
         }
     }
 
+    // 아이디 중복 확인
+    @Transactional
+    public String checkIdDuplication(String userId) throws BaseException{
+        try{
+            if(checkUserId(userId)==1){
+                // 아이디가 기존에 존재한다면
+                throw new BaseException(POST_USERS_EXISTS_ID);
+            }
+            String result = "사용 가능한 아이디입니다.";
+            return result;
+        }catch (Exception exception){
+            throw new BaseException(POST_USERS_EXISTS_ID);
+        }
+    }
+
     // 해당 userIdx를 갖는 User의 포인트 조회
     public GetUserPointRes getUserPoint(int userIdx) throws BaseException {
         try {
