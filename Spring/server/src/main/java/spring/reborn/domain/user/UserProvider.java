@@ -56,15 +56,15 @@ public class UserProvider {
     // 아이디 중복 확인
     @Transactional
     public String checkIdDuplication(String userId) throws BaseException{
+        if(checkUserId(userId)==1){
+            // 아이디가 기존에 존재한다면
+            throw new BaseException(POST_USERS_EXISTS_ID);
+        }
         try{
-            if(checkUserId(userId)==1){
-                // 아이디가 기존에 존재한다면
-                throw new BaseException(POST_USERS_EXISTS_ID);
-            }
             String result = "사용 가능한 아이디입니다.";
             return result;
         }catch (Exception exception){
-            throw new BaseException(POST_USERS_EXISTS_ID);
+            throw new BaseException(DATABASE_ERROR);
         }
     }
 
