@@ -116,7 +116,7 @@ public class UserController {
     }
     /**
      * 회원가입-가게 API
-     * [POST] /users
+     * [POST] /users/sign-up-store
      */
     // Body
     @ResponseBody
@@ -184,6 +184,30 @@ public class UserController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+
+    /**
+     * 아이디 중복 확인
+     * [GET] /users/checkDuplicate/:userId
+     */
+    @GetMapping("/checkDuplicate")
+    @ResponseBody
+    public BaseResponse<String> checkId(@RequestParam("userId") String userId) throws Exception {
+        // id에 값이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
+        if (userId.length() == 0) {
+            return new BaseResponse<>(POST_USERS_EMPTY_ID);
+        }
+        //id 정규표현: 입력받은 id가 영문 대소문자,숫자 4-16자리 형식인지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
+        if (!isRegexId(userId)) {
+            return new BaseResponse<>(POST_USERS_INVALID_ID);
+        }
+        try {
+            String result = userProvider.checkIdDuplication(userId);
+            return new BaseResponse<>(result);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
     /**
      * 회원 1명 포인트 조회 API
      * [GET] /users/:userIdx
