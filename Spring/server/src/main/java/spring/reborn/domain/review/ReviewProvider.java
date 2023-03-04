@@ -3,10 +3,7 @@ package spring.reborn.domain.review;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import spring.reborn.config.BaseException;
-import spring.reborn.domain.review.model.GetBestReviewRes;
-import spring.reborn.domain.review.model.GetReviewReq;
-import spring.reborn.domain.review.model.GetReviewRes;
-import spring.reborn.domain.review.model.GetReviewRes2;
+import spring.reborn.domain.review.model.*;
 
 import java.util.List;
 
@@ -36,6 +33,10 @@ public class ReviewProvider {
 
     public List<GetReviewRes2> getReviewByStoreIdx2(Integer storeIdx) throws BaseException {
         return reviewDao.getReviewByStoreIdx2(storeIdx);
+    }
+
+    public List<GetReviewRes3> getReviewByStoreIdx3(Integer storeIdx) throws BaseException {
+        return reviewDao.getReviewByStoreIdx3(storeIdx);
     }
 
     public GetReviewRes getReviewByReviewIdx(Integer reviewIdx) throws BaseException {
