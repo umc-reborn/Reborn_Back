@@ -2,19 +2,15 @@ package spring.reborn.domain.store;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import spring.reborn.config.BaseException;
-import spring.reborn.config.BaseResponseStatus;
 import spring.reborn.domain.awsS3.AwsS3Service;
 import spring.reborn.domain.store.model.*;
 import spring.reborn.domain.user.UserDao;
-import spring.reborn.domain.user.UserService;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -100,17 +96,23 @@ public class StoreService {
         }
     }
 
+
     @Transactional
-    public void updateStoreInfo(Long storeIdx, PatchStoreReq patchStoreReq) throws BaseException {
+    public void updateStoreInfo(Long storeIdx, PatchStoreReq patchStoreReq) throws BaseException{
+        storeDao.updateStoreInfo(storeIdx,patchStoreReq);
+    }
+    @Transactional
+    public void updateStoreInfo2(Long storeIdx, PatchStoreReq patchStoreReq) throws BaseException {
         try {
-            storeDao.updateStoreInfo(storeIdx ,patchStoreReq);
+            storeDao.updateStoreInfo(storeIdx , patchStoreReq);
         }
         catch (BaseException e){
             throw new BaseException(e.getStatus());
         }
     }
+
     @Transactional
-    public void updateStoreInfo(Long storeIdx, PatchStoreReq patchStoreReq, MultipartFile multipartFile) throws BaseException {
+    public void updateStoreInfo2(Long storeIdx, PatchStoreReq patchStoreReq, MultipartFile multipartFile) throws BaseException {
         try {
             if(!multipartFile.isEmpty()){
                 String imageUrl = awsS3Service.uploadImage(multipartFile);
@@ -121,7 +123,7 @@ public class StoreService {
 //                }
                 patchStoreReq.setStoreImage(imageUrl);
             }
-            storeDao.updateStoreInfo(storeIdx ,patchStoreReq);
+            storeDao.updateStoreInfo(storeIdx , patchStoreReq);
         }
         catch (BaseException e){
             throw new BaseException(e.getStatus());
@@ -134,5 +136,6 @@ public class StoreService {
 //        String userLikes = userDao.getUserLikes(userIdx);
         return storeDao.getLikeableStore(userIdx);
     }
+
 }
 

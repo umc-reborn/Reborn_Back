@@ -9,7 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 import spring.reborn.config.BaseException;
 import spring.reborn.config.BaseResponse;
 import spring.reborn.config.BaseResponseStatus;
-import spring.reborn.domain.awsS3.AwsS3Service;
 import spring.reborn.domain.store.model.*;
 import spring.reborn.utils.JwtService;
 
@@ -98,30 +97,25 @@ public class StoreController {
 
             List<GetStoreRes> getStoreRes;
 
-            if(sort == null || sort.equals("name")){
+            if (sort == null || sort.equals("name")) {
                 getStoreRes = storeService.searchStoreListUsingTitleSortByName(keyword);
 
-            }
-            else if(sort.toUpperCase().equals("score".toUpperCase())){
+            } else if (sort.toUpperCase().equals("score".toUpperCase())) {
                 getStoreRes = storeService.searchStoreListUsingTitleSortByScore(keyword);
 
-            }
-            else if(sort.toUpperCase().equals("jjim".toUpperCase())){
+            } else if (sort.toUpperCase().equals("jjim".toUpperCase())) {
                 getStoreRes = storeService.searchStoreListUsingTitleSortByJjim(keyword);
 
             }
             // 잘못된 정렬 값도 이름순 처리
-            else{
+            else {
                 getStoreRes = storeService.searchStoreListUsingTitleSortByName(keyword);
-
             }
-
 
             return new BaseResponse<>(getStoreRes);
         } catch (BaseException e) {
             log.error(e.getStatus().getMessage());
             return new BaseResponse<>(e.getStatus());
-
         }
     }
 
@@ -129,30 +123,50 @@ public class StoreController {
     가게 정보 수정
     patch -> post
      */
-    @PostMapping(value = "/update/{storeIdx}",
-            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE}
-    )
+    // string으로 url주소 삽입
+    @PostMapping("/update/{storeIdx}")
     public BaseResponse<Object> updateStoreInfo(@PathVariable Long storeIdx,
-                                                @RequestPart PatchStoreReq patchStoreReq,
-                                                @RequestPart(name = "image",required = false) MultipartFile multipartFile) {
+                                                @RequestBody PatchStoreReq patchStoreReq) {
         try {
             if (patchStoreReq.getStoreName().isEmpty())
                 throw new BaseException(BaseResponseStatus.MODIFY_FAIL_STORE_EMPTY_NAME);
             if (patchStoreReq.getStoreAddress().isEmpty())
                 throw new BaseException(BaseResponseStatus.MODIFY_FAIL_STORE_EMPTY_LOCATION);
+            storeService.updateStoreInfo(storeIdx, patchStoreReq);
 
-            if(multipartFile == null)
-                storeService.updateStoreInfo(storeIdx, patchStoreReq);
-            else
-                storeService.updateStoreInfo(storeIdx, patchStoreReq,multipartFile);
 
             return new BaseResponse<>(new PatchStoreRes(storeIdx));
         } catch (BaseException e) {
             log.error(e.getStatus().getMessage());
             return new BaseResponse<>(e.getStatus());
         }
-
     }
+    // 사진 multipart/form으로 올리기
+    @PostMapping(value = "/update2/{storeIdx}",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE}
+    )
+    public BaseResponse<Object> updateStoreInfo2(@PathVariable Long storeIdx,
+                                                @RequestPart PatchStoreReq patchStoreReq,
+                                                @RequestPart(name = "image", required = false) MultipartFile multipartFile) {
+        try {
+            if (patchStoreReq.getStoreName().isEmpty())
+                throw new BaseException(BaseResponseStatus.MODIFY_FAIL_STORE_EMPTY_NAME);
+            if (patchStoreReq.getStoreAddress().isEmpty())
+                throw new BaseException(BaseResponseStatus.MODIFY_FAIL_STORE_EMPTY_LOCATION);
+
+            if (multipartFile == null)
+                storeService.updateStoreInfo2(storeIdx, patchStoreReq);
+            else
+                storeService.updateStoreInfo2(storeIdx, patchStoreReq, multipartFile);
+
+            return new BaseResponse<>(new PatchStoreRes(storeIdx));
+        } catch (BaseException e) {
+            log.error(e.getStatus().getMessage());
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+
 
     /* 인기가게 조회 */
     @ResponseBody
@@ -172,14 +186,13 @@ public class StoreController {
      * [GET]
      */
     @GetMapping("/likeable-stores")
-    public BaseResponse<List<GetLikeableStoreRes>> getLikeableStores(){
+    public BaseResponse<List<GetLikeableStoreRes>> getLikeableStores() {
         try {
             int userIdx = jwtService.getUserIdx();
             List<GetLikeableStoreRes> likeableStoreRes = storeService.getLikeableStores(userIdx);
             return new BaseResponse<>(likeableStoreRes);
 
-        }
-        catch (BaseException e){
+        } catch (BaseException e) {
             e.printStackTrace();
             log.error(e.getStatus().getMessage());
             return new BaseResponse<>(e.getStatus());
