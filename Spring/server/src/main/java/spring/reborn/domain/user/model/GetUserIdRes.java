@@ -9,5 +9,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class GetUserIdRes {
     private String userId;
+    private String userImg;
     private String createdAt;
 }

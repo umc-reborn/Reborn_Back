@@ -50,6 +50,9 @@ dependencies {
 
 	// Gson
 	implementation 'com.google.code.gson:gson:2.8.7'
+
+	// ribbon
+//	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-ribbon:2.1.4.RELEASE'
 }
 
 tasks.named('test') {

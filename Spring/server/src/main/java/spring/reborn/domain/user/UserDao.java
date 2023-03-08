@@ -225,11 +225,12 @@ public class UserDao {
     // 해당 email을 갖는 유저 아이디 조회
     @Transactional
     public GetUserIdRes getUserIdInform(String email){
-        String getUserIdQuery = "select userId, createdAt from User where userEmail = ?"; // 해당 userEmail을 만족하는 유저를 조회하는 쿼리문
+        String getUserIdQuery = "select userId, userImg, createdAt from User where userEmail = ?"; // 해당 userEmail을 만족하는 유저를 조회하는 쿼리문
         String checkEmailParams = email; // 해당(확인할) 이메일 값
         return this.jdbcTemplate.queryForObject(getUserIdQuery,
                 (rs, rowNum) -> new GetUserIdRes(
                         rs.getString("userId"),
+                        rs.getString("userImg"),
                         rs.getString("createdAt")),
                 checkEmailParams);
     }
