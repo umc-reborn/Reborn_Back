@@ -151,7 +151,7 @@ public class JjimDao {
                         rs.getString("storeName"),
                         rs.getString("storeImage"),
                         rs.getString("category"),
-                        rs.getInt("storeScore")),
+                        rs.getFloat("storeScore")),
                 getJjimStoreListParams
         );
 
@@ -178,7 +178,7 @@ public class JjimDao {
                         rs.getString("storeName"),
                         rs.getString("storeImage"),
                         rs.getString("category"),
-                        rs.getInt("storeScore")),
+                        rs.getFloat("storeScore")),
                 getJjimStoreListParams
         );
 
