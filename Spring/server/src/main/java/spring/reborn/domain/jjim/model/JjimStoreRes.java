@@ -15,5 +15,5 @@ public class JjimStoreRes {
     private String storeName;
     private String storeImage;
     private String storeCategory;
-    private int storeScore;
+    private float storeScore;
 }
