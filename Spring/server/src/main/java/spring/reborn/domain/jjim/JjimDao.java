@@ -161,15 +161,20 @@ public class JjimDao {
     // 작성중
     @Transactional
     public List<JjimStoreRes> getSortedJjimStoreList(Integer userIdx, String sort) throws BaseException {
+
+        if (!sort.equals("storeName")) {
+            sort += " DESC;";
+        }
+
         String getJjimStoreListQuery =
                 "SELECT j.jjimIdx, j.storeIdx, s.storeName, s.storeImage, s.category, s.storeScore, \n" +
                         "(SELECT count(a.jjimIdx) FROM Jjim a JOIN Store b ON a.storeIdx = b.storeIdx WHERE a.storeIdx=j.storeIdx) jjimCnt\n" +
                         "FROM Jjim j JOIN Store s\n" +
                         "ON j.storeIdx = s.storeIdx\n" +
                         "WHERE j.userIdx = ?\n" +
-                        "ORDER BY ?;";
+                        "ORDER BY "+sort;
         Object[] getJjimStoreListParams = new Object[]{
-                userIdx, sort}; // 동적 쿼리의 ?부분에 주입될 값
+                userIdx}; // 동적 쿼리의 ?부분에 주입될 값
 
         List<JjimStoreRes> jjimStoreRes = this.jdbcTemplate.query(getJjimStoreListQuery,
                 (rs, rowNum) -> new JjimStoreRes(
