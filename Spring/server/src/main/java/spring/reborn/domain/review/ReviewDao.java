@@ -31,6 +31,9 @@ public class ReviewDao {
     }
 
     public int createReview(PostReviewReq postReviewReq) throws BaseException {
+
+        System.out.println("-- create review --");
+
         String createReviewQuery = "insert into Review (userIdx, rebornIdx, reviewScore, reviewComment, " +
                 "reviewImage1)" +
                 "VALUES (?,?,?,?,?)"; // 실행될 동적 쿼리문
@@ -41,10 +44,6 @@ public class ReviewDao {
                 postReviewReq.getReviewComment(),
                 postReviewReq.getReviewImage()}; // 동적 쿼리의 ?부분에 주입될 값
         this.jdbcTemplate.update(createReviewQuery, createReviewParams);
-
-        // 가게 평점 업데이트
-        calculateStoreAvgScore(postReviewReq.getRebornIdx());
-
 
         String lastInsertIdQuery = "select last_insert_id()"; // 가장 마지막에 삽입된(생성된) id값은 가져온다.
         return this.jdbcTemplate.queryForObject(lastInsertIdQuery, int.class); // 해당 쿼리문의 결과 마지막으로 삽인된 유저의 userIdx번호를 반환한다.
@@ -66,10 +65,6 @@ public class ReviewDao {
                 postReviewReq2.getReviewImg().getReviewImage5(),}; // 동적 쿼리의 ?부분에 주입될 값
         this.jdbcTemplate.update(createReviewQuery, createReviewParams);
 
-        // 가게 평점 업데이트
-        calculateStoreAvgScore(postReviewReq2.getRebornIdx());
-
-
         String lastInsertIdQuery = "select last_insert_id()"; // 가장 마지막에 삽입된(생성된) id값은 가져온다.
         return this.jdbcTemplate.queryForObject(lastInsertIdQuery, int.class); // 해당 쿼리문의 결과 마지막으로 삽인된 유저의 userIdx번호를 반환한다.
     }
@@ -80,10 +75,6 @@ public class ReviewDao {
             String deleteReviewQuery = "delete from Review where Review.reviewIdx=?;";
             Object[] deleteReviewParams = new Object[]{reviewReq.getReviewIdx()};
             this.jdbcTemplate.update(deleteReviewQuery, deleteReviewParams);
-
-            // 가게 평점 업데이트
-            calculateStoreAvgScore(reviewReq.getRebornIdx());
-
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -415,19 +406,21 @@ public class ReviewDao {
         // 가게 평점 업데이트
         String getStoreScoreQuery =
                 "SELECT AVG(Review.reviewScore) FROM Review JOIN Reborn\n" +
-                        "WHERE storeIdx =\n" +
-                        "(SELECT storeIdx FROM Reborn where rebornIdx = ? );";
+                        "on Review.rebornIdx = Reborn.rebornIdx\n" +
+                        "WHERE storeIdx = (SELECT storeIdx FROM Reborn where rebornIdx = ? );";
 
         Float avgScore = jdbcTemplate.queryForObject(
                 getStoreScoreQuery, Float.class,rebornIdx);
 
         Double avgScore2 = ((double) Math.round(avgScore*10)/10);
 
+        System.out.println("avgScore : " +avgScore);
         System.out.println("새로운 스토어 평균 점수 (반올림처리) : "+avgScore2);
 
-        String updateStoreScoreQuery = "UPDATE Store SET storeScore=?";
+        String updateStoreScoreQuery = "UPDATE Store SET storeScore=? " +
+                "WHERE storeIdx = (SELECT storeIdx FROM Reborn where rebornIdx = ? );";
         Object[] updateStoreScoreParams = new Object[]{
-                avgScore2}; // 동적 쿼리의 ?부분에 주입될 값
+                avgScore2, rebornIdx}; // 동적 쿼리의 ?부분에 주입될 값
         this.jdbcTemplate.update(updateStoreScoreQuery, updateStoreScoreParams);
     }
 }
