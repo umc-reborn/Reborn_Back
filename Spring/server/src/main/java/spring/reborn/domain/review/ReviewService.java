@@ -19,6 +19,7 @@ public class ReviewService {
 
     public PostReviewRes createReview(PostReviewReq postReviewReq) throws BaseException {
         int reviewIdx = reviewDao.createReview(postReviewReq);
+        reviewDao.calculateStoreAvgScore(postReviewReq.getRebornIdx());
         return new PostReviewRes(reviewIdx);
     }
 
@@ -29,6 +30,7 @@ public class ReviewService {
 
     public void deleteReview(ReviewReq reviewReq) throws BaseException {
         reviewDao.deleteReview(reviewReq);
+        reviewDao.calculateStoreAvgScore(reviewReq.getRebornIdx());
     }
 
     public ReviewImgKey findImgKey(ReviewReq reviewReq) throws BaseException {
