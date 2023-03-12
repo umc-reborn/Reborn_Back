@@ -1,5 +1,7 @@
 package spring.reborn.domain.user;
 
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import java.io.UnsupportedEncodingException;
+import java.time.Duration;
 import java.util.Random;
 
 import static spring.reborn.config.BaseResponseStatus.*;
@@ -520,6 +523,30 @@ public class UserService {
             }
         } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
             throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    //redis test
+    private final int LIMIT_TIME = 6 * 60 * 60; //6시간
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+    @Transactional
+    public void setRedisValue(String key, String value){
+        ValueOperations<String,String> stringValueOperations = stringRedisTemplate.opsForValue();
+        //stringValueOperations.set(key,value);
+        stringValueOperations.set(key,value, Duration.ofSeconds(LIMIT_TIME));
+    }
+
+    public String getRedisValue(String key) throws BaseException {
+        try {
+            ValueOperations<String, String> stringValueOperations = stringRedisTemplate.opsForValue();
+            String value = stringValueOperations.get(key);
+            if (value == null) {
+                throw new BaseException(INVALID_RTK);
+            }
+            return value;
+        } catch (Exception exception) {
+            throw new BaseException(INVALID_RTK);
         }
     }
     

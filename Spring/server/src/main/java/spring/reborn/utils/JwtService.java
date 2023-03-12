@@ -34,10 +34,32 @@ public class JwtService {
                 .compact();
     }
 
+    public String createRefreshToken(int userIdx){
+        Date now = new Date();
+        return Jwts.builder()
+                .setHeaderParam("type","rtk")
+                .claim("userIdx",userIdx)
+                .setIssuedAt(now)
+                .setExpiration(new Date(System.currentTimeMillis()+1*(1000*60*60*24*365)))
+                .signWith(SignatureAlgorithm.HS256, Secret.JWT_SECRET_KEY)
+                .compact();
+    }
+
     public String createEmptyJwt(int userIdx){
         Date now = new Date();
         return Jwts.builder()
                 .setHeaderParam("type","jwt")
+                .claim("userIdx",userIdx)
+                .setIssuedAt(now)
+                .setExpiration(new Date(System.currentTimeMillis()+1*(0)))
+                .signWith(SignatureAlgorithm.HS256, Secret.JWT_SECRET_KEY)
+                .compact();
+    }
+
+    public String createEmptyRtk(int userIdx){
+        Date now = new Date();
+        return Jwts.builder()
+                .setHeaderParam("type","rtk")
                 .claim("userIdx",userIdx)
                 .setIssuedAt(now)
                 .setExpiration(new Date(System.currentTimeMillis()+1*(0)))
