@@ -1,7 +1,5 @@
 package spring.reborn.domain.user;
 
-import org.json.JSONObject;
-import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -10,15 +8,9 @@ import spring.reborn.config.*;
 import spring.reborn.domain.user.model.*;
 import spring.reborn.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import spring.reborn.domain.awsS3.AwsS3Service;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.List;
 
 import static spring.reborn.config.BaseResponseStatus.*;
@@ -502,6 +494,92 @@ public class UserController {
             int userIdx = jwtService.getUserIdx();
             PostLogoutRes postLogoutRes = userProvider.logOut(userIdx);
             return new BaseResponse<>(postLogoutRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    /**
+     * 토큰 생성
+     * [POST] /users/redis
+     */
+    @PostMapping("/redis")
+    public boolean createRtk(@RequestBody Redis redis){
+        userService.setRedisValue(redis.getKey(),redis.getValue());
+        return true;
+    }
+
+    /**
+     * 토큰 받기
+     * [GET] /users/redis
+     */
+    @GetMapping("/redis")
+    public String getRtk(@RequestParam String key) throws BaseException {
+        return userService.getRedisValue(key);
+    }
+
+    /**
+     * 토큰 갱신
+     * [POST] /users/reissue
+     */
+    @ResponseBody
+    @PostMapping("/reissue")
+    public BaseResponse<PostReissueRes> reissue() {
+        try {
+            int userIdx = jwtService.getUserIdx();
+            String rtk = userService.getRedisValue(Integer.toString(userIdx));
+            if(rtk == null){
+                return new BaseResponse<>(INVALID_RTK);
+            }
+            return new BaseResponse<>(new PostReissueRes(jwtService.createJwt(userIdx)));
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    /**
+     * 이웃 로그인 rtk API
+     * [POST] /users/log-in/rtk
+     */
+    @ResponseBody
+    @PostMapping("/log-in/rtk")
+    public BaseResponse<PostLoginRtkRes> logInRtk(@RequestBody PostLoginReq postLoginReq) {
+        if (postLoginReq.getUserId().length() == 0) {
+            return new BaseResponse<>(POST_USERS_EMPTY_ID);
+        }
+        //id 정규표현: 입력받은 id가 영문 대소문자,숫자 4-16자리 형식인지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
+        if (!isRegexId(postLoginReq.getUserId())) {
+            return new BaseResponse<>(POST_USERS_INVALID_ID);
+        }
+        // password에 값이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
+        if (postLoginReq.getUserPwd().length() == 0) {
+            return new BaseResponse<>(POST_USERS_EMPTY_PASSWORD);
+        }
+        //비밀번호 정규표현: 입력받은 비밀번호가 숫자, 특문 각 1회 이상, 영문은 대소문자 모두 사용하여 8~16자리 입력과 같은 형식인지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
+        if (!isRegexPassword(postLoginReq.getUserPwd())) {
+            return new BaseResponse<>(POST_USERS_INVALID_PASSWORD);
+        }
+        try {
+            PostLoginRtkRes postLoginRtkRes = userProvider.logInRtk(postLoginReq);
+            userService.setRedisValue(Integer.toString(postLoginRtkRes.getUserIdx()), postLoginRtkRes.getRtk());
+            return new BaseResponse<>(postLoginRtkRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    /**
+     * 로그아웃rtk API
+     * [POST] /users/log-out/rtk
+     */
+    @ResponseBody
+    @PostMapping("/log-out/rtk")
+    public BaseResponse<PostLogoutRtkRes> logOutRtk() {
+        try {
+            int userIdx = jwtService.getUserIdx();
+            PostLogoutRtkRes postLogoutRtkRes = userProvider.logOutRtk(userIdx);
+            userService.setRedisValue(Integer.toString(postLogoutRtkRes.getUserIdx()), postLogoutRtkRes.getRtk());
+            return new BaseResponse<>(postLogoutRtkRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }

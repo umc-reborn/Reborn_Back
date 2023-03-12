@@ -45,6 +45,7 @@ public enum BaseResponseStatus {
     NO_JOINED_ID(false, 2110, "가입되지 않은 ID입니다."),
     WRONG_PWD(false, 2111, "입력된 비밀번호가 틀렸습니다."),
     DIFFERENT_PWD(false, 2112, "비밀번호가 일치하지 않습니다.."),
+    INVALID_RTK(false, 2112, "리프레시 토큰이 없습니다"),
 
 
     //준몰리
