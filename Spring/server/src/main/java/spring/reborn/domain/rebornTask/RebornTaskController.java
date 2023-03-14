@@ -2,6 +2,8 @@ package spring.reborn.domain.rebornTask;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.*;
 import org.springframework.web.bind.annotation.*;
 import spring.reborn.config.BaseException;
 import spring.reborn.config.BaseResponse;
@@ -16,7 +18,13 @@ import java.util.Map;
 @RequestMapping("/reborn-task")
 @RequiredArgsConstructor
 public class RebornTaskController {
+
+    @Autowired
+    private final RedisTemplate<Object,Object> redisTemplate;
+
+
     private final RebornTaskService rebornTaskService;
+    private final RebornTaskRedisService rebornTaskRedisService;
     private final JwtService jwtService;
 
 
@@ -29,6 +37,14 @@ public class RebornTaskController {
             log.error(e.getStatus().getMessage());
             return new BaseResponse<>((e.getStatus()));
         }
+    }
+
+    // redis 코드 추가 작성중
+    @PostMapping("/redis")
+    public BaseResponse<String> createRebornTaskWithREDIS(@RequestBody PostRebornTaskReq postRebornTaskReq) {
+        // 레디스에 리본 태스크 등록
+        rebornTaskRedisService.addQueue(postRebornTaskReq);
+        return new BaseResponse<>("success!");
     }
 
     @PostMapping("/update")
