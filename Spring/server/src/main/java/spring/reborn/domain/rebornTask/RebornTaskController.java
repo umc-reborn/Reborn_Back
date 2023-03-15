@@ -39,12 +39,20 @@ public class RebornTaskController {
         }
     }
 
-    // redis 코드 추가 작성중
     @PostMapping("/redis")
-    public BaseResponse<String> createRebornTaskWithREDIS(@RequestBody PostRebornTaskReq postRebornTaskReq) {
-        // 레디스에 리본 태스크 등록
-        rebornTaskRedisService.addQueue(postRebornTaskReq);
-        return new BaseResponse<>("success!");
+    public BaseResponse<String> createRebornTask2(@RequestBody PostRebornTaskReq postRebornTaskReq) {
+        try {
+//            PostRebornTaskRes postRebornTaskRes = rebornTaskService.createRebornTask(postRebornTaskReq);
+
+            // redis
+            rebornTaskRedisService.addQueue(postRebornTaskReq);
+//            rebornTaskRedisService.addQueue(postRebornTaskReq, postRebornTaskRes);
+
+            return new BaseResponse<>("success!");
+        } catch (BaseException e) {
+            log.error(e.getStatus().getMessage());
+            return new BaseResponse<>((e.getStatus()));
+        }
     }
 
     @PostMapping("/update")

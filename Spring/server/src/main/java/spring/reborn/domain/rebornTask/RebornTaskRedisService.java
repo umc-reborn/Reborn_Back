@@ -9,13 +9,16 @@ import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 import spring.reborn.config.BaseException;
 import spring.reborn.config.RedisConfig;
+import spring.reborn.domain.reborn.RebornDao;
 import spring.reborn.domain.rebornTask.model.PostRebornTaskReq;
 import spring.reborn.domain.rebornTask.model.PostRebornTaskRes;
 import spring.reborn.domain.rebornTask.model.RebornTask;
 import spring.reborn.domain.redis.model.Event;
 import spring.reborn.domain.redis.model.EventCount;
 
-import java.util.Set;
+import java.sql.Time;
+import java.util.concurrent.TimeUnit;
+
 
 @Slf4j
 @Service
@@ -24,7 +27,10 @@ public class RebornTaskRedisService {
 
     @Autowired
     private final RedisTemplate<Object,Object> redisTemplate;
-//    private static final long FIRST_ELEMENT = 0;
+
+    private final RebornTaskDao rebornTaskDao;
+
+    //    private static final long FIRST_ELEMENT = 0;
 //    private static final long LAST_ELEMENT = -1;
 //    private static final long PUBLISH_SIZE = 10;
 //    private static final long LAST_INDEX = 1;
@@ -36,14 +42,18 @@ public class RebornTaskRedisService {
 //                "rebornIdx:"+rebornIdx, queue);
 //    }
 //
-    public void addQueue(PostRebornTaskReq postRebornTaskReq){
+    public void addQueue(PostRebornTaskReq postRebornTaskReq) throws BaseException {
         SetOperations<Object, Object> stringStringSetOperations
                 = redisTemplate.opsForSet();
-        String key = "reborn:" + postRebornTaskReq.getRebornIdx();
-        final long now = System.currentTimeMillis();
+        String key = "reborn:" + postRebornTaskReq.getRebornIdx() + " / " + postRebornTaskReq.getUserIdx();
         String userIdxS = String.valueOf(postRebornTaskReq.getUserIdx());
 
+        // Time to Long으로 바꾸어 60 대신 변수 입력
+//        Time productLimitTime = rebornTaskDao.getRebornProductLimitTime(postRebornTaskRes.getRebornTaskIdx());
+
         stringStringSetOperations.add(key,userIdxS);
+        redisTemplate.expire(key, 60, TimeUnit.SECONDS);
+
     }
 //
 //    public void getOrder(int rebornIdx){
