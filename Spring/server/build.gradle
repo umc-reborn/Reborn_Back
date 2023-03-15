@@ -56,6 +56,9 @@ dependencies {
 
 	// ribbon
 //	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-ribbon:2.1.4.RELEASE'
+
+	//redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 tasks.named('test') {

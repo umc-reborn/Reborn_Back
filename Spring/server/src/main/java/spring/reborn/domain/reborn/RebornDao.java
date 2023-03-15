@@ -128,7 +128,7 @@ public class RebornDao {
 
     public List<GetInProgressRes> getInProgressReborns(Integer userIdx) {
         System.out.println("dao 시작");
-        String getRebornsQuery = "SELECT T.rebornTaskIdx, T.rebornIdx, S.storeIdx, S.storeName, S.category, R.productName, R.productImg, R.productLimitTime, R.productCnt FROM Reborn AS R LEFT OUTER JOIN RebornTask AS T ON T.rebornIdx = R.rebornIdx LEFT OUTER JOIN Store AS S ON R.storeIdx = S.storeIdx WHERE (S.userIdx = ? AND T.status = ?)";
+        String getRebornsQuery = "SELECT T.rebornTaskIdx, T.rebornIdx, S.storeIdx, S.storeName, S.category, R.productName, R.productImg, R.productLimitTime, R.productCnt FROM Reborn AS R LEFT OUTER JOIN RebornTask AS T ON T.rebornIdx = R.rebornIdx LEFT OUTER JOIN Store AS S ON R.storeIdx = S.storeIdx WHERE (T.userIdx = ? AND T.status = 'ACTIVE')";
         List<GetInProgressRes> result = this.jdbcTemplate.query(
                 getRebornsQuery,
                 (rs, rowNum) -> new GetInProgressRes(
@@ -142,8 +142,7 @@ public class RebornDao {
                         rs.getString("productLimitTime"),
                         rs.getInt("productCnt"))
                 ,
-                userIdx,
-                "ACTIVE"
+                userIdx
         );
         return result;
     }
