@@ -9,16 +9,13 @@ import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 import spring.reborn.config.BaseException;
 import spring.reborn.config.RedisConfig;
-import spring.reborn.domain.reborn.RebornDao;
 import spring.reborn.domain.rebornTask.model.PostRebornTaskReq;
 import spring.reborn.domain.rebornTask.model.PostRebornTaskRes;
 import spring.reborn.domain.rebornTask.model.RebornTask;
 import spring.reborn.domain.redis.model.Event;
 import spring.reborn.domain.redis.model.EventCount;
 
-import java.sql.Time;
-import java.util.concurrent.TimeUnit;
-
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -27,12 +24,9 @@ public class RebornTaskRedisService {
 
     @Autowired
     private final RedisTemplate<Object,Object> redisTemplate;
-
-    private final RebornTaskDao rebornTaskDao;
-
-    //    private static final long FIRST_ELEMENT = 0;
-//    private static final long LAST_ELEMENT = -1;
-//    private static final long PUBLISH_SIZE = 10;
+    private static final long FIRST_ELEMENT = 0;
+    private static final long LAST_ELEMENT = -1;
+    private static final long PUBLISH_SIZE = 10;
 //    private static final long LAST_INDEX = 1;
 //    private EventCount eventCount;
 //    private RebornTaskService rebornTaskService;
@@ -42,18 +36,25 @@ public class RebornTaskRedisService {
 //                "rebornIdx:"+rebornIdx, queue);
 //    }
 //
-    public void addQueue(PostRebornTaskReq postRebornTaskReq) throws BaseException {
+    // redis 값 추가
+    public String addQueue(Long rebornIdx, Long userIdx){
         SetOperations<Object, Object> stringStringSetOperations
                 = redisTemplate.opsForSet();
-        String key = "reborn:" + postRebornTaskReq.getRebornIdx() + " / " + postRebornTaskReq.getUserIdx();
-        String userIdxS = String.valueOf(postRebornTaskReq.getUserIdx());
+        String key = "rId_" + rebornIdx;
+        String userIdxS = String.valueOf(userIdx);
 
-        // Time to Long으로 바꾸어 60 대신 변수 입력
-//        Time productLimitTime = rebornTaskDao.getRebornProductLimitTime(postRebornTaskRes.getRebornTaskIdx());
+        String result = "";
 
-        stringStringSetOperations.add(key,userIdxS);
-        redisTemplate.expire(key, 60, TimeUnit.SECONDS);
+        Set<Object> rebornUsers = redisTemplate.opsForSet().members("rId_" + rebornIdx);
 
+        if (rebornUsers.size() < 5){
+            stringStringSetOperations.add(key,userIdxS);
+            result = "선착순 나눔에 성공하였습니다";
+        }
+        else{
+            result = "선착순 나눔에 실패하였습니다";
+        }
+        return result;
     }
 //
 //    public void getOrder(int rebornIdx){
@@ -61,7 +62,7 @@ public class RebornTaskRedisService {
 //        final long end = LAST_ELEMENT;
 //
 //        Set<Object> queue = redisTemplate.opsForZSet().range(
-//                "rebornIdx:"+rebornIdx, start, end);
+//                "rId_"+rebornIdx, start, end);
 //
 //        for (Object people : queue) {
 //            Long rank = redisTemplate.opsForZSet().rank(

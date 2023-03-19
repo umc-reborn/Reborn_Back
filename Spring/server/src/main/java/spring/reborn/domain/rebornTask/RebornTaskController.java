@@ -41,18 +41,9 @@ public class RebornTaskController {
 
     @PostMapping("/redis")
     public BaseResponse<String> createRebornTask2(@RequestBody PostRebornTaskReq postRebornTaskReq) {
-        try {
-//            PostRebornTaskRes postRebornTaskRes = rebornTaskService.createRebornTask(postRebornTaskReq);
-
-            // redis
-            rebornTaskRedisService.addQueue(postRebornTaskReq);
-//            rebornTaskRedisService.addQueue(postRebornTaskReq, postRebornTaskRes);
-
-            return new BaseResponse<>("success!");
-        } catch (BaseException e) {
-            log.error(e.getStatus().getMessage());
-            return new BaseResponse<>((e.getStatus()));
-        }
+        String result = "";
+        result = rebornTaskRedisService.addQueue(postRebornTaskReq.getRebornIdx(), postRebornTaskReq.getUserIdx());
+        return new BaseResponse<>(result);
     }
 
     @PostMapping("/update")
