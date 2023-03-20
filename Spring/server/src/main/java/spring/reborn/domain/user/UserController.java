@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import spring.reborn.domain.awsS3.AwsS3Service;
 
+import javax.servlet.http.HttpServletRequest;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 
 import static spring.reborn.config.BaseResponseStatus.*;
@@ -42,7 +45,7 @@ public class UserController {
      * [POST] /users
      */
     // Body
-    @ResponseBody
+    /*@ResponseBody
     @PostMapping(value = "/sign-up", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})    // POST 방식의 요청을 매핑하기 위한 어노테이션
     public BaseResponse<PostUserRes> createUser(@RequestPart PostUserReq postUserReq, @RequestParam(name = "images") List<MultipartFile> multipartFile) {
         //  @RequestBody란, 클라이언트가 전송하는 HTTP Request Body(우리는 JSON으로 통신하니, 이 경우 body는 JSON)를 자바 객체로 매핑시켜주는 어노테이션
@@ -99,6 +102,70 @@ public class UserController {
 
         // 이미지 파일 객체에 추가
         postUserReq.setUserImg(fileUrl.get(0));
+        try {
+            PostUserRes postUserRes = userService.createUser(postUserReq);
+            return new BaseResponse<>(postUserRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }*/
+    /**
+     * 회원가입 API
+     * [POST] /users
+     */
+    // Body
+    @ResponseBody
+    @PostMapping(value = "/sign-up")    // POST 방식의 요청을 매핑하기 위한 어노테이션
+    public BaseResponse<PostUserRes> createUser2(@RequestBody PostUserReq postUserReq) {
+        //  @RequestBody란, 클라이언트가 전송하는 HTTP Request Body(우리는 JSON으로 통신하니, 이 경우 body는 JSON)를 자바 객체로 매핑시켜주는 어노테이션
+        // email에 값이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
+        if (postUserReq.getUserEmail().length() == 0) {
+            return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
+        }
+        //이메일 정규표현: 입력받은 이메일이 email@domain.xxx와 같은 형식인지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
+        if (!isRegexEmail(postUserReq.getUserEmail())) {
+            return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
+        }
+        // id에 값이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
+        if (postUserReq.getUserId().length() == 0) {
+            return new BaseResponse<>(POST_USERS_EMPTY_ID);
+        }
+        //id 정규표현: 입력받은 id가 영문 대소문자,숫자 4-16자리 형식인지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
+        if (!isRegexId(postUserReq.getUserId())) {
+            return new BaseResponse<>(POST_USERS_INVALID_ID);
+        }
+        // password에 값이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
+        if (postUserReq.getUserPwd().length() == 0) {
+            return new BaseResponse<>(POST_USERS_EMPTY_PASSWORD);
+        }
+        //비밀번호 정규표현: 입력받은 비밀번호가 숫자, 특문 각 1회 이상, 영문은 대소문자 모두 사용하여 8~16자리 입력과 같은 형식인지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
+        if (!isRegexPassword(postUserReq.getUserPwd())) {
+            return new BaseResponse<>(POST_USERS_INVALID_PASSWORD);
+        }
+        // 닉네임 값이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
+        if (postUserReq.getUserNickname().length() == 0) {
+            return new BaseResponse<>(POST_USERS_EMPTY_NICKNAME);
+        }
+        // 닉네임 정규표현: 입력받은 닉네임이 숫자와 영문, 한글로만 이루어졌는지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
+        if (!isRegexNickname(postUserReq.getUserNickname())) {
+            return new BaseResponse<>(POST_USERS_INVALID_NICKNAME);
+        }
+        // 생년월일이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
+        if (postUserReq.getUserBirthDate().length() == 0) {
+            return new BaseResponse<>(POST_USERS_EMPTY_BIRTHDATE);
+        }
+        // 생년월일 정규표현: 입력받은 새연월일이 숫자 8개로 이루어졌는지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
+        if (!isRegexBirthDate(postUserReq.getUserBirthDate())) {
+            return new BaseResponse<>(POST_USERS_INVALID_BIRTHDATE);
+        }
+        // 주소가 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
+        if (postUserReq.getUserAddress().length() == 0) {
+            return new BaseResponse<>(POST_USERS_EMPTY_ADDRESS);
+        }
+        // 관심사를 설정했는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
+        if (postUserReq.getUserLikes() == null) {
+            return new BaseResponse<>(POST_USERS_EMPTY_LIKES);
+        }
         try {
             PostUserRes postUserRes = userService.createUser(postUserReq);
             return new BaseResponse<>(postUserRes);
@@ -583,6 +650,15 @@ public class UserController {
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
+    }
+
+    /**
+     * 토큰 받기
+     * [GET] /users/redis
+     */
+    @GetMapping("/apple")
+    public String apple() throws BaseException, InvalidKeySpecException, NoSuchAlgorithmException {
+        return jwtService.parseAppleJwt();
     }
 
 //    /**
