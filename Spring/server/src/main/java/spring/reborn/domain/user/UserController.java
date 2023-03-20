@@ -652,14 +652,7 @@ public class UserController {
         }
     }
 
-    /**
-     * 토큰 받기
-     * [GET] /users/redis
-     */
-    @GetMapping("/apple")
-    public String apple() throws BaseException, InvalidKeySpecException, NoSuchAlgorithmException {
-        return jwtService.parseAppleJwt();
-    }
+
 
 //    /**
 //     * 사업자 등록 상태조회 API
