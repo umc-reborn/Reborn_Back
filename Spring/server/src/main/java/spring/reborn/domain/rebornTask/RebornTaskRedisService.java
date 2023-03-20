@@ -12,8 +12,8 @@ import spring.reborn.config.RedisConfig;
 import spring.reborn.domain.rebornTask.model.PostRebornTaskReq;
 import spring.reborn.domain.rebornTask.model.PostRebornTaskRes;
 import spring.reborn.domain.rebornTask.model.RebornTask;
-import spring.reborn.domain.redis.model.Event;
-import spring.reborn.domain.redis.model.EventCount;
+//import spring.reborn.domain.redis.model.Event;
+//import spring.reborn.domain.redis.model.EventCount;
 
 import java.util.Set;
 
