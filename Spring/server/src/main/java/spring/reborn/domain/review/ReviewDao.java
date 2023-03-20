@@ -81,7 +81,7 @@ public class ReviewDao {
     }
 
     @Transactional
-    public List<GetReviewRes> getReviewByUserIdx(Integer userIdx) throws BaseException {
+    public List<GetReviewRes3> getReviewByUserIdx(Integer userIdx) throws BaseException {
         String getReviewByUserIdxQuery = "SELECT Review.reviewIdx, Review.userIdx, User.userImg, User.userNickname, \n" +
                 "Store.storeName, Store.category, Review.rebornIdx, Reborn.productName, Review.reviewScore,\n" +
                 "Review.reviewComment, Review.reviewImage1, Review.reviewImage2, Review.reviewImage3,\n" +
@@ -95,8 +95,8 @@ public class ReviewDao {
                 userIdx,}; // 동적 쿼리의 ?부분에 주입될 값
 
         //queryForObject : DTO 여러개 값 반환
-        List<GetReviewRes> getReviewRes = this.jdbcTemplate.query(getReviewByUserIdxQuery,
-                (rs, rowNum) -> new GetReviewRes(
+        List<GetReviewRes3> getReviewRes = this.jdbcTemplate.query(getReviewByUserIdxQuery,
+                (rs, rowNum) -> new GetReviewRes3(
                         rs.getInt("reviewIdx"),
                         rs.getInt("userIdx"),
                         rs.getString("userImg"),
@@ -108,12 +108,7 @@ public class ReviewDao {
                         rs.getInt("reviewScore"),
                         rs.getString("reviewComment"),
                         rs.getTimestamp("createdAt"),
-                        new ReviewImg(
-                                rs.getString("reviewImage1"),
-                                rs.getString("reviewImage2"),
-                                rs.getString("reviewImage3"),
-                                rs.getString("reviewImage4"),
-                                rs.getString("reviewImage5"))),
+                        rs.getString("reviewImage1")),
                 getReviewByStoreIdxParams
         );
         return getReviewRes;

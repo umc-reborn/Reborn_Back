@@ -123,10 +123,10 @@ public class ReviewController {
 
     @ResponseBody
     @GetMapping("/review")
-    public BaseResponse<List<GetReviewRes>> getReviewByUserIdx() {
+    public BaseResponse<List<GetReviewRes3>> getReviewByUserIdx() {
         try {
             int userIdxByJwt = jwtService.getUserIdx();
-            List<GetReviewRes> getReviewRes = reviewProvider.getReviewByUserIdx(userIdxByJwt);
+            List<GetReviewRes3> getReviewRes = reviewProvider.getReviewByUserIdx(userIdxByJwt);
             return new BaseResponse<>(getReviewRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
