@@ -1,11 +1,15 @@
 package spring.reborn.domain.oauth.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 import spring.reborn.domain.oauth.helper.constants.SocialLoginType;
 import spring.reborn.domain.oauth.service.social.SocialOauth;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
 import java.util.List;
 
