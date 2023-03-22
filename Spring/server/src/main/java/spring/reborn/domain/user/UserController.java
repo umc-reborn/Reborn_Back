@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
 import spring.reborn.config.*;
+import spring.reborn.domain.review.model.PostReviewReq;
 import spring.reborn.domain.user.model.*;
 import spring.reborn.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -352,11 +353,11 @@ public class UserController {
     }
 /////////////////////////////////////
     /**
-     * 회원정보 수정 API
+     * 회원정보 수정 API_atOnce
      * [PATCH]
      */
     @ResponseBody
-    @PostMapping(value="/userModify", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value="/userModify/atOnce", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public BaseResponse<String> modifyUserInform(@RequestPart User user,  @RequestParam(name = "userImg") List<MultipartFile> multipartFile) {
         try {
 //            //jwt에서 idx 추출.
@@ -365,8 +366,9 @@ public class UserController {
 //            if(userIdx != userIdxByJwt){
 //                return new BaseResponse<>(INVALID_USER_JWT);
 //            }
-//            //같다면 유저정보 변경
 
+//            //같다면 유저정보 변경
+            //jwt에서 idx 추출.
             int userIdx = jwtService.getUserIdx();
             //사진 넣기
             List<String> fileUrl = awsS3Service.uploadImage(multipartFile);
@@ -382,7 +384,26 @@ public class UserController {
             System.out.println(exception);
             return new BaseResponse<>((exception.getStatus()));
         }
-  }
+    }
+
+    /**
+     * 회원정보 수정 API_이미지 String 첨부
+     * [PATCH]
+     */
+    @ResponseBody
+    @PostMapping(value="/userModify")
+    public BaseResponse<String> modifyUserInform(@RequestBody PatchUserReq patchUserReq) {
+        try {
+            //jwt에서 idx 추출.
+            int userIdx = jwtService.getUserIdx();
+            patchUserReq.setUserIdx(userIdx);
+            String result = userService.modifyUserInform(patchUserReq);
+            return new BaseResponse<>(result);
+        } catch (BaseException exception) {
+            System.out.println(exception);
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
   
     /**
      * 이웃 로그인 API

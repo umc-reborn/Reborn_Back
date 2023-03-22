@@ -12,6 +12,7 @@ repositories {
 	mavenCentral()
 }
 
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -54,8 +55,8 @@ dependencies {
 	//Redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-	// ribbon
-//	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-ribbon:2.1.4.RELEASE'
+	// Spring Cloud Gateway
+//	implementation 'org.springframework.cloud:spring-cloud-starter-gateway:3.1.4'
 
 	//redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
