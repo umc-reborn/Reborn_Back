@@ -199,7 +199,7 @@ public class UserService {
                 "\n" +
                 "\t<p style=\"font-size: 16px; margin: 40px 5px 20px; line-height: 28px;\">\n" +
                 "\t\t회원가입 인증 코드: <br />\n" +
-                "\t\t<span style=\"font-size: 24px;\">"+ePw+"</span>\n" +
+                "\t\t<span style=\"font-size: 24px; font-family: 'Times New Roman', 'serif' !important;\">"+ePw+"</span>\n" +
                 "\t</p>\n" +
                 "</div>";
         message.setText(msgg, "utf-8", "html");// 내용, charset 타입, subtype
@@ -233,7 +233,7 @@ public class UserService {
                 "\n" +
                 "\t<p style=\"font-size: 16px; margin: 40px 5px 20px; line-height: 28px;\">\n" +
                 "\t\t아이디: <br />\n" +
-                "\t\t<span style=\"font-size: 24px;\">"+ePw+"</span>\n" +
+                "\t\t<span style=\"font-size: 24px; font-family: 'Times New Roman', 'serif' !important;\">"+ePw+"</span>\n" +
                 "\t</p>\n" +
                 "</div>";
         message.setText(msgg, "utf-8", "html");// 내용, charset 타입, subtype
@@ -269,7 +269,7 @@ public class UserService {
                 "\n" +
                 "\t<p style=\"font-size: 16px; margin: 40px 5px 20px; line-height: 28px;\">\n" +
                 "\t\t임시 비밀번호: <br />\n" +
-                "\t\t<span style=\"font-size: 24px;\">"+ePw+"</span>\n" +
+                "\t\t<span style=\"font-size: 24px; font-family: 'Times New Roman', 'serif' !important;\">"+ePw+"</span>\n" +
                 "\t</p>\n" +
                 "</div>";
         message.setText(msgg, "utf-8", "html");// 내용, charset 타입, subtype
