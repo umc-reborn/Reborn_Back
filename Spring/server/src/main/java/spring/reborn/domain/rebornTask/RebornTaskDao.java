@@ -36,38 +36,33 @@ public class RebornTaskDao {
     public Long createRebornTask(PostRebornTaskReq postRebornTaskReq) throws BaseException {
         try {
 
-            // todo 최적화 필요
-            String countRebornTaskQuery = "select count(rebornTaskIdx) " +
-                    "from RebornTask " +
-                    "where rebornIdx = ? and status != 'EXPIRED'";
-
-            String countRebornQuery = "select productCnt " +
-                    "from Reborn " +
-                    "where rebornIdx = ? and status = 'ACTIVE'";
-
-            // 리본의 상품 수보다 이미 생성된 task 수가 많다면
-            if (this.jdbcTemplate.queryForObject(countRebornQuery, new Object[]{postRebornTaskReq.getRebornIdx()}, Integer.class)
-                    <=
-                    this.jdbcTemplate.queryForObject(countRebornTaskQuery, new Object[]{postRebornTaskReq.getRebornIdx()}, Integer.class)) {
-                throw new BaseException(NOT_ENOUGH_REBORN);
-            }
-
             // 가능하다면 리본 태스크 생성
-            String createRebornTaskQuery = "insert into RebornTask (userIdx, rebornIdx, productExchangeCode) values (?,?,?)";
+            String createRebornTaskQuery = "insert into RebornTask (userIdx, rebornIdx, productExchangeCode) select ?,?,? from dual where exists(select * from Reborn where rebornIdx= ? and productCnt > 0 and status='ACTIVE')";
 
-            // 리본 생성 6자리 랜`덤 값
+            // 리본 생성 및 6자리 랜덤 값
             Object[] createRebornTaskParams = new Object[]{
                     postRebornTaskReq.getUserIdx(),
                     postRebornTaskReq.getRebornIdx(),
-                    (int) (Math.random() * 89999 + 10000)
+                    (int) (Math.random() * 89999 + 10000),
+                    postRebornTaskReq.getRebornIdx()
             };
+
+            // 생성 실패시
             if (this.jdbcTemplate.update(createRebornTaskQuery, createRebornTaskParams) == 0) {
                 throw new BaseException(UPDATE_FAIL_REBORN_TASK);
             }
 
+            // 마지막 삽입한 인덱스 받기 <= update 쿼리에 영향받으므로 먼저 받아야함
             String selectRebornTaskQuery = "SELECT last_insert_id() ";
 
             Long rebornTaskIdx = this.jdbcTemplate.queryForObject(selectRebornTaskQuery, Long.class);
+
+            // 생성 성공하면 개수 1개 감소
+            String updateRebornQuery = "UPDATE Reborn SET productCnt = productCnt-1 WHERE rebornIdx = ?";
+            if (this.jdbcTemplate.update(updateRebornQuery, postRebornTaskReq.getRebornIdx()) == 0) {
+                throw new BaseException(UPDATE_FAIL_REBORN);
+            }
+
             return rebornTaskIdx;
         } catch (BaseException e) {
             log.error(e.getStatus().getMessage());
@@ -172,7 +167,7 @@ public class RebornTaskDao {
                 throw new BaseException(CAN_NOT_CHECK_EXPIRING_REBORN_TASK);
             }
 
-            log.info("isExpired : " + isExpired.toString());
+            log.info("isExpired : " + isExpired);
             if (isExpired) {
                 String updateRebornTaskQuery =
                         "update RebornTask set status = 'EXPIRED', updatedAt = now() where rebornTaskIdx = ? and status = 'ACTIVE'";
@@ -181,6 +176,11 @@ public class RebornTaskDao {
                     throw new BaseException(FAIL_EXPIRING_REBORN_TASK);
                 }
 
+            }
+            // 생성 성공하면 개수 1개 감소
+            String updateRebornQuery = "update Reborn set productCnt = productCnt+1 where rebornIdx = (select rebornIdx from RebornTask where rebornTaskIdx=?)";
+            if (this.jdbcTemplate.update(updateRebornQuery, rebornTaskIdx) == 0) {
+                throw new BaseException(UPDATE_FAIL_REBORN);
             }
 
         } catch (BaseException e) {

@@ -73,6 +73,7 @@ public enum BaseResponseStatus {
     FAIL_INSERT_JJIM(false,2223, "찜 추가를 실패하였습니다."),
     CAN_NOT_JJIM_STORE_TO_STORE(false,2224, "스토어는 찜을 할 수 없습니다."),
 
+    UPDATE_FAIL_REBORN(false, 2225, "리본상품 개수 업데이트 실패했습니다."),
 
 
 
