@@ -218,5 +218,16 @@ public class ReviewController {
         }
     }
 
+    @ResponseBody
+    @PostMapping("/review/refresh")
+    public BaseResponse<String> setReviewScore() {
+        try {
+            reviewDao.setReviewScore(1);
+            return new BaseResponse<>("success!");
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
 
 }
