@@ -12,6 +12,7 @@ import spring.reborn.domain.store.model.StoreCategory;
 
 import javax.sql.DataSource;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -416,6 +417,41 @@ public class ReviewDao {
                 "WHERE storeIdx = (SELECT storeIdx FROM Reborn where rebornIdx = ? );";
         Object[] updateStoreScoreParams = new Object[]{
                 avgScore2, rebornIdx}; // 동적 쿼리의 ?부분에 주입될 값
+        this.jdbcTemplate.update(updateStoreScoreQuery, updateStoreScoreParams);
+    }
+
+    @Transactional
+    public void setReviewScore(int storeIdx) throws BaseException {
+        // 모든 가게 storeIdx
+        String getStoreIdxQuery =
+                "SELECT storeIdx FROM Store;";
+
+        Integer storeIdxList = jdbcTemplate.queryForObject(
+                getStoreIdxQuery, Integer.class);
+
+
+        System.out.println("storeIdxList");
+        System.out.println(storeIdxList);
+
+
+        // 가게 평점 업데이트
+        String getStoreScoreQuery =
+                "SELECT AVG(Review.reviewScore) FROM Review JOIN Reborn\n" +
+                        "on Review.rebornIdx = Reborn.rebornIdx\n" +
+                        "WHERE storeIdx = ?;";
+
+        Float avgScore = jdbcTemplate.queryForObject(
+                getStoreScoreQuery, Float.class,storeIdx);
+
+        Double avgScore2 = ((double) Math.round(avgScore*10)/10);
+
+        System.out.println("avgScore : " +avgScore);
+        System.out.println("새로운 스토어 평균 점수 (반올림처리) : "+avgScore2);
+
+        String updateStoreScoreQuery = "UPDATE Store SET storeScore=? " +
+                "WHERE storeIdx = ?;";
+        Object[] updateStoreScoreParams = new Object[]{
+                avgScore2, storeIdx}; // 동적 쿼리의 ?부분에 주입될 값
         this.jdbcTemplate.update(updateStoreScoreQuery, updateStoreScoreParams);
     }
 }
