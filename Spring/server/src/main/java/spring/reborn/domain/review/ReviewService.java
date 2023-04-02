@@ -18,15 +18,15 @@ public class ReviewService {
     }
 
     public PostReviewRes createReview(PostReviewReq postReviewReq) throws BaseException {
-        int reviewIdx = reviewDao.createReview(postReviewReq);
+        PostReviewRes postReviewRes = reviewDao.createReview(postReviewReq);
         reviewDao.calculateStoreAvgScore(postReviewReq.getRebornIdx());
-        return new PostReviewRes(reviewIdx);
+        return postReviewRes;
     }
 
-    public PostReviewRes createReview2(PostReviewReq2 postReviewReq2) throws BaseException {
-        int reviewIdx = reviewDao.createReview2(postReviewReq2);
-        return new PostReviewRes(reviewIdx);
-    }
+//    public PostReviewRes createReview2(PostReviewReq2 postReviewReq2) throws BaseException {
+//        int reviewIdx = reviewDao.createReview2(postReviewReq2);
+//        return new PostReviewRes(reviewIdx);
+//    }
 
     public void deleteReview(ReviewReq reviewReq) throws BaseException {
         reviewDao.deleteReview(reviewReq);
