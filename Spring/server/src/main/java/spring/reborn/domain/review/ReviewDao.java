@@ -1,10 +1,14 @@
 package spring.reborn.domain.review;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 import spring.reborn.config.BaseException;
+import spring.reborn.config.BaseResponse;
+import spring.reborn.config.BaseResponseStatus;
 import spring.reborn.domain.awsS3.AwsS3Controller;
 import spring.reborn.domain.awsS3.AwsS3Service;
 import spring.reborn.domain.review.model.*;
@@ -31,23 +35,37 @@ public class ReviewDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    public int createReview(PostReviewReq postReviewReq) throws BaseException {
+    public PostReviewRes createReview(PostReviewReq postReviewReq) throws BaseException {
+        try{
+            String createReviewQuery = "insert into Review (userIdx, rebornIdx, reviewScore, reviewComment, " +
+                    "reviewImage1)" +
+                    "VALUES (?,?,?,?,?)"; // 실행될 동적 쿼리문
+            Object[] createReviewParams = new Object[]{
+                    postReviewReq.getUserIdx(),
+                    postReviewReq.getRebornIdx(),
+                    postReviewReq.getReviewScore(),
+                    postReviewReq.getReviewComment(),
+                    postReviewReq.getReviewImage()}; // 동적 쿼리의 ?부분에 주입될 값
+            this.jdbcTemplate.update(createReviewQuery, createReviewParams);
 
-        System.out.println("-- create review --");
+            String lastInsertIdQuery = "select last_insert_id()"; // 가장 마지막에 삽입된(생성된) id값은 가져온다.
+            Integer reviewIdx = this.jdbcTemplate.queryForObject(lastInsertIdQuery, int.class);
 
-        String createReviewQuery = "insert into Review (userIdx, rebornIdx, reviewScore, reviewComment, " +
-                "reviewImage1)" +
-                "VALUES (?,?,?,?,?)"; // 실행될 동적 쿼리문
-        Object[] createReviewParams = new Object[]{
-                postReviewReq.getUserIdx(),
-                postReviewReq.getRebornIdx(),
-                postReviewReq.getReviewScore(),
-                postReviewReq.getReviewComment(),
-                postReviewReq.getReviewImage()}; // 동적 쿼리의 ?부분에 주입될 값
-        this.jdbcTemplate.update(createReviewQuery, createReviewParams);
 
-        String lastInsertIdQuery = "select last_insert_id()"; // 가장 마지막에 삽입된(생성된) id값은 가져온다.
-        return this.jdbcTemplate.queryForObject(lastInsertIdQuery, int.class); // 해당 쿼리문의 결과 마지막으로 삽인된 유저의 userIdx번호를 반환한다.
+            String getRebornTaskIdxQuery = "SELECT rebornTaskIdx FROM RebornTask WHERE rebornIdx = ? and userIdx = ?;";
+            Object[] getRebornTaskIdxParams = new Object[]{
+                    postReviewReq.getRebornIdx(),
+                    postReviewReq.getUserIdx(),}; // 동적 쿼리의 ?부분에 주입될 값
+            Integer rebornTaskIdx = jdbcTemplate.queryForObject(
+                    getRebornTaskIdxQuery, getRebornTaskIdxParams, Integer.class);
+
+
+            return new PostReviewRes(reviewIdx, rebornTaskIdx); // 해당 쿼리문의 결과 마지막으로 삽인된 유저의 userIdx번호를 반환한다.
+        }
+        catch (Exception IncorrectResultSizeDataAccessException){
+            throw new BaseException(BaseResponseStatus.INCORRECT_INPUT_DATA);
+        }
+
     }
 
     public int createReview2(PostReviewReq2 postReviewReq2) throws BaseException {

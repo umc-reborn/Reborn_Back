@@ -109,6 +109,7 @@ public enum BaseResponseStatus {
 
     // 햄 (2500~2599)
     CAN_NOT_CHANGE_STATUS_TO_ACTIVE(false,2500,"활성화, 혹은 비활성화가 불가능한 리본상품입니다."),
+    INCORRECT_INPUT_DATA(false,2501,"해당되는 리본태스크가 없거나 2개 이상입니다."),
 
     /**
      * 3000 : Response 오류
