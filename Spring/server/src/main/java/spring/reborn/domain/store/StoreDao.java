@@ -353,7 +353,7 @@ public class StoreDao {
             String selectLikeableStoreQuery = "select s.storeIdx, storeName, category, storeScore, (select userImg FROM User U WHERE U.userIdx = s.userIdx) `userImage`, " +
                     "if((select j.jjimIdx from Jjim j where j.userIdx = ? and s.storeIdx = j.storeIdx) is null, false, true) hasJjim\n" +
                     "from  Store s\n" +
-                    "where s.category = (select ifnull(userLikes,'ETC') from User where userIdx = ?) " +
+                    "where s.category = (select ifnull(userLikes,'ETC') from User where userIdx = ?) and s.status='ACTIVE' " +
                     "order by storeScore desc " +
                     "limit 10 ";
             List<GetLikeableStoreRes> likeableStoreRes = jdbcTemplate.query(selectLikeableStoreQuery,
