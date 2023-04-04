@@ -88,6 +88,26 @@ public class ReviewDao {
         return this.jdbcTemplate.queryForObject(lastInsertIdQuery, int.class); // 해당 쿼리문의 결과 마지막으로 삽인된 유저의 userIdx번호를 반환한다.
     }
 
+
+    public int setReviewScore() throws BaseException {
+        String getStoreIdxQuery = "SELECT DISTINCT Store.storeIdx " +
+                "FROM Review JOIN Reborn ON Review.rebornIdx = Reborn.rebornIdx " +
+                "JOIN Store ON Store.storeIdx = Reborn.storeIdx;\n";
+
+        List<Integer> storeIdxList = this.jdbcTemplate.query(getStoreIdxQuery,
+                (rs, rowNum) -> rs.getInt("storeIdx")
+        );
+
+        for (int storeIdx : storeIdxList){
+            System.out.println(storeIdx);
+            calculateStoreScoreByStoreIdx(storeIdx);
+        }
+
+
+
+        return 1;
+    }
+
     @Transactional
     public void deleteReview(ReviewReq reviewReq) throws BaseException {
         try {
@@ -439,17 +459,7 @@ public class ReviewDao {
     }
 
     @Transactional
-    public void setReviewScore(int storeIdx) throws BaseException {
-        // 모든 가게 storeIdx
-        String getStoreIdxQuery =
-                "SELECT storeIdx FROM Store;";
-
-        Integer storeIdxList = jdbcTemplate.queryForObject(
-                getStoreIdxQuery, Integer.class);
-
-
-        System.out.println("storeIdxList");
-        System.out.println(storeIdxList);
+    public void calculateStoreScoreByStoreIdx(int storeIdx) throws BaseException {
 
 
         // 가게 평점 업데이트
