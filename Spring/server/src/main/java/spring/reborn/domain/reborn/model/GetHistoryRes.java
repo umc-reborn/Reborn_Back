@@ -7,6 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 public class GetHistoryRes {
     private int rebornTaskIdx;
+    private int rebornIdx;
     private String storeName;
     private String storeImage;
     private float storeScore;
