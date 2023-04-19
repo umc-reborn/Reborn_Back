@@ -67,6 +67,19 @@ public class ReviewController {
 //            return new BaseResponse<>((exception.getStatus()));
 //        }
 //    }
+
+    @ResponseBody
+    @PostMapping(value = "/review/set")
+    public BaseResponse<String> setReviewScore() {
+        try {
+            reviewDao.setReviewScore();
+            return new BaseResponse<>("성공적으로 평점이 업데이트 되었습니다");
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+
     @ResponseBody
     @PostMapping(value = "/reviewboni")
     public BaseResponse<PostReviewRes> createReview2(@RequestBody PostReviewReq postReviewReq) {
@@ -217,17 +230,5 @@ public class ReviewController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
-
-    @ResponseBody
-    @PostMapping("/review/refresh")
-    public BaseResponse<String> setReviewScore() {
-        try {
-            reviewDao.setReviewScore(1);
-            return new BaseResponse<>("success!");
-        } catch (BaseException exception) {
-            return new BaseResponse<>((exception.getStatus()));
-        }
-    }
-
 
 }
