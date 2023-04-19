@@ -177,7 +177,7 @@ public class RebornTaskDao {
                 }
 
             }
-            // 생성 성공하면 개수 1개 감소
+            // 만료시 리본 1개 복구
             String updateRebornQuery = "update Reborn set productCnt = productCnt+1 where rebornIdx = (select rebornIdx from RebornTask where rebornTaskIdx=?)";
             if (this.jdbcTemplate.update(updateRebornQuery, rebornTaskIdx) == 0) {
                 throw new BaseException(UPDATE_FAIL_REBORN);
