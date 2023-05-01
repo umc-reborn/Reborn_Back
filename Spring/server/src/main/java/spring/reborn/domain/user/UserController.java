@@ -151,14 +151,6 @@ public class UserController {
         if (!isRegexNickname(postUserReq.getUserNickname())) {
             return new BaseResponse<>(POST_USERS_INVALID_NICKNAME);
         }
-        // 생년월일이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
-        if (postUserReq.getUserBirthDate().length() == 0) {
-            return new BaseResponse<>(POST_USERS_EMPTY_BIRTHDATE);
-        }
-        // 생년월일 정규표현: 입력받은 새연월일이 숫자 8개로 이루어졌는지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
-        if (!isRegexBirthDate(postUserReq.getUserBirthDate())) {
-            return new BaseResponse<>(POST_USERS_INVALID_BIRTHDATE);
-        }
         // 주소가 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
         if (postUserReq.getUserAddress().length() == 0) {
             return new BaseResponse<>(POST_USERS_EMPTY_ADDRESS);
@@ -375,7 +367,7 @@ public class UserController {
             // 이미지 파일 객체에 추가
             user.setUserImg(fileUrl.get(0));
 
-            PatchUserReq patchUserReq = new PatchUserReq(userIdx, user.getUserImg(), user.getUserNickname(), user.getUserAddress(), user.getUserBirthDate(), user.getUserLikes());
+            PatchUserReq patchUserReq = new PatchUserReq(userIdx, user.getUserImg(), user.getUserNickname(), user.getUserAddress(), user.getUserLikes());
             userService.modifyUserInform(patchUserReq);
 
             String result = "회원정보가 수정되었습니다.";
