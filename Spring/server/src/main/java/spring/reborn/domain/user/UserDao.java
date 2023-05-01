@@ -51,8 +51,8 @@ public class UserDao {
     // 회원가입
     @Transactional
     public int createUser(PostUserReq postUserReq) {
-        String createUserQuery = "insert into User (userId, userEmail, userPwd, userNickname, userImg, userAdAgreement, userBirthDate, userAddress, userLikes) VALUES (?,?,?,?,?,?,?,?,?)"; // 실행될 동적 쿼리문
-        Object[] createUserParams = new Object[]{postUserReq.getUserId(), postUserReq.getUserEmail(), postUserReq.getUserPwd(), postUserReq.getUserNickname(), postUserReq.getUserImg(), postUserReq.getUserAdAgreement(), postUserReq.getUserBirthDate(), postUserReq.getUserAddress(), postUserReq.getUserLikes().name()}; // 동적 쿼리의 ?부분에 주입될 값
+        String createUserQuery = "insert into User (userId, userEmail, userPwd, userNickname, userImg, userAdAgreement, userAddress, userLikes) VALUES (?,?,?,?,?,?,?,?)"; // 실행될 동적 쿼리문
+        Object[] createUserParams = new Object[]{postUserReq.getUserId(), postUserReq.getUserEmail(), postUserReq.getUserPwd(), postUserReq.getUserNickname(), postUserReq.getUserImg(), postUserReq.getUserAdAgreement(), postUserReq.getUserAddress(), postUserReq.getUserLikes().name()}; // 동적 쿼리의 ?부분에 주입될 값
         this.jdbcTemplate.update(createUserQuery, createUserParams);
 
         String lastInserIdQuery = "select last_insert_id()"; // 가장 마지막에 삽입된(생성된) id값은 가져온다.
@@ -217,7 +217,6 @@ public class UserDao {
                         rs.getString("userImg"),
                         rs.getString("userNickname"),
                         rs.getString("userAddress"),
-                        rs.getString("userBirthDate"),
                         rs.getString("userLikes")), // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
                 getUserParams); // 한 개의 회원정보를 얻기 위한 jdbcTemplate 함수(Query, 객체 매핑 정보, Params)의 결과 반환
     }
@@ -262,8 +261,8 @@ public class UserDao {
     // 회원정보 수정
     @Transactional
     public int modifyUserInform(PatchUserReq patchUserReq) {
-        String modifyUserNameQuery = "update User set userImg = ?, userNickname = ?, userAddress = ?, userBirthDate = ?, userLikes = ? where userIdx = ? "; // 해당 userIdx를 만족하는 User를 해당 nickname으로 변경한다.
-        Object[] modifyUserNameParams = new Object[]{patchUserReq.getUserImg(), patchUserReq.getUserNickname(), patchUserReq.getUserAddress(), patchUserReq.getUserBirthDate(), patchUserReq.getUserLikes(), patchUserReq.getUserIdx()}; // 주입될 값들(nickname, userIdx) 순
+        String modifyUserNameQuery = "update User set userImg = ?, userNickname = ?, userAddress = ?, userLikes = ? where userIdx = ? "; // 해당 userIdx를 만족하는 User를 해당 nickname으로 변경한다.
+        Object[] modifyUserNameParams = new Object[]{patchUserReq.getUserImg(), patchUserReq.getUserNickname(), patchUserReq.getUserAddress(), patchUserReq.getUserLikes(), patchUserReq.getUserIdx()}; // 주입될 값들(nickname, userIdx) 순
 
         return this.jdbcTemplate.update(modifyUserNameQuery, modifyUserNameParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0)
     }
@@ -283,7 +282,6 @@ public class UserDao {
                         rs.getInt("userPoint"),
                         rs.getString("userImg"),
                         rs.getString("userAdAgreement"),
-                        rs.getString("userBirthDate"),
                         rs.getString("userAddress"),
                         rs.getString("userLikes"),
                         rs.getString("status")
@@ -359,8 +357,8 @@ public class UserDao {
     // 애플 회원가입
     @Transactional
     public int createAppleUser(PostAppleUserReq postAppleUserReq) {
-        String createUserQuery = "insert into User (userEmail, userNickname, userImg, userAdAgreement, userBirthDate, userAddress, userLikes, userId, userPwd) VALUES (?,?,?,?,?,?,?,?,'apple')"; // 실행될 동적 쿼리문
-        Object[] createUserParams = new Object[]{postAppleUserReq.getUserEmail(), postAppleUserReq.getUserNickname(), postAppleUserReq.getUserImg(), postAppleUserReq.getUserAdAgreement(), postAppleUserReq.getUserBirthDate(), postAppleUserReq.getUserAddress(), postAppleUserReq.getUserLikes().name(), postAppleUserReq.getUserEmail()}; // 동적 쿼리의 ?부분에 주입될 값
+        String createUserQuery = "insert into User (userEmail, userNickname, userImg, userAdAgreement, userAddress, userLikes, userId, userPwd) VALUES (?,?,?,?,?,?,?,?,'apple')"; // 실행될 동적 쿼리문
+        Object[] createUserParams = new Object[]{postAppleUserReq.getUserEmail(), postAppleUserReq.getUserNickname(), postAppleUserReq.getUserImg(), postAppleUserReq.getUserAdAgreement(), postAppleUserReq.getUserAddress(), postAppleUserReq.getUserLikes().name(), postAppleUserReq.getUserEmail()}; // 동적 쿼리의 ?부분에 주입될 값
         this.jdbcTemplate.update(createUserQuery, createUserParams);
 
         String lastInserIdQuery = "select last_insert_id()"; // 가장 마지막에 삽입된(생성된) id값은 가져온다.
@@ -382,7 +380,6 @@ public class UserDao {
                         rs.getInt("userPoint"),
                         rs.getString("userImg"),
                         rs.getString("userAdAgreement"),
-                        rs.getString("userBirthDate"),
                         rs.getString("userAddress"),
                         rs.getString("userLikes"),
                         rs.getString("status")

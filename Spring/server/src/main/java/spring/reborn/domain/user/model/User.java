@@ -23,7 +23,6 @@ public class User {
     private int userPoint;
     private String userImg;
     private String userAdAgreement;
-    private String userBirthDate;
     private String userAddress;//맞나?
     private String userLikes;
     private String status;

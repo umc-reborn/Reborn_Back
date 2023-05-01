@@ -13,6 +13,5 @@ public class GetUserInformRes {
     private String userImg;
     private String userNickname;
     private String userAddress;
-    private String userBirthDate;
     private String userLikes;
 }

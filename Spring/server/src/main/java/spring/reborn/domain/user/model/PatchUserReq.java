@@ -11,6 +11,5 @@ public class PatchUserReq {
     private String userImg;
     private String userNickname;
     private String userAddress;
-    private String userBirthDate;
     private String userLikes;
 }

@@ -15,7 +15,6 @@ public class PostUserReq {
     private String userNickname;
     private String userImg;
     private String userAdAgreement;
-    private String userBirthDate;
     private String userAddress;//맞나?
     @Getter
     public enum userLikes
