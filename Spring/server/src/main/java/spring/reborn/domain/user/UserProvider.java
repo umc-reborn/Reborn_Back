@@ -36,6 +36,7 @@ public class UserProvider {
         this.userDao = userDao;
         this.jwtService = jwtService; // JWT부분은 7주차에 다루므로 모르셔도 됩니다!
     }
+
     // ******************************************************************************
     public int checkUserEmail(String userEmail) throws BaseException {
         try {
@@ -55,15 +56,15 @@ public class UserProvider {
 
     // 아이디 중복 확인
     @Transactional
-    public String checkIdDuplication(String userId) throws BaseException{
-        if(checkUserId(userId)==1){
+    public String checkIdDuplication(String userId) throws BaseException {
+        if (checkUserId(userId) == 1) {
             // 아이디가 기존에 존재한다면
             throw new BaseException(POST_USERS_EXISTS_ID);
         }
-        try{
+        try {
             String result = "사용 가능한 아이디입니다.";
             return result;
-        }catch (Exception exception){
+        } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
@@ -118,13 +119,13 @@ public class UserProvider {
             String status = userDao.getUserStatus(userIdx);
             String userType = userDao.getUserType(userIdx);
             String userNickname = userDao.getUserNickname(userIdx);
-            if(!userType.equals("CONSUMER")){
+            if (!userType.equals("CONSUMER")) {
                 throw new BaseException(INVALID_USERTYPE);
             }
-            if(!status.equals("ACTIVE")){
+            if (!status.equals("ACTIVE")) {
                 throw new BaseException(INVALID_USER);
-            } else{
-                return new PostLoginRes(userIdx,userNickname,jwt);
+            } else {
+                return new PostLoginRes(userIdx, userNickname, jwt);
             }
 //  **************************************************************************
 
@@ -132,6 +133,7 @@ public class UserProvider {
             throw new BaseException(FAILED_TO_LOGIN);
         }
     }
+
     //스토어 로그인(password 검사)
     @Transactional
     public PostStoreLoginRes storeLogIn(PostLoginReq postLoginReq) throws BaseException {
@@ -147,7 +149,7 @@ public class UserProvider {
         if (postLoginReq.getUserPwd().equals(password)) { //비말번호가 일치한다면 userIdx를 가져온다.
             int userIdx = userDao.getPwd(postLoginReq).getUserIdx();
             String userType = userDao.getUserType(userIdx);
-            if(!userType.equals("STORE")){
+            if (!userType.equals("STORE")) {
                 throw new BaseException(INVALID_USERTYPE);
             }
             int storeIdx = userDao.getStorePwd(userIdx).getStoreIdx();
@@ -156,10 +158,10 @@ public class UserProvider {
 //  *********** 해당 부분은 7주차 - JWT 수업 후 주석해제 및 대체해주세요!  **************** //
             String jwt = jwtService.createJwt(userIdx);
             String status = userDao.getUserStatus(userIdx);
-            if(!status.equals("ACTIVE")){
+            if (!status.equals("ACTIVE")) {
                 throw new BaseException(INVALID_USER);
-            } else{
-                return new PostStoreLoginRes(userIdx,storeIdx,storeName,jwt);
+            } else {
+                return new PostStoreLoginRes(userIdx, storeIdx, storeName, jwt);
             }
 //  **************************************************************************
 
@@ -172,11 +174,12 @@ public class UserProvider {
     @Transactional
     public PostLogoutRes logOut(int userIdx) throws BaseException {
 //  *********** 해당 부분은 7주차 - JWT 수업 후 주석해제 및 대체해주세요!  **************** //
-            String jwt = jwtService.createEmptyJwt(userIdx);
-            String userNickname = userDao.getUserNickname(userIdx);
-            return new PostLogoutRes(userIdx,userNickname,jwt);
+        String jwt = jwtService.createEmptyJwt(userIdx);
+        String userNickname = userDao.getUserNickname(userIdx);
+        return new PostLogoutRes(userIdx, userNickname, jwt);
 //  **************************************************************************
     }
+
     //이웃 로그인Rtk(password 검사)
     @Transactional
     public PostLoginRtkRes logInRtk(PostLoginReq postLoginReq) throws BaseException {
@@ -198,13 +201,13 @@ public class UserProvider {
             String userType = userDao.getUserType(userIdx);
             String userNickname = userDao.getUserNickname(userIdx);
             String rtk = jwtService.createRefreshToken(userIdx);
-            if(!userType.equals("CONSUMER")){
+            if (!userType.equals("CONSUMER")) {
                 throw new BaseException(INVALID_USERTYPE);
             }
-            if(!status.equals("ACTIVE")){
+            if (!status.equals("ACTIVE")) {
                 throw new BaseException(INVALID_USER);
-            } else{
-                return new PostLoginRtkRes(userIdx,userNickname,jwt,rtk);
+            } else {
+                return new PostLoginRtkRes(userIdx, userNickname, jwt, rtk);
             }
 //  **************************************************************************
 
@@ -212,13 +215,33 @@ public class UserProvider {
             throw new BaseException(FAILED_TO_LOGIN);
         }
     }
+
     //로그아웃rtk
     @Transactional
     public PostLogoutRtkRes logOutRtk(int userIdx) throws BaseException {
 //  *********** 해당 부분은 7주차 - JWT 수업 후 주석해제 및 대체해주세요!  **************** //
         String rtk = jwtService.createEmptyRtk(userIdx);
         String userNickname = userDao.getUserNickname(userIdx);
-        return new PostLogoutRtkRes(userIdx,userNickname,rtk);
+        return new PostLogoutRtkRes(userIdx, userNickname, rtk);
 //  **************************************************************************
+    }
+
+    //애플 로그인
+    @Transactional
+    public PostLoginRes appleLogIn(PostAppleLoginReq postAppleLoginReq) throws BaseException {
+        int userIdx = userDao.getApplePwd(postAppleLoginReq).getUserIdx();
+
+        String jwt = jwtService.createJwt(userIdx);
+        String status = userDao.getUserStatus(userIdx);
+        String userType = userDao.getUserType(userIdx);
+        String userNickname = userDao.getUserNickname(userIdx);
+        if (!userType.equals("CONSUMER")) {
+            throw new BaseException(INVALID_USERTYPE);
+        }
+        if (!status.equals("ACTIVE")) {
+            throw new BaseException(INVALID_USER);
+        } else {
+            return new PostLoginRes(userIdx, userNickname, jwt);
+        }
     }
 }

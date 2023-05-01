@@ -673,7 +673,131 @@ public class UserController {
         }
     }
 
+    /**
+     * 토큰 검증
+     * [GET] /users/apple
+     */
+    @GetMapping("/apple/verify")
+    public String appleVerify() throws BaseException, InvalidKeySpecException, NoSuchAlgorithmException {
+        return jwtService.parseAppleJwt();
+    }
 
+    /**
+     * 애플 회원가입 확인
+     * [GET] /users/appleCheck
+     */
+    @GetMapping("/apple/check")
+    public String appleCheck(@RequestBody PostAppleUserReq postAppleUserReq) throws BaseException {
+        // 중복 확인: 해당 이메일을 가진 유저가 있는지 확인합니다.
+        if (userProvider.checkUserEmail(postAppleUserReq.getUserEmail()) == 1) {
+            return "회원입니다 로그인절차 진행";
+        }
+        return "회원이 아닙니다. 회원가입절차 진행";
+    }
+
+    /**
+     * 애플 회원 가입
+     * [POST] /users/apple/sign-up
+     */
+    @ResponseBody
+    @PostMapping("/apple/sign-up")
+    public BaseResponse<PostUserRes> appleSignup(@RequestBody PostAppleUserReq postAppleUserReq) {
+        // 닉네임 값이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
+        if (postAppleUserReq.getUserNickname().length() == 0) {
+            return new BaseResponse<>(POST_USERS_EMPTY_NICKNAME);
+        }
+        // 닉네임 정규표현: 입력받은 닉네임이 숫자와 영문, 한글로만 이루어졌는지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
+        if (!isRegexNickname(postAppleUserReq.getUserNickname())) {
+            return new BaseResponse<>(POST_USERS_INVALID_NICKNAME);
+        }
+        // 생년월일이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
+        if (postAppleUserReq.getUserBirthDate().length() == 0) {
+            return new BaseResponse<>(POST_USERS_EMPTY_BIRTHDATE);
+        }
+        // 생년월일 정규표현: 입력받은 새연월일이 숫자 8개로 이루어졌는지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
+        if (!isRegexBirthDate(postAppleUserReq.getUserBirthDate())) {
+            return new BaseResponse<>(POST_USERS_INVALID_BIRTHDATE);
+        }
+        // 주소가 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
+        if (postAppleUserReq.getUserAddress().length() == 0) {
+            return new BaseResponse<>(POST_USERS_EMPTY_ADDRESS);
+        }
+        // 관심사를 설정했는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
+        if (postAppleUserReq.getUserLikes() == null) {
+            return new BaseResponse<>(POST_USERS_EMPTY_LIKES);
+        }
+        try {
+            PostUserRes postUserRes = userService.createAppleUser(postAppleUserReq);
+            return new BaseResponse<>(postUserRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 애플 로그인 API
+     * [POST] /users/apple/sign-in
+     */
+    @ResponseBody
+    @PostMapping("/apple/sign-in")
+    public BaseResponse<PostLoginRes> appleLogIn(@RequestBody PostAppleLoginReq postAppleLoginReq) {
+        try {
+            PostLoginRes postLoginRes = userProvider.appleLogIn(postAppleLoginReq);
+            return new BaseResponse<>(postLoginRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    /**
+     * 애플 로그인
+     * [POST] /users/log-out/rtk
+     */
+    /*@RequestMapping(value="loginCallBackApple")
+    public String appleLoginCallBack(@RequestBody String apple_data, HttpServletRequest request, Model model){
+        logger.warn(apple_data);
+        //또는 System.out.println(apple_data);
+        return "apple/callback.jsp";
+    }*/
+
+    /**
+     * 애플 로그인
+     * [POST] /users/log-out/rtk
+     */
+    /*@RequestMapping(value="loginCallBackApple")
+    public String appleLoginCall(){
+        String[] datas = apple_data.split("[&]");
+        String code = "";
+        String id_token = "";
+        for(String data : datas ) {
+            if(data.equals("code=")) {
+                code = data.replace("code=", "");
+            }
+            if(data.equals("id_token=")) {
+                id_token = data.replace("id_token=", "");
+            }
+        }
+
+        logger.warn(code);
+        logger.warn(id_token);
+        SignedJWT signedJWT = SignedJWT.parse(id_token);
+        JWTClaimsSet payload = signedJWT.getJWTClaimsSet();
+
+        String publicKeys = HttpClientUtils.doGet("https://appleid.apple.com/auth/keys");
+        ObjectMapper objectMapper = new ObjectMapper();
+        Keys keys = objectMapper.readValue(publicKeys, Keys.class);
+
+        boolean signature=false;
+        for (Key key : keys.getKeys()) {
+            RSAKey rsaKey = (RSAKey) JWK.parse(objectMapper.writeValueAsString(key));
+            RSAPublicKey publicKey = rsaKey.toRSAPublicKey();
+            JWSVerifier verifier = new RSASSAVerifier(publicKey);
+            if (signedJWT.verify(verifier)) {
+                signature=true;
+                logger.warn("복호화 성공");
+            }
+        }
+    }*/
 
 //    /**
 //     * 사업자 등록 상태조회 API
