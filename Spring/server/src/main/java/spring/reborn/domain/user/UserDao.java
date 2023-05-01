@@ -355,4 +355,39 @@ public class UserDao {
             throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
         }
     }
+
+    // 애플 회원가입
+    @Transactional
+    public int createAppleUser(PostAppleUserReq postAppleUserReq) {
+        String createUserQuery = "insert into User (userEmail, userNickname, userImg, userAdAgreement, userBirthDate, userAddress, userLikes, userId, userPwd) VALUES (?,?,?,?,?,?,?,?,'apple')"; // 실행될 동적 쿼리문
+        Object[] createUserParams = new Object[]{postAppleUserReq.getUserEmail(), postAppleUserReq.getUserNickname(), postAppleUserReq.getUserImg(), postAppleUserReq.getUserAdAgreement(), postAppleUserReq.getUserBirthDate(), postAppleUserReq.getUserAddress(), postAppleUserReq.getUserLikes().name(), postAppleUserReq.getUserEmail()}; // 동적 쿼리의 ?부분에 주입될 값
+        this.jdbcTemplate.update(createUserQuery, createUserParams);
+
+        String lastInserIdQuery = "select last_insert_id()"; // 가장 마지막에 삽입된(생성된) id값은 가져온다.
+        return this.jdbcTemplate.queryForObject(lastInserIdQuery, int.class); // 해당 쿼리문의 결과 마지막으로 삽인된 유저의 userIdx번호를 반환한다.
+    }
+
+    // 애플 로그인: 해당 email에 해당되는 user의 암호화된 비밀번호 값을 가져온다.
+    public User getApplePwd(PostAppleLoginReq postAppleLoginReq) {
+        String getPwdQuery = "select * from User where userEmail = ?"; // 해당 id를 만족하는 User의 정보들을 조회한다.
+        String getPwdParams = postAppleLoginReq.getUserEmail(); // 주입될 id값을 클라이언트의 요청에서 주어진 정보를 통해 가져온다.
+
+        return this.jdbcTemplate.queryForObject(getPwdQuery,
+                (rs, rowNum) -> new User(
+                        rs.getInt("userIdx"),
+                        rs.getString("userId"),
+                        rs.getString("userEmail"),
+                        rs.getString("userPwd"),
+                        rs.getString("userNickname"),
+                        rs.getInt("userPoint"),
+                        rs.getString("userImg"),
+                        rs.getString("userAdAgreement"),
+                        rs.getString("userBirthDate"),
+                        rs.getString("userAddress"),
+                        rs.getString("userLikes"),
+                        rs.getString("status")
+                ), // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+                getPwdParams
+        ); // 한 개의 회원정보를 얻기 위한 jdbcTemplate 함수(Query, 객체 매핑 정보, Params)의 결과 반환
+    }
 }

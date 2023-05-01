@@ -551,5 +551,22 @@ public class UserService {
             throw new BaseException(INVALID_RTK);
         }
     }
+
+    @Transactional
+    public PostUserRes createAppleUser(PostAppleUserReq postAppleUserReq) throws BaseException {
+        try {
+            int userIdx = userDao.createAppleUser(postAppleUserReq);
+            String userNickname = userDao.getUserNickname(userIdx);
+//            return new PostUserRes(userIdx);
+
+//  *********** 해당 부분은 7주차 수업 후 주석해제하서 대체해서 사용해주세요! ***********
+//            jwt 발급.
+            String jwt = jwtService.createJwt(userIdx);
+            return new PostUserRes(userIdx,userNickname,jwt);
+//  *********************************************************************
+        } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
     
 }
