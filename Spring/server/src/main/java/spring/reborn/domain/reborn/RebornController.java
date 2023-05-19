@@ -37,7 +37,6 @@ public class RebornController {
     /* 상품 생성 */
     @ResponseBody
     @PostMapping(value = "/create/atOnce", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    @Transactional
     public BaseResponse<PostRebornRes> createAtOnceReborn(@RequestPart(required = false) PostRebornReq postRebornReq,
                                                     @RequestParam(name = "images") List<MultipartFile> multipartFile) {
         try {
@@ -57,7 +56,6 @@ public class RebornController {
     /* 상품 생성 */
     @ResponseBody
     @PostMapping("/create")
-    @Transactional
     public BaseResponse<PostRebornRes> createReborn(@RequestBody PostRebornReq postRebornReq) {
         try {
             PostRebornRes postRebornRes = rebornService.createReborn(postRebornReq);
@@ -71,7 +69,6 @@ public class RebornController {
     /* 전체 리본 조회 (스토어) */
     @ResponseBody
     @GetMapping("/store/{storeIdx}/status")
-    @Transactional
     public BaseResponse<List<GetRebornRes>> getReborns(@PathVariable Integer storeIdx, @RequestParam String status) {
         try {
             List<GetRebornRes> getRebornsRes= rebornProvider.getReborns(storeIdx, status);
@@ -84,7 +81,6 @@ public class RebornController {
     /* 리본 조회 페이지 with 상태별 (스토어) */
     @ResponseBody
     @GetMapping("/store/page/{storeIdx}/status")
-    @Transactional
     public BaseResponse<List<GetRebornPageRes>> getRebornsPage(@PathVariable Integer storeIdx, @RequestParam String status) {
         try {
             List<GetRebornPageRes> getRebornsPageRes= rebornProvider.getRebornsPage(storeIdx, status);
@@ -97,7 +93,6 @@ public class RebornController {
     /* 진행 중인 리본 조회 (유저) */
     @ResponseBody
     @GetMapping("/inprogress/user/{userIdx}")
-    @Transactional
     public BaseResponse<List<GetInProgressRes>> getInProgressReborns(@PathVariable Integer userIdx) {
         try {
             List<GetInProgressRes> getInProgressRebornsRes = rebornProvider.getInProgressReborns(userIdx);
@@ -110,7 +105,6 @@ public class RebornController {
     /* 상품 수정 */
     @ResponseBody
     @PostMapping("/modify")
-    @Transactional
     public BaseResponse<String> patchReborn(@RequestBody PatchRebornReq patchRebornReq) {
         try {
 //            if (patchRebornReq.getProductName() == null)
@@ -129,7 +123,6 @@ public class RebornController {
     /* 리본 히스토리 조회(유저) */
     @ResponseBody
     @GetMapping("/history/{userIdx}")
-    @Transactional
     public BaseResponse<List<GetHistoryRes>> getHistory(@PathVariable Integer userIdx) {
         try {
             List<GetHistoryRes> getHistoriesRes = rebornProvider.getHistory(userIdx);
@@ -142,7 +135,6 @@ public class RebornController {
     /* 리본 히스토리 상세조회*/
     @ResponseBody
     @GetMapping("/history/detail/{rebornTaskIdx}")
-    @Transactional
     public BaseResponse<GetHistroyDetailRes> getHistoryDetail(@PathVariable Integer rebornTaskIdx) {
         try {
             GetHistroyDetailRes getHistroyDetailRes = rebornProvider.getHistoryDetail(rebornTaskIdx);
@@ -155,7 +147,6 @@ public class RebornController {
     /* 리본 히스토리 생성 */
     @ResponseBody
     @PostMapping("/create/history/{rebornTaskIdx}")
-    @Transactional
     public BaseResponse<String> postHistory(@PathVariable int rebornTaskIdx) {
         try {
             if (rebornService.postHistory(rebornTaskIdx) == 1) {
@@ -171,7 +162,6 @@ public class RebornController {
     /* 상품 삭제 */
     @ResponseBody
     @PostMapping("/delete/{rebornIdx}")
-    @Transactional
     public BaseResponse<String> deleteProduct(@PathVariable int rebornIdx) {
         try {
             String result = rebornService.deleteProduct(rebornIdx);
@@ -184,7 +174,6 @@ public class RebornController {
     /* 나눔 취소 */
     @ResponseBody
     @PostMapping("/task/inactive/{rebornTaskIdx}")
-    @Transactional
     public BaseResponse<String> inactiveRebornTask(@PathVariable int rebornTaskIdx) {
         try {
             String result = rebornService.inactiveRebornTask(rebornTaskIdx);
@@ -197,7 +186,6 @@ public class RebornController {
     /* 리본상품 활성화, 비활성화 */
     @ResponseBody
     @PostMapping("/active/{rebornIdx}")
-    @Transactional
     public BaseResponse<PatchRebornStatusRes> activeReborn(@PathVariable int rebornIdx) throws BaseException {
         try {
             PatchRebornStatusRes result = rebornService.ativeReborn(rebornIdx);

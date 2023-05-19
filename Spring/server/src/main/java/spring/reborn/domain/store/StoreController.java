@@ -171,7 +171,6 @@ public class StoreController {
     /* 인기가게 조회 */
     @ResponseBody
     @GetMapping("/popular")
-    @Transactional
     public BaseResponse<List<GetPopularStoreRes>> getPopularStore(@RequestParam String category) {
         try {
             List<GetPopularStoreRes> getPopularStores = storeProvider.getPopularStore(category);
